@@ -4,6 +4,8 @@ import type { PlayerState, Resources } from '../types/game';
 
 const SAVE_KEY = 'among-quiet-stars.save.v1';
 
+const unique = <T>(items: T[]) => Array.from(new Set(items));
+
 export const initialResources: Resources = {
   fuel: 72,
   supplies: 18,
@@ -14,7 +16,7 @@ export const initialResources: Resources = {
 export const createInitialState = (): PlayerState => ({
   resources: { ...initialResources },
   currentSystemId: STARTING_SYSTEM_ID,
-  discoveredSystemIds: ['lumen-rest', 'vela-rest', 'marrowlight', 'pale-current', 'kites-end', 'orison-belt'],
+  discoveredSystemIds: ['lumen-rest', 'vela-rest', 'marrowlight', 'pale-current', 'kites-end', 'orison-belt', 'tallow-star'],
   completedEncounterIds: [],
   journalEntryIds: [],
   radioHistoryIds: [...defaultRadioIds],
@@ -41,7 +43,7 @@ export const loadPlayerState = (): PlayerState => {
     return {
       resources: { ...initial.resources, ...parsed.resources },
       currentSystemId: parsed.currentSystemId ?? initial.currentSystemId,
-      discoveredSystemIds: parsed.discoveredSystemIds ?? initial.discoveredSystemIds,
+      discoveredSystemIds: unique([...initial.discoveredSystemIds, ...(parsed.discoveredSystemIds ?? [])]),
       completedEncounterIds: parsed.completedEncounterIds ?? initial.completedEncounterIds,
       journalEntryIds: parsed.journalEntryIds ?? initial.journalEntryIds,
       radioHistoryIds: parsed.radioHistoryIds ?? initial.radioHistoryIds,

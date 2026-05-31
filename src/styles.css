@@ -1,6 +1,6 @@
 :root {
   color: #fff7dc;
-  background: #110a24;
+  background: #10091d;
   font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -15,11 +15,7 @@ body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
-  background:
-    radial-gradient(circle at 20% 15%, rgba(255, 197, 110, 0.35), transparent 24rem),
-    radial-gradient(circle at 84% 18%, rgba(109, 217, 255, 0.25), transparent 20rem),
-    radial-gradient(circle at 50% 80%, rgba(196, 106, 255, 0.22), transparent 22rem),
-    #110a24;
+  background: #10091d;
 }
 
 button {
@@ -27,38 +23,23 @@ button {
 }
 
 .app-shell {
-  position: relative;
   min-height: 100vh;
-  overflow: hidden;
-  padding: max(12px, env(safe-area-inset-top)) 12px max(12px, env(safe-area-inset-bottom));
-}
-
-.starfield {
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  opacity: 0.75;
-  background-image:
-    radial-gradient(circle, rgba(255, 247, 209, 0.85) 0 1px, transparent 1px),
-    radial-gradient(circle, rgba(177, 224, 255, 0.75) 0 1px, transparent 1px);
-  background-position:
-    0 0,
-    20px 28px;
-  background-size:
-    64px 64px,
-    92px 92px;
-  animation: star-drift 42s linear infinite;
+  padding: max(10px, env(safe-area-inset-top)) 10px max(10px, env(safe-area-inset-bottom));
+  background:
+    linear-gradient(180deg, rgba(12, 7, 24, 0.68), rgba(12, 7, 24, 0.96)),
+    var(--title-backdrop),
+    #10091d;
+  background-size: cover;
+  background-position: center;
 }
 
 .game-frame {
-  position: relative;
-  z-index: 1;
-  width: min(100%, 760px);
-  min-height: calc(100vh - 24px);
+  width: min(100%, 820px);
+  min-height: calc(100vh - 20px);
   margin: 0 auto;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
 }
 
 .topbar {
@@ -66,37 +47,43 @@ button {
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  padding: 8px 4px 0;
+  padding: 4px 2px 0;
 }
 
 .topbar h1,
+.cockpit-status h2,
 .screen-heading h2,
-.cockpit-copy h2 {
+.current-lead h3,
+.voyage-overlay h2,
+.encounter-card h2,
+.journal-title h2 {
   margin: 0;
   font-family: Georgia, "Times New Roman", serif;
   color: #ffe9ae;
+  text-shadow: 0 2px 18px rgba(0, 0, 0, 0.46);
 }
 
 .topbar h1 {
-  font-size: clamp(1.45rem, 6vw, 2.2rem);
+  font-size: clamp(1.35rem, 5vw, 2.2rem);
   line-height: 1;
 }
 
 .eyebrow {
   margin: 0 0 4px;
   color: #aee8ff;
-  font-size: 0.72rem;
+  font-size: 0.68rem;
   font-weight: 800;
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
 
 .location-pill {
-  min-width: 108px;
-  padding: 8px 10px;
-  border: 1px solid rgba(255, 232, 168, 0.32);
+  min-width: 96px;
+  padding: 7px 9px;
+  border: 1px solid rgba(255, 232, 168, 0.24);
   border-radius: 8px;
-  background: rgba(32, 20, 55, 0.78);
+  background: rgba(18, 10, 33, 0.72);
+  backdrop-filter: blur(10px);
   text-align: right;
 }
 
@@ -105,45 +92,22 @@ button {
 .ship-resource span {
   display: block;
   color: #d7c9ff;
-  font-size: 0.68rem;
+  font-size: 0.64rem;
   text-transform: uppercase;
 }
 
 .location-pill strong {
   color: #fff7dc;
-  font-size: 0.85rem;
-}
-
-.resource-strip,
-.resource-grid {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 8px;
-}
-
-.resource {
-  min-width: 0;
-  padding: 9px 8px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 8px;
-  background: linear-gradient(180deg, rgba(255, 248, 219, 0.12), rgba(29, 19, 53, 0.72));
-}
-
-.resource strong,
-.ship-resource strong {
-  color: #ffe9ae;
-  font-size: 1.05rem;
+  font-size: 0.82rem;
 }
 
 .screen-panel {
   flex: 1;
   min-height: 0;
-  border: 1px solid rgba(255, 232, 168, 0.22);
+  border: 1px solid rgba(255, 232, 168, 0.14);
   border-radius: 8px;
-  background:
-    linear-gradient(180deg, rgba(255, 245, 213, 0.08), rgba(21, 13, 39, 0.9)),
-    rgba(16, 10, 31, 0.82);
-  box-shadow: 0 18px 54px rgba(7, 4, 18, 0.38);
+  background: rgba(10, 6, 19, 0.52);
+  box-shadow: 0 18px 54px rgba(7, 4, 18, 0.42);
   overflow: auto;
 }
 
@@ -154,13 +118,13 @@ button {
 }
 
 .nav-button,
-.action-grid button,
 .choice-button,
 .primary-action,
+.small-action,
 .reset-button {
   border: 1px solid rgba(255, 232, 168, 0.24);
   border-radius: 8px;
-  background: rgba(255, 248, 219, 0.11);
+  background: rgba(255, 248, 219, 0.1);
   color: #fff7dc;
   font-weight: 800;
 }
@@ -168,6 +132,7 @@ button {
 .nav-button {
   padding: 8px 4px;
   font-size: 0.72rem;
+  backdrop-filter: blur(12px);
 }
 
 .nav-button.active,
@@ -177,7 +142,146 @@ button {
   color: #20112f;
 }
 
-.cockpit-layout,
+.primary-action,
+.choice-button,
+.small-action,
+.reset-button {
+  padding: 12px 14px;
+}
+
+.small-action {
+  min-height: 38px;
+  padding: 8px 12px;
+  background: rgba(174, 232, 255, 0.14);
+  font-size: 0.82rem;
+}
+
+.small-action:disabled,
+.map-node:disabled {
+  cursor: not-allowed;
+}
+
+.hero-art {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.cockpit-screen {
+  padding: 8px;
+}
+
+.cockpit-hero {
+  position: relative;
+  min-height: clamp(540px, 74vh, 760px);
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 232, 168, 0.2);
+  background: #160f2d;
+}
+
+.hero-shade {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, rgba(8, 5, 16, 0.06), rgba(8, 5, 16, 0.12) 38%, rgba(8, 5, 16, 0.88)),
+    radial-gradient(circle at 50% 74%, rgba(255, 197, 110, 0.22), transparent 32%);
+}
+
+.cockpit-status {
+  position: absolute;
+  inset: 14px 14px auto;
+  display: grid;
+  gap: 10px;
+}
+
+.resource-strip {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.resource-strip.compact {
+  max-width: 420px;
+}
+
+.resource {
+  min-width: 0;
+  padding: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 8px;
+  background: rgba(18, 10, 33, 0.56);
+  backdrop-filter: blur(10px);
+}
+
+.resource strong,
+.ship-resource strong {
+  color: #ffe9ae;
+  font-size: 1rem;
+}
+
+.current-lead {
+  position: absolute;
+  left: 14px;
+  right: 14px;
+  bottom: 14px;
+  padding: 14px;
+  border: 1px solid rgba(255, 232, 168, 0.28);
+  border-radius: 8px;
+  background:
+    linear-gradient(180deg, rgba(38, 24, 54, 0.72), rgba(17, 10, 30, 0.86)),
+    rgba(17, 10, 30, 0.72);
+  backdrop-filter: blur(14px);
+}
+
+.current-lead p,
+.quiet-context p,
+.screen-heading p,
+.system-card p,
+.encounter-copy,
+.journal-entry p,
+.upgrade-card p,
+.radio-message p,
+.voyage-overlay p {
+  color: #f3e8d0;
+}
+
+.current-lead h3 {
+  font-size: clamp(1.25rem, 6vw, 2rem);
+}
+
+.lead-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.lead-footer span {
+  color: #aee8ff;
+  font-weight: 800;
+}
+
+.quiet-context,
+.soft-alert,
+.empty-state,
+.radio-slip {
+  margin-top: 10px;
+  padding: 12px;
+  border: 1px solid rgba(255, 232, 168, 0.2);
+  border-radius: 8px;
+  background: rgba(18, 10, 33, 0.56);
+  backdrop-filter: blur(10px);
+}
+
+.soft-alert,
+.radio-slip {
+  color: #ffe9ae;
+}
+
 .map-screen,
 .travel-screen,
 .encounter-screen,
@@ -187,202 +291,21 @@ button {
   padding: 14px;
 }
 
-.cockpit-window,
-.voyage-window {
-  position: relative;
-  min-height: 238px;
-  border: 10px solid #2a1c42;
-  border-bottom-width: 24px;
-  border-radius: 8px 8px 42px 42px;
-  overflow: hidden;
-  background:
-    radial-gradient(circle at 18% 30%, rgba(255, 210, 133, 0.78), transparent 18%),
-    radial-gradient(circle at 78% 20%, rgba(109, 217, 255, 0.65), transparent 22%),
-    radial-gradient(circle at 48% 70%, rgba(193, 91, 255, 0.52), transparent 30%),
-    linear-gradient(180deg, #23164c, #110a24 80%);
-}
-
-.cockpit-window::before,
-.voyage-window::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background-image: radial-gradient(circle, rgba(255, 255, 255, 0.9) 0 1px, transparent 1px);
-  background-size: 42px 42px;
-  opacity: 0.45;
-}
-
-.nebula-orb {
-  position: absolute;
-  border-radius: 999px;
-  filter: blur(4px);
-}
-
-.nebula-a {
-  width: 120px;
-  height: 120px;
-  left: 12%;
-  top: 20%;
-  background: rgba(255, 212, 125, 0.38);
-}
-
-.nebula-b {
-  width: 180px;
-  height: 140px;
-  right: -10%;
-  bottom: 8%;
-  background: rgba(108, 215, 255, 0.24);
-}
-
-.ship-silhouette,
-.ship-body {
-  position: absolute;
-  left: 50%;
-  bottom: 22px;
-  width: 190px;
-  height: 52px;
-  transform: translateX(-50%);
-  border-radius: 60% 60% 46% 46%;
-  background: #211733;
-  box-shadow: inset 0 10px 0 rgba(255, 214, 138, 0.22), 0 0 28px rgba(255, 197, 110, 0.25);
-}
-
-.ship-silhouette::before,
-.ship-body::before {
-  content: "";
-  position: absolute;
-  left: 50%;
-  top: -38px;
-  width: 78px;
-  height: 64px;
-  transform: translateX(-50%);
-  border-radius: 60px 60px 20px 20px;
-  background: #f1b96b;
-}
-
-.ship-silhouette span,
-.ship-body span {
-  position: absolute;
-  left: 50%;
-  bottom: 12px;
-  transform: translateX(-50%);
-  width: max-content;
-  color: #ffe9ae;
-  font-family: Georgia, "Times New Roman", serif;
-  font-size: 0.8rem;
-}
-
-.cabin-details {
-  display: grid;
-  grid-template-columns: 44px 44px 1fr;
-  align-items: end;
-  gap: 10px;
-  margin-top: -28px;
-  padding: 0 18px;
-  position: relative;
-  z-index: 2;
-}
-
-.plant,
-.mug,
-.blanket,
-.notes {
-  border-radius: 8px;
-  background: rgba(255, 248, 219, 0.15);
-  border: 1px solid rgba(255, 232, 168, 0.24);
-}
-
-.plant {
-  height: 58px;
-  background:
-    radial-gradient(ellipse at 34% 28%, #7be2a5 0 18%, transparent 20%),
-    radial-gradient(ellipse at 68% 24%, #9cf7be 0 18%, transparent 20%),
-    linear-gradient(180deg, transparent 0 58%, #d08f62 60%);
-}
-
-.mug {
-  height: 36px;
-  background: linear-gradient(180deg, #fff0bc, #d77d73);
-}
-
-.blanket {
-  height: 28px;
-  background: repeating-linear-gradient(90deg, #7fc7ff 0 12px, #f5a5c8 12px 24px, #ffe29a 24px 36px);
-}
-
-.notes {
-  padding: 10px;
-  color: #3b2440;
-  background: #ffe9ae;
-  font-family: Georgia, "Times New Roman", serif;
-}
-
-.cockpit-copy,
 .screen-heading {
-  margin-top: 18px;
-}
-
-.cockpit-copy p,
-.screen-heading p,
-.encounter-copy,
-.system-card p,
-.journal-entry p,
-.upgrade-card p,
-.radio-message p {
-  color: #f3e8d0;
-}
-
-.tag-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  margin-top: 10px;
-}
-
-.system-tag {
-  padding: 4px 8px;
-  border-radius: 999px;
-  background: rgba(174, 232, 255, 0.16);
-  color: #bdeeff;
-  font-size: 0.75rem;
-  font-weight: 800;
-}
-
-.soft-alert,
-.empty-state,
-.radio-slip {
-  margin-top: 14px;
-  padding: 12px;
-  border: 1px solid rgba(255, 232, 168, 0.26);
-  border-radius: 8px;
-  background: rgba(255, 197, 110, 0.13);
-  color: #ffe9ae;
-}
-
-.action-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 10px;
-  margin-top: 18px;
-}
-
-.action-grid button,
-.choice-button,
-.primary-action,
-.reset-button {
-  padding: 12px 14px;
+  margin-bottom: 14px;
 }
 
 .sector-map {
   position: relative;
-  height: 250px;
-  margin-top: 14px;
+  height: 255px;
   border: 1px solid rgba(255, 232, 168, 0.18);
   border-radius: 8px;
+  overflow: hidden;
   background:
-    radial-gradient(circle at 30% 28%, rgba(255, 197, 110, 0.22), transparent 18%),
-    radial-gradient(circle at 76% 60%, rgba(119, 216, 255, 0.16), transparent 20%),
-    rgba(7, 4, 18, 0.36);
+    linear-gradient(180deg, rgba(8, 5, 16, 0.12), rgba(8, 5, 16, 0.82)),
+    var(--map-vista);
+  background-size: cover;
+  background-position: center;
 }
 
 .map-node {
@@ -392,8 +315,8 @@ button {
   min-height: 34px;
   transform: translate(-50%, -50%);
   border-radius: 999px;
-  border: 1px solid rgba(255, 232, 168, 0.35);
-  background: rgba(255, 232, 168, 0.14);
+  border: 1px solid rgba(255, 232, 168, 0.42);
+  background: rgba(255, 232, 168, 0.12);
 }
 
 .map-node span {
@@ -410,8 +333,13 @@ button {
   outline: 2px solid #77d8ff;
 }
 
+.map-node.recommended {
+  outline: 2px solid #ffc66d;
+  box-shadow: 0 0 28px rgba(255, 198, 109, 0.55);
+}
+
 .map-node.unknown {
-  opacity: 0.35;
+  opacity: 0.38;
 }
 
 .system-list,
@@ -428,19 +356,42 @@ button {
 .journal-entry,
 .upgrade-card,
 .radio-message {
-  display: flex;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 12px;
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 8px;
   background: rgba(255, 248, 219, 0.08);
 }
 
+.system-card {
+  display: grid;
+  grid-template-columns: 86px minmax(0, 1fr);
+  gap: 12px;
+  padding: 10px;
+}
+
+.system-card.recommended {
+  border-color: rgba(255, 198, 109, 0.48);
+  box-shadow: 0 0 24px rgba(255, 198, 109, 0.12);
+}
+
+.system-card.muted {
+  opacity: 0.58;
+}
+
+.system-thumb {
+  width: 86px;
+  height: 98px;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+.system-main {
+  min-width: 0;
+}
+
 .system-card h3,
 .journal-entry h3,
 .upgrade-card h4 {
-  margin: 0 0 6px;
+  margin: 6px 0;
   color: #ffe9ae;
   font-size: 1rem;
 }
@@ -453,62 +404,73 @@ button {
   font-size: 0.9rem;
 }
 
-.system-card.muted {
-  opacity: 0.58;
-}
-
 .system-meta {
-  display: grid;
-  align-content: start;
-  justify-items: end;
-  gap: 6px;
-  min-width: 82px;
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
   color: #d7c9ff;
-  text-align: right;
 }
 
-.travel-screen {
-  display: grid;
-  gap: 14px;
+.system-meta strong {
+  color: #aee8ff;
+}
+
+.tag-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.system-tag {
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: rgba(174, 232, 255, 0.16);
+  color: #bdeeff;
+  font-size: 0.72rem;
+  font-weight: 800;
 }
 
 .voyage-window {
-  min-height: 280px;
+  position: relative;
+  min-height: calc(100vh - 150px);
   border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 232, 168, 0.2);
+  background: #160f2d;
 }
 
-.drift-stars {
+.voyage-art {
+  transform: scale(1.06);
+  animation: slow-vista 14s ease-in-out infinite alternate;
+}
+
+.travel-parallax {
   position: absolute;
   inset: -20%;
-  background-image: radial-gradient(circle, rgba(255, 247, 209, 0.95) 0 1px, transparent 1px);
-  background-size: 38px 38px;
-}
-
-.layer-one {
-  animation: voyage-drift 4s linear infinite;
-}
-
-.layer-two {
-  opacity: 0.35;
-  background-size: 68px 68px;
+  background-image: radial-gradient(circle, rgba(255, 247, 209, 0.9) 0 1px, transparent 1px);
+  background-size: 48px 48px;
+  opacity: 0.42;
   animation: voyage-drift 7s linear infinite;
 }
 
-.voyage-ship {
+.voyage-overlay {
   position: absolute;
-  left: 50%;
-  bottom: 42px;
-  width: 72px;
-  height: 32px;
-  transform: translateX(-50%);
-  border-radius: 70% 70% 45% 45%;
-  background: #ffe0a4;
-  box-shadow: 0 0 28px rgba(255, 224, 164, 0.45);
-  animation: ship-hum 0.9s ease-in-out infinite alternate;
+  left: 14px;
+  right: 14px;
+  bottom: 14px;
+  padding: 16px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 232, 168, 0.24);
+  background: rgba(13, 8, 25, 0.76);
+  backdrop-filter: blur(14px);
 }
 
 .voyage-progress {
   height: 12px;
+  margin: 14px 0;
   background: rgba(255, 255, 255, 0.12);
 }
 
@@ -518,8 +480,31 @@ button {
   animation: route-progress 3.8s ease-out both;
 }
 
+.encounter-screen {
+  position: relative;
+  min-height: calc(100vh - 150px);
+}
+
+.encounter-art {
+  width: 100%;
+  height: 230px;
+  border-radius: 8px;
+  object-fit: cover;
+  border: 1px solid rgba(255, 232, 168, 0.18);
+}
+
+.encounter-card {
+  margin-top: -28px;
+  position: relative;
+  padding: 16px;
+  border: 1px solid rgba(255, 232, 168, 0.24);
+  border-radius: 8px;
+  background: rgba(18, 10, 33, 0.86);
+  backdrop-filter: blur(14px);
+}
+
 .encounter-copy {
-  margin: 18px 0;
+  margin: 14px 0;
   font-size: 1.05rem;
   line-height: 1.6;
 }
@@ -529,48 +514,116 @@ button {
   background: rgba(174, 232, 255, 0.13);
 }
 
+.journal-hero {
+  position: relative;
+  min-height: 190px;
+  border: 1px solid rgba(255, 232, 168, 0.18);
+  border-radius: 8px;
+  overflow: hidden;
+  background: #271c2f;
+}
+
+.journal-hero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, rgba(29, 18, 36, 0.84), rgba(29, 18, 36, 0.24));
+}
+
+.journal-title {
+  position: absolute;
+  inset: auto 14px 14px;
+  z-index: 1;
+}
+
+.journal-entry {
+  display: block;
+  padding: 16px;
+  background:
+    linear-gradient(90deg, rgba(255, 247, 219, 0.88), rgba(255, 237, 190, 0.82)),
+    #fff1c8;
+  color: #3a2731;
+  box-shadow: 0 10px 28px rgba(6, 4, 12, 0.18);
+}
+
+.journal-entry h3 {
+  color: #3d233c;
+  font-family: Georgia, "Times New Roman", serif;
+}
+
+.journal-entry p {
+  color: #49343b;
+}
+
 .entry-topline,
 .journal-entry footer {
   display: flex;
   justify-content: space-between;
   gap: 10px;
-  color: #aee8ff;
-  font-size: 0.75rem;
-  font-weight: 800;
-}
-
-.journal-entry {
-  display: block;
-}
-
-.journal-entry h3 {
-  margin-top: 8px;
+  color: #7b496d;
+  font-size: 0.74rem;
+  font-weight: 900;
+  text-transform: uppercase;
 }
 
 .journal-entry footer {
-  margin-top: 10px;
-  color: #d7c9ff;
+  margin-top: 12px;
+}
+
+.notebook-empty {
+  color: #ffe9ae;
 }
 
 .ship-portrait {
   position: relative;
-  min-height: 160px;
+  min-height: 190px;
   margin: 16px 0;
   border-radius: 8px;
-  background:
-    radial-gradient(circle at 50% 45%, rgba(255, 226, 154, 0.24), transparent 22%),
-    linear-gradient(180deg, rgba(119, 216, 255, 0.15), rgba(232, 121, 181, 0.08));
+  overflow: hidden;
   border: 1px solid rgba(255, 232, 168, 0.18);
 }
 
-.ship-body {
-  bottom: 48px;
+.ship-portrait::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(8, 5, 16, 0.1), rgba(8, 5, 16, 0.74));
 }
 
-.ship-resource {
-  padding: 10px;
-  border-radius: 8px;
-  background: rgba(255, 248, 219, 0.09);
+.ship-body {
+  position: absolute;
+  left: 50%;
+  bottom: 34px;
+  z-index: 1;
+  width: 190px;
+  height: 52px;
+  transform: translateX(-50%);
+  border-radius: 60% 60% 46% 46%;
+  background: #211733;
+  box-shadow: inset 0 10px 0 rgba(255, 214, 138, 0.22), 0 0 28px rgba(255, 197, 110, 0.25);
+}
+
+.ship-body::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: -38px;
+  width: 78px;
+  height: 64px;
+  transform: translateX(-50%);
+  border-radius: 60px 60px 20px 20px;
+  background: #f1b96b;
+}
+
+.ship-body span {
+  position: absolute;
+  left: 50%;
+  bottom: 12px;
+  transform: translateX(-50%);
+  width: max-content;
+  color: #ffe9ae;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 0.8rem;
 }
 
 .section-title {
@@ -580,7 +633,11 @@ button {
 }
 
 .upgrade-card {
+  display: flex;
   align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px;
 }
 
 .upgrade-card strong {
@@ -619,6 +676,8 @@ button {
 
 .radio-message {
   display: block;
+  padding: 12px;
+  background: rgba(255, 248, 219, 0.08);
 }
 
 .radio-message strong {
@@ -633,46 +692,63 @@ button {
   border-color: rgba(123, 226, 165, 0.42);
 }
 
-@media (min-width: 680px) {
+@media (min-width: 700px) {
   .game-frame {
     min-height: calc(100vh - 40px);
   }
 
-  .cockpit-layout {
+  .cockpit-screen,
+  .map-screen,
+  .travel-screen,
+  .encounter-screen,
+  .journal-screen,
+  .ship-screen,
+  .radio-screen {
+    padding: 18px;
+  }
+
+  .cockpit-status {
+    grid-template-columns: 1fr minmax(320px, 0.7fr);
+    align-items: start;
+  }
+
+  .current-lead {
+    left: 24px;
+    right: auto;
+    bottom: 24px;
+    width: min(520px, calc(100% - 48px));
+  }
+
+  .system-card {
+    grid-template-columns: 130px minmax(0, 1fr) 120px;
+  }
+
+  .system-thumb {
+    width: 130px;
+    height: 112px;
+  }
+
+  .system-meta {
+    grid-column: auto;
     display: grid;
-    grid-template-columns: 1.1fr 0.9fr;
-    gap: 18px;
+    align-content: center;
+    justify-items: end;
   }
 
-  .cockpit-window,
-  .cabin-details {
-    grid-column: 1;
-  }
-
-  .cockpit-copy,
-  .soft-alert,
-  .action-grid {
-    grid-column: 2;
-  }
-}
-
-@keyframes star-drift {
-  to {
-    background-position:
-      64px 128px,
-      112px 184px;
+  .encounter-art {
+    height: 330px;
   }
 }
 
 @keyframes voyage-drift {
   to {
-    transform: translateY(18%);
+    transform: translateY(16%);
   }
 }
 
-@keyframes ship-hum {
+@keyframes slow-vista {
   to {
-    transform: translateX(-50%) translateY(3px);
+    transform: scale(1.12) translate3d(-1.5%, -1%, 0);
   }
 }
 
