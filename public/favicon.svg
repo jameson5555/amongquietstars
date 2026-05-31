@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Among Quiet Stars icon">
+  <defs>
+    <radialGradient id="nebula" cx="50%" cy="45%" r="70%">
+      <stop offset="0%" stop-color="#ffd98f"/>
+      <stop offset="40%" stop-color="#9e6dff"/>
+      <stop offset="100%" stop-color="#120b25"/>
+    </radialGradient>
+  </defs>
+  <rect width="64" height="64" rx="16" fill="url(#nebula)"/>
+  <path d="M12 39c11-7 24-7 40 0-9 8-24 10-40 0Z" fill="#1d1530"/>
+  <path d="M26 35c2-8 5-14 8-18 3 4 6 10 8 18-5 2-11 2-16 0Z" fill="#f7c978"/>
+  <circle cx="34" cy="29" r="4" fill="#fff7d1"/>
+  <circle cx="14" cy="15" r="1.5" fill="#fff7d1"/>
+  <circle cx="49" cy="18" r="1" fill="#fff7d1"/>
+  <circle cx="52" cy="48" r="1.2" fill="#fff7d1"/>
+</svg>

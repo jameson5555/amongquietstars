@@ -1,0 +1,686 @@
+:root {
+  color: #fff7dc;
+  background: #110a24;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at 20% 15%, rgba(255, 197, 110, 0.35), transparent 24rem),
+    radial-gradient(circle at 84% 18%, rgba(109, 217, 255, 0.25), transparent 20rem),
+    radial-gradient(circle at 50% 80%, rgba(196, 106, 255, 0.22), transparent 22rem),
+    #110a24;
+}
+
+button {
+  min-height: 46px;
+}
+
+.app-shell {
+  position: relative;
+  min-height: 100vh;
+  overflow: hidden;
+  padding: max(12px, env(safe-area-inset-top)) 12px max(12px, env(safe-area-inset-bottom));
+}
+
+.starfield {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.75;
+  background-image:
+    radial-gradient(circle, rgba(255, 247, 209, 0.85) 0 1px, transparent 1px),
+    radial-gradient(circle, rgba(177, 224, 255, 0.75) 0 1px, transparent 1px);
+  background-position:
+    0 0,
+    20px 28px;
+  background-size:
+    64px 64px,
+    92px 92px;
+  animation: star-drift 42s linear infinite;
+}
+
+.game-frame {
+  position: relative;
+  z-index: 1;
+  width: min(100%, 760px);
+  min-height: calc(100vh - 24px);
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 4px 0;
+}
+
+.topbar h1,
+.screen-heading h2,
+.cockpit-copy h2 {
+  margin: 0;
+  font-family: Georgia, "Times New Roman", serif;
+  color: #ffe9ae;
+}
+
+.topbar h1 {
+  font-size: clamp(1.45rem, 6vw, 2.2rem);
+  line-height: 1;
+}
+
+.eyebrow {
+  margin: 0 0 4px;
+  color: #aee8ff;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.location-pill {
+  min-width: 108px;
+  padding: 8px 10px;
+  border: 1px solid rgba(255, 232, 168, 0.32);
+  border-radius: 8px;
+  background: rgba(32, 20, 55, 0.78);
+  text-align: right;
+}
+
+.location-pill span,
+.resource span,
+.ship-resource span {
+  display: block;
+  color: #d7c9ff;
+  font-size: 0.68rem;
+  text-transform: uppercase;
+}
+
+.location-pill strong {
+  color: #fff7dc;
+  font-size: 0.85rem;
+}
+
+.resource-strip,
+.resource-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.resource {
+  min-width: 0;
+  padding: 9px 8px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  background: linear-gradient(180deg, rgba(255, 248, 219, 0.12), rgba(29, 19, 53, 0.72));
+}
+
+.resource strong,
+.ship-resource strong {
+  color: #ffe9ae;
+  font-size: 1.05rem;
+}
+
+.screen-panel {
+  flex: 1;
+  min-height: 0;
+  border: 1px solid rgba(255, 232, 168, 0.22);
+  border-radius: 8px;
+  background:
+    linear-gradient(180deg, rgba(255, 245, 213, 0.08), rgba(21, 13, 39, 0.9)),
+    rgba(16, 10, 31, 0.82);
+  box-shadow: 0 18px 54px rgba(7, 4, 18, 0.38);
+  overflow: auto;
+}
+
+.bottom-nav {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.nav-button,
+.action-grid button,
+.choice-button,
+.primary-action,
+.reset-button {
+  border: 1px solid rgba(255, 232, 168, 0.24);
+  border-radius: 8px;
+  background: rgba(255, 248, 219, 0.11);
+  color: #fff7dc;
+  font-weight: 800;
+}
+
+.nav-button {
+  padding: 8px 4px;
+  font-size: 0.72rem;
+}
+
+.nav-button.active,
+.primary-action {
+  background: linear-gradient(135deg, #ffc66d, #e879b5 52%, #77d8ff);
+  border-color: transparent;
+  color: #20112f;
+}
+
+.cockpit-layout,
+.map-screen,
+.travel-screen,
+.encounter-screen,
+.journal-screen,
+.ship-screen,
+.radio-screen {
+  padding: 14px;
+}
+
+.cockpit-window,
+.voyage-window {
+  position: relative;
+  min-height: 238px;
+  border: 10px solid #2a1c42;
+  border-bottom-width: 24px;
+  border-radius: 8px 8px 42px 42px;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 18% 30%, rgba(255, 210, 133, 0.78), transparent 18%),
+    radial-gradient(circle at 78% 20%, rgba(109, 217, 255, 0.65), transparent 22%),
+    radial-gradient(circle at 48% 70%, rgba(193, 91, 255, 0.52), transparent 30%),
+    linear-gradient(180deg, #23164c, #110a24 80%);
+}
+
+.cockpit-window::before,
+.voyage-window::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle, rgba(255, 255, 255, 0.9) 0 1px, transparent 1px);
+  background-size: 42px 42px;
+  opacity: 0.45;
+}
+
+.nebula-orb {
+  position: absolute;
+  border-radius: 999px;
+  filter: blur(4px);
+}
+
+.nebula-a {
+  width: 120px;
+  height: 120px;
+  left: 12%;
+  top: 20%;
+  background: rgba(255, 212, 125, 0.38);
+}
+
+.nebula-b {
+  width: 180px;
+  height: 140px;
+  right: -10%;
+  bottom: 8%;
+  background: rgba(108, 215, 255, 0.24);
+}
+
+.ship-silhouette,
+.ship-body {
+  position: absolute;
+  left: 50%;
+  bottom: 22px;
+  width: 190px;
+  height: 52px;
+  transform: translateX(-50%);
+  border-radius: 60% 60% 46% 46%;
+  background: #211733;
+  box-shadow: inset 0 10px 0 rgba(255, 214, 138, 0.22), 0 0 28px rgba(255, 197, 110, 0.25);
+}
+
+.ship-silhouette::before,
+.ship-body::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: -38px;
+  width: 78px;
+  height: 64px;
+  transform: translateX(-50%);
+  border-radius: 60px 60px 20px 20px;
+  background: #f1b96b;
+}
+
+.ship-silhouette span,
+.ship-body span {
+  position: absolute;
+  left: 50%;
+  bottom: 12px;
+  transform: translateX(-50%);
+  width: max-content;
+  color: #ffe9ae;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 0.8rem;
+}
+
+.cabin-details {
+  display: grid;
+  grid-template-columns: 44px 44px 1fr;
+  align-items: end;
+  gap: 10px;
+  margin-top: -28px;
+  padding: 0 18px;
+  position: relative;
+  z-index: 2;
+}
+
+.plant,
+.mug,
+.blanket,
+.notes {
+  border-radius: 8px;
+  background: rgba(255, 248, 219, 0.15);
+  border: 1px solid rgba(255, 232, 168, 0.24);
+}
+
+.plant {
+  height: 58px;
+  background:
+    radial-gradient(ellipse at 34% 28%, #7be2a5 0 18%, transparent 20%),
+    radial-gradient(ellipse at 68% 24%, #9cf7be 0 18%, transparent 20%),
+    linear-gradient(180deg, transparent 0 58%, #d08f62 60%);
+}
+
+.mug {
+  height: 36px;
+  background: linear-gradient(180deg, #fff0bc, #d77d73);
+}
+
+.blanket {
+  height: 28px;
+  background: repeating-linear-gradient(90deg, #7fc7ff 0 12px, #f5a5c8 12px 24px, #ffe29a 24px 36px);
+}
+
+.notes {
+  padding: 10px;
+  color: #3b2440;
+  background: #ffe9ae;
+  font-family: Georgia, "Times New Roman", serif;
+}
+
+.cockpit-copy,
+.screen-heading {
+  margin-top: 18px;
+}
+
+.cockpit-copy p,
+.screen-heading p,
+.encounter-copy,
+.system-card p,
+.journal-entry p,
+.upgrade-card p,
+.radio-message p {
+  color: #f3e8d0;
+}
+
+.tag-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.system-tag {
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: rgba(174, 232, 255, 0.16);
+  color: #bdeeff;
+  font-size: 0.75rem;
+  font-weight: 800;
+}
+
+.soft-alert,
+.empty-state,
+.radio-slip {
+  margin-top: 14px;
+  padding: 12px;
+  border: 1px solid rgba(255, 232, 168, 0.26);
+  border-radius: 8px;
+  background: rgba(255, 197, 110, 0.13);
+  color: #ffe9ae;
+}
+
+.action-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.action-grid button,
+.choice-button,
+.primary-action,
+.reset-button {
+  padding: 12px 14px;
+}
+
+.sector-map {
+  position: relative;
+  height: 250px;
+  margin-top: 14px;
+  border: 1px solid rgba(255, 232, 168, 0.18);
+  border-radius: 8px;
+  background:
+    radial-gradient(circle at 30% 28%, rgba(255, 197, 110, 0.22), transparent 18%),
+    radial-gradient(circle at 76% 60%, rgba(119, 216, 255, 0.16), transparent 20%),
+    rgba(7, 4, 18, 0.36);
+}
+
+.map-node {
+  position: absolute;
+  width: 34px;
+  height: 34px;
+  min-height: 34px;
+  transform: translate(-50%, -50%);
+  border-radius: 999px;
+  border: 1px solid rgba(255, 232, 168, 0.35);
+  background: rgba(255, 232, 168, 0.14);
+}
+
+.map-node span {
+  display: block;
+  width: 12px;
+  height: 12px;
+  margin: 10px auto;
+  border-radius: 999px;
+  background: #ffe9ae;
+  box-shadow: 0 0 18px #ffe9ae;
+}
+
+.map-node.current {
+  outline: 2px solid #77d8ff;
+}
+
+.map-node.unknown {
+  opacity: 0.35;
+}
+
+.system-list,
+.journal-list,
+.upgrade-list,
+.radio-list,
+.choice-stack {
+  display: grid;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.system-card,
+.journal-entry,
+.upgrade-card,
+.radio-message {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  background: rgba(255, 248, 219, 0.08);
+}
+
+.system-card h3,
+.journal-entry h3,
+.upgrade-card h4 {
+  margin: 0 0 6px;
+  color: #ffe9ae;
+  font-size: 1rem;
+}
+
+.system-card p,
+.journal-entry p,
+.upgrade-card p,
+.radio-message p {
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.system-card.muted {
+  opacity: 0.58;
+}
+
+.system-meta {
+  display: grid;
+  align-content: start;
+  justify-items: end;
+  gap: 6px;
+  min-width: 82px;
+  color: #d7c9ff;
+  text-align: right;
+}
+
+.travel-screen {
+  display: grid;
+  gap: 14px;
+}
+
+.voyage-window {
+  min-height: 280px;
+  border-radius: 8px;
+}
+
+.drift-stars {
+  position: absolute;
+  inset: -20%;
+  background-image: radial-gradient(circle, rgba(255, 247, 209, 0.95) 0 1px, transparent 1px);
+  background-size: 38px 38px;
+}
+
+.layer-one {
+  animation: voyage-drift 4s linear infinite;
+}
+
+.layer-two {
+  opacity: 0.35;
+  background-size: 68px 68px;
+  animation: voyage-drift 7s linear infinite;
+}
+
+.voyage-ship {
+  position: absolute;
+  left: 50%;
+  bottom: 42px;
+  width: 72px;
+  height: 32px;
+  transform: translateX(-50%);
+  border-radius: 70% 70% 45% 45%;
+  background: #ffe0a4;
+  box-shadow: 0 0 28px rgba(255, 224, 164, 0.45);
+  animation: ship-hum 0.9s ease-in-out infinite alternate;
+}
+
+.voyage-progress {
+  height: 12px;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.voyage-progress .progress-bar {
+  width: 100%;
+  background: linear-gradient(90deg, #ffc66d, #e879b5, #77d8ff);
+  animation: route-progress 3.8s ease-out both;
+}
+
+.encounter-copy {
+  margin: 18px 0;
+  font-size: 1.05rem;
+  line-height: 1.6;
+}
+
+.choice-button {
+  text-align: left;
+  background: rgba(174, 232, 255, 0.13);
+}
+
+.entry-topline,
+.journal-entry footer {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  color: #aee8ff;
+  font-size: 0.75rem;
+  font-weight: 800;
+}
+
+.journal-entry {
+  display: block;
+}
+
+.journal-entry h3 {
+  margin-top: 8px;
+}
+
+.journal-entry footer {
+  margin-top: 10px;
+  color: #d7c9ff;
+}
+
+.ship-portrait {
+  position: relative;
+  min-height: 160px;
+  margin: 16px 0;
+  border-radius: 8px;
+  background:
+    radial-gradient(circle at 50% 45%, rgba(255, 226, 154, 0.24), transparent 22%),
+    linear-gradient(180deg, rgba(119, 216, 255, 0.15), rgba(232, 121, 181, 0.08));
+  border: 1px solid rgba(255, 232, 168, 0.18);
+}
+
+.ship-body {
+  bottom: 48px;
+}
+
+.ship-resource {
+  padding: 10px;
+  border-radius: 8px;
+  background: rgba(255, 248, 219, 0.09);
+}
+
+.section-title {
+  margin: 18px 0 0;
+  color: #ffe9ae;
+  font-size: 1rem;
+}
+
+.upgrade-card {
+  align-items: center;
+}
+
+.upgrade-card strong {
+  color: #aee8ff;
+  white-space: nowrap;
+}
+
+.reset-button {
+  width: 100%;
+  margin-top: 16px;
+  border-color: rgba(255, 120, 120, 0.4);
+  background: rgba(255, 120, 120, 0.16);
+}
+
+.radio-dial {
+  display: grid;
+  place-items: center;
+  width: 150px;
+  height: 150px;
+  margin: 18px auto;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 232, 168, 0.28);
+  background:
+    conic-gradient(from 20deg, #ffc66d, #e879b5, #77d8ff, #ffc66d),
+    #22163d;
+  box-shadow: 0 0 32px rgba(119, 216, 255, 0.22);
+}
+
+.dial-core {
+  width: 88px;
+  height: 88px;
+  border-radius: 999px;
+  background: #160f2d;
+  border: 8px solid rgba(255, 247, 220, 0.34);
+}
+
+.radio-message {
+  display: block;
+}
+
+.radio-message strong {
+  color: #ffe9ae;
+}
+
+.radio-message.mystery {
+  border-color: rgba(232, 121, 181, 0.4);
+}
+
+.radio-message.safety {
+  border-color: rgba(123, 226, 165, 0.42);
+}
+
+@media (min-width: 680px) {
+  .game-frame {
+    min-height: calc(100vh - 40px);
+  }
+
+  .cockpit-layout {
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: 18px;
+  }
+
+  .cockpit-window,
+  .cabin-details {
+    grid-column: 1;
+  }
+
+  .cockpit-copy,
+  .soft-alert,
+  .action-grid {
+    grid-column: 2;
+  }
+}
+
+@keyframes star-drift {
+  to {
+    background-position:
+      64px 128px,
+      112px 184px;
+  }
+}
+
+@keyframes voyage-drift {
+  to {
+    transform: translateY(18%);
+  }
+}
+
+@keyframes ship-hum {
+  to {
+    transform: translateX(-50%) translateY(3px);
+  }
+}
+
+@keyframes route-progress {
+  from {
+    width: 0%;
+  }
+  to {
+    width: 100%;
+  }
+}

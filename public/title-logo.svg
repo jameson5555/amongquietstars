@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 180" role="img" aria-label="Among Quiet Stars">
+  <defs>
+    <linearGradient id="titleGlow" x1="0" x2="1">
+      <stop offset="0%" stop-color="#ffe8a8"/>
+      <stop offset="50%" stop-color="#f6c4ff"/>
+      <stop offset="100%" stop-color="#bfe7ff"/>
+    </linearGradient>
+  </defs>
+  <rect width="680" height="180" rx="28" fill="#160f2d"/>
+  <path d="M67 119c68-38 143-38 226 0-49 42-137 48-226 0Z" fill="#22183c"/>
+  <path d="M145 104c10-38 25-67 43-88 17 21 31 50 41 88-27 12-56 12-84 0Z" fill="#f4bd69"/>
+  <circle cx="188" cy="75" r="18" fill="#fff7d1"/>
+  <text x="318" y="76" font-family="Georgia, serif" font-size="38" fill="url(#titleGlow)">Among</text>
+  <text x="318" y="126" font-family="Georgia, serif" font-size="46" fill="url(#titleGlow)">Quiet Stars</text>
+  <circle cx="585" cy="47" r="3" fill="#fff7d1"/>
+  <circle cx="612" cy="109" r="2" fill="#fff7d1"/>
+  <circle cx="548" cy="137" r="2.5" fill="#fff7d1"/>
+</svg>
