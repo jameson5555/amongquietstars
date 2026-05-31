@@ -5,8 +5,8 @@
       "id": "cockpit_background",
       "file": "/images/cockpit_background.webp",
       "fallback": "/images/cockpit_background.png",
-      "width": 1440,
-      "height": 893
+      "width": 941,
+      "height": 1672
     },
     {
       "id": "nebula_vista_01",
