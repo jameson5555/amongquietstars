@@ -117,7 +117,6 @@ function App() {
       <main className="game-frame">
         <header className="topbar">
           <div>
-            <p className="eyebrow">Home-ship registry</p>
             <h1>Among Quiet Stars</h1>
           </div>
           <div className="location-pill">
@@ -126,7 +125,7 @@ function App() {
           </div>
         </header>
 
-        <section className="screen-panel">
+        <section className={`screen-panel ${view === 'cockpit' ? 'cockpit-panel' : ''}`}>
           {view === 'cockpit' && (
             <CockpitScreen
               state={state}
@@ -221,17 +220,6 @@ function CockpitScreen({
             </button>
           </div>
         </div>
-      </section>
-
-      {state.emergencyTowUsed && (
-        <div className="soft-alert">
-          Emergency tow logged. The old safety network brought you back to Lumen Rest.
-        </div>
-      )}
-
-      <section className="quiet-context">
-        <p className="eyebrow">Ship notes</p>
-        <p>{currentSystem.description}</p>
       </section>
     </div>
   );
