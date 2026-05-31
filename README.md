@@ -33,6 +33,8 @@ Upload the contents of `dist/` to the `amongquietstars` directory on shared/cPan
 
 The included `.htaccess` supports SPA fallback routing and serves static assets directly.
 
+Pushing to `main` also runs the GitHub Actions workflow in `.github/workflows/ci.yml`. When the repository has `FTP_SERVER`, `FTP_USERNAME`, and `FTP_PASSWORD` secrets configured, the workflow builds the app and uploads `dist/` to `/amongquietstars/` via FTP.
+
 ## PWA
 
 The app uses `vite-plugin-pwa` with a generated web app manifest, offline asset caching, standalone display mode, Android-friendly icons, and first-load offline support.

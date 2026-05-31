@@ -1,4 +1,4 @@
-name: CI
+name: Build and Deploy
 
 on:
   push:
@@ -9,7 +9,7 @@ on:
 
 jobs:
   build:
-    name: Lint, Typecheck, and Build
+    name: Lint, Typecheck, Build, and Deploy
     runs-on: ubuntu-latest
 
     steps:
@@ -39,3 +39,13 @@ jobs:
         with:
           name: amongquietstars-dist
           path: dist
+
+      - name: Deploy to cPanel via FTP
+        if: github.event_name != 'pull_request'
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          server-dir: /amongquietstars/
+          local-dir: ./dist/
