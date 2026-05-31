@@ -1,6 +1,6 @@
 # Among Quiet Stars Image Assets
 
-Upload the PNG and/or WebP files in this folder to your app's `/public/images` directory.
+Upload the WebP files in this folder to your app's `/public/images` directory.
 
 For Vite/React, public assets can be referenced directly as:
 
@@ -18,4 +18,4 @@ Recommended usage:
 - `planet_*.webp` — star map or system detail tiles
 - `journal_pages_background.webp` — Journal of Wonders header/background
 
-A manifest is included as `image-manifest.json`, and a TypeScript helper is included as `image-assets.ts`.
+A manifest is included as `image-manifest.json`, and a TypeScript helper is included as `image-assets.ts`. PNG fallbacks are intentionally omitted because the app targets modern browsers.

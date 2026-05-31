@@ -4,87 +4,75 @@
     {
       "id": "cockpit_background",
       "file": "/images/cockpit_background.webp",
-      "fallback": "/images/cockpit_background.png",
       "width": 941,
       "height": 1672
     },
     {
       "id": "nebula_vista_01",
       "file": "/images/nebula_vista_01.webp",
-      "fallback": "/images/nebula_vista_01.png",
       "width": 1200,
       "height": 597
     },
     {
       "id": "nebula_vista_02",
       "file": "/images/nebula_vista_02.webp",
-      "fallback": "/images/nebula_vista_02.png",
       "width": 1200,
       "height": 548
     },
     {
       "id": "nebula_vista_03",
       "file": "/images/nebula_vista_03.webp",
-      "fallback": "/images/nebula_vista_03.png",
       "width": 1200,
       "height": 611
     },
     {
       "id": "space_station_lumen_rest",
       "file": "/images/space_station_lumen_rest.webp",
-      "fallback": "/images/space_station_lumen_rest.png",
       "width": 1200,
       "height": 484
     },
     {
       "id": "asteroid_belt_outpost",
       "file": "/images/asteroid_belt_outpost.webp",
-      "fallback": "/images/asteroid_belt_outpost.png",
       "width": 1200,
       "height": 403
     },
     {
       "id": "planet_lumen_rest",
       "file": "/images/planet_lumen_rest.webp",
-      "fallback": "/images/planet_lumen_rest.png",
       "width": 768,
       "height": 616
     },
     {
       "id": "planet_vela_rest",
       "file": "/images/planet_vela_rest.webp",
-      "fallback": "/images/planet_vela_rest.png",
       "width": 768,
       "height": 583
     },
     {
       "id": "planet_marrowlight",
       "file": "/images/planet_marrowlight.webp",
-      "fallback": "/images/planet_marrowlight.png",
       "width": 768,
       "height": 567
     },
     {
       "id": "planet_bluewake",
       "file": "/images/planet_bluewake.webp",
-      "fallback": "/images/planet_bluewake.png",
       "width": 768,
       "height": 489
     },
     {
       "id": "journal_pages_background",
       "file": "/images/journal_pages_background.webp",
-      "fallback": "/images/journal_pages_background.png",
       "width": 1440,
       "height": 322
     },
     {
       "id": "title_background",
       "file": "/images/title_background.webp",
-      "fallback": "/images/title_background.png",
       "width": 1200,
       "height": 699
     }
   ],
-  "notes": "Place PNG/WebP files in public/images. In React/Vite, reference them as /images/<filename>.webp with PNG fallback if desired."
+  "notes": "Place WebP files in public/images. In React/Vite, reference them as /images/<filename>.webp."
 }

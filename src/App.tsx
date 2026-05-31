@@ -202,14 +202,14 @@ function CockpitScreen({
       <section className="cockpit-hero" aria-label="Cozy ship cockpit">
         <img src={imageAssets.cockpitBackground} alt="" className="hero-art" />
         <div className="hero-shade" />
-        <div className="cockpit-status">
-          <div>
-            <p className="eyebrow">Looking out from</p>
-            <h2>{currentSystem.name}</h2>
-          </div>
+        <div className="cockpit-display cockpit-location-display">
+          <p className="eyebrow">Orbit</p>
+          <h2>{currentSystem.name}</h2>
+        </div>
+        <div className="cockpit-display cockpit-resource-display">
           <ResourceStrip state={state} compact />
         </div>
-        <div className="current-lead">
+        <div className="cockpit-display current-lead">
           <p className="eyebrow">Current lead</p>
           <h3>{currentLead.title}</h3>
           <p>{currentLead.description}</p>
