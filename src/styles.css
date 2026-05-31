@@ -58,7 +58,7 @@ button {
 }
 
 .topbar h1,
-.cockpit-location-display h2,
+.location-console h2,
 .screen-heading h2,
 .current-lead h3,
 .voyage-overlay h2,
@@ -230,40 +230,53 @@ button {
     radial-gradient(circle at 50% 80%, rgba(255, 197, 110, 0.14), transparent 30%);
 }
 
-.cockpit-display {
+.cockpit-console {
   position: absolute;
   z-index: 1;
+  left: 10px;
+  right: 10px;
+  bottom: 10px;
+  display: grid;
+  grid-template-columns: minmax(70px, 0.72fr) minmax(0, 1.65fr) minmax(82px, 0.82fr);
+  gap: 8px;
+  align-items: stretch;
+  padding: 9px;
+  border: 1px solid rgba(255, 198, 109, 0.26);
+  border-radius: 8px;
+  background:
+    linear-gradient(180deg, rgba(72, 43, 28, 0.34), rgba(16, 10, 22, 0.78)),
+    rgba(16, 10, 22, 0.58);
+  box-shadow: inset 0 1px 0 rgba(255, 231, 168, 0.18), 0 14px 36px rgba(0, 0, 0, 0.38);
+  backdrop-filter: blur(8px);
+}
+
+.console-screen {
+  min-width: 0;
+  min-height: 98px;
+  padding: 9px;
+  border: 1px solid rgba(255, 194, 92, 0.5);
+  border-radius: 8px;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(116, 216, 255, 0.16), transparent 54%),
+    linear-gradient(180deg, rgba(8, 34, 50, 0.86), rgba(4, 13, 20, 0.96));
+  box-shadow:
+    inset 0 0 18px rgba(119, 216, 255, 0.13),
+    0 0 12px rgba(255, 185, 83, 0.2);
   color: #dff8ff;
   text-shadow: 0 0 8px rgba(119, 216, 255, 0.42);
 }
 
-.cockpit-location-display {
-  left: 7.5%;
-  top: 49%;
-  width: 10.5%;
-  min-height: 9%;
+.location-console {
   display: grid;
   align-content: center;
-  justify-items: center;
-  padding: 6px 4px;
   text-align: center;
 }
 
-.cockpit-location-display h2 {
-  max-width: 100%;
-  font-size: clamp(0.68rem, 2.7vw, 1rem);
+.location-console h2 {
+  margin: 0;
+  font-size: clamp(0.84rem, 3.8vw, 1.2rem);
   line-height: 1.05;
   overflow-wrap: anywhere;
-}
-
-.cockpit-resource-display {
-  right: 7.5%;
-  top: 49.5%;
-  width: 12%;
-  min-height: 10%;
-  display: grid;
-  align-content: center;
-  padding: 4px;
 }
 
 .resource-strip {
@@ -273,7 +286,7 @@ button {
 }
 
 .resource-strip.compact {
-  justify-content: center;
+  justify-content: flex-start;
   padding: 0;
   border: 0;
   border-radius: 0;
@@ -303,42 +316,34 @@ button {
   font-size: 0.78rem;
 }
 
-.cockpit-resource-display .resource-strip {
+.resource-console .resource-strip {
   display: grid;
-  gap: 1px;
-}
-
-.cockpit-resource-display .resource {
-  justify-content: space-between;
   gap: 3px;
-  color: #dff8ff;
-  font-size: 0.5rem;
-  line-height: 1.05;
+  margin-top: 6px;
 }
 
-.cockpit-resource-display .resource span {
-  max-width: 34px;
+.resource-console .resource {
+  justify-content: space-between;
+  gap: 6px;
+  color: #dff8ff;
+  font-size: 0.68rem;
+  line-height: 1.1;
+}
+
+.resource-console .resource span {
+  max-width: 58px;
   overflow: hidden;
   color: #8fdcff;
-  font-size: 0.48rem;
+  font-size: 0.58rem;
   text-overflow: clip;
 }
 
-.cockpit-resource-display .resource strong {
+.resource-console .resource strong {
   color: #ffe08b;
-  font-size: 0.56rem;
+  font-size: 0.7rem;
 }
 
 .current-lead {
-  left: 29.5%;
-  right: 31%;
-  bottom: 24.6%;
-  min-height: 9.2%;
-  padding: 8px 10px;
-  border: 0;
-  border-radius: 0;
-  background: transparent;
-  backdrop-filter: none;
   overflow: hidden;
 }
 
@@ -354,18 +359,18 @@ button {
 }
 
 .current-lead h3 {
-  font-size: clamp(0.76rem, 3.2vw, 1.1rem);
+  font-size: clamp(0.95rem, 4vw, 1.3rem);
   line-height: 1.08;
 }
 
 .current-lead p:not(.eyebrow) {
   display: -webkit-box;
-  margin: 3px 0 0;
+  margin: 5px 0 0;
   overflow: hidden;
   -webkit-box-orient: vertical;
-  -webkit-line-clamp: 1;
-  font-size: clamp(0.58rem, 2vw, 0.78rem);
-  line-height: 1.15;
+  -webkit-line-clamp: 2;
+  font-size: clamp(0.68rem, 2.5vw, 0.84rem);
+  line-height: 1.2;
 }
 
 .lead-footer {
@@ -373,23 +378,23 @@ button {
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  margin-top: 5px;
+  margin-top: 8px;
 }
 
 .lead-footer span {
   color: #aee8ff;
-  font-size: clamp(0.55rem, 2vw, 0.74rem);
+  font-size: clamp(0.62rem, 2.2vw, 0.8rem);
   font-weight: 800;
 }
 
 .current-lead .primary-action {
-  min-height: 28px;
-  padding: 5px 9px;
+  min-height: 34px;
+  padding: 7px 10px;
   border-color: rgba(255, 208, 115, 0.52);
-  border-radius: 5px;
+  border-radius: 7px;
   background: rgba(255, 194, 92, 0.9);
   box-shadow: 0 0 12px rgba(255, 190, 92, 0.28);
-  font-size: clamp(0.56rem, 2vw, 0.74rem);
+  font-size: clamp(0.62rem, 2.2vw, 0.8rem);
 }
 
 .soft-alert,

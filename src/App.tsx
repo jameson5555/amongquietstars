@@ -202,22 +202,25 @@ function CockpitScreen({
       <section className="cockpit-hero" aria-label="Cozy ship cockpit">
         <img src={imageAssets.cockpitBackground} alt="" className="hero-art" />
         <div className="hero-shade" />
-        <div className="cockpit-display cockpit-location-display">
-          <p className="eyebrow">Orbit</p>
-          <h2>{currentSystem.name}</h2>
-        </div>
-        <div className="cockpit-display cockpit-resource-display">
-          <ResourceStrip state={state} compact />
-        </div>
-        <div className="cockpit-display current-lead">
-          <p className="eyebrow">Current lead</p>
-          <h3>{currentLead.title}</h3>
-          <p>{currentLead.description}</p>
-          <div className="lead-footer">
-            <span>{getLeadDestinationName(currentLead)}</span>
-            <button className="primary-action" type="button" onClick={onLeadAction}>
-              {currentLead.ctaLabel}
-            </button>
+        <div className="cockpit-console" aria-label="Ship dashboard">
+          <div className="console-screen location-console">
+            <p className="eyebrow">Orbit</p>
+            <h2>{currentSystem.name}</h2>
+          </div>
+          <div className="console-screen current-lead">
+            <p className="eyebrow">Current lead</p>
+            <h3>{currentLead.title}</h3>
+            <p>{currentLead.description}</p>
+            <div className="lead-footer">
+              <span>{getLeadDestinationName(currentLead)}</span>
+              <button className="primary-action" type="button" onClick={onLeadAction}>
+                {currentLead.ctaLabel}
+              </button>
+            </div>
+          </div>
+          <div className="console-screen resource-console">
+            <p className="eyebrow">Ship status</p>
+            <ResourceStrip state={state} compact />
           </div>
         </div>
       </section>
