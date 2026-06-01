@@ -214,14 +214,14 @@ function PanoramicCabinExperience({
   onReset: () => void;
 }) {
   const activeScene = sceneOffsets[activeView];
-  const [overlaysReady, setOverlaysReady] = useState(false);
+  const [readyView, setReadyView] = useState<PrimaryViewId>(activeView);
+
+  const overlaysReady = readyView === activeView;
 
   useEffect(() => {
-    setOverlaysReady(false);
-
     const delay = activeView === 'map' || activeView === 'journal' ? 360 : 760;
     const timeoutId = window.setTimeout(() => {
-      setOverlaysReady(true);
+      setReadyView(activeView);
     }, delay);
 
     return () => {
