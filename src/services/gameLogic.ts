@@ -26,7 +26,10 @@ export const getVisibleSystems = (state: PlayerState): StarSystem[] =>
     known: state.discoveredSystemIds.includes(system.id)
   }));
 
-export const getTravelSpeedMultiplier = (_state: PlayerState) => 1;
+export const getTravelSpeedMultiplier = (state: PlayerState) => {
+  void state;
+  return 1;
+};
 
 export const getTravelDurationMs = (destination: StarSystem, state: PlayerState) => {
   const baseMs = 30_000 + destination.distance * 10_000;

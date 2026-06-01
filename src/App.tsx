@@ -72,44 +72,52 @@ function App() {
     }
 
     const intervalId = window.setInterval(() => {
-      setNow(Date.now());
+      const currentTime = Date.now();
+      setNow(currentTime);
+
+      if (currentTime < activeTravel.arrivesAt) {
+        return;
+      }
+
+      const destination = getSystem(activeTravel.toSystemId);
+      let arrivedAtDestination = false;
+
+      setState((current) => {
+        if (current.activeTravel?.arrivesAt !== activeTravel.arrivesAt) {
+          return current;
+        }
+
+        const nextState = beginTravel(
+          {
+            ...current,
+            activeTravel: undefined
+          },
+          destination
+        );
+        arrivedAtDestination = nextState.currentSystemId === destination.id;
+
+        return {
+          ...nextState,
+          activeTravel: undefined
+        };
+      });
+      setTravel(null);
+      setChoiceResult(null);
+
+      if (!arrivedAtDestination) {
+        setActiveEncounterId(null);
+        setView('cockpit');
+        return;
+      }
+
+      setActiveEncounterId(activeTravel.encounterId);
+      setView('encounter');
     }, 1000);
 
     return () => {
       window.clearInterval(intervalId);
     };
   }, [activeTravel]);
-
-  useEffect(() => {
-    if (!activeTravel || now < activeTravel.arrivesAt) {
-      return;
-    }
-
-    const destination = getSystem(activeTravel.toSystemId);
-    const nextState = beginTravel(
-      {
-        ...state,
-        activeTravel: undefined
-      },
-      destination
-    );
-
-    setState({
-      ...nextState,
-      activeTravel: undefined
-    });
-    setTravel(null);
-    setChoiceResult(null);
-
-    if (nextState.currentSystemId !== destination.id) {
-      setActiveEncounterId(null);
-      setView('cockpit');
-      return;
-    }
-
-    setActiveEncounterId(activeTravel.encounterId);
-    setView('encounter');
-  }, [activeTravel, now, state]);
 
   const goTo = (nextView: ViewId) => {
     setChoiceResult(null);
@@ -358,15 +366,12 @@ function CabinOverlay({
 }) {
   const activeDestination = activeTravel ? getSystem(activeTravel.toSystemId) : undefined;
   const travelRemainingMs = activeTravel ? activeTravel.arrivesAt - now : 0;
-  const [selectedSystemId, setSelectedSystemId] = useState(recommendedSystemId ?? currentSystem.id);
+  const [selectedMapSystemId, setSelectedMapSystemId] = useState<string>();
+  const selectedSystemId = selectedMapSystemId ?? recommendedSystemId ?? currentSystem.id;
   const systemCardRefs = useRef<Record<string, HTMLElement | null>>({});
 
-  useEffect(() => {
-    setSelectedSystemId(recommendedSystemId ?? currentSystem.id);
-  }, [activeView, currentSystem.id, recommendedSystemId]);
-
   const selectMapSystem = (systemId: string) => {
-    setSelectedSystemId(systemId);
+    setSelectedMapSystemId(systemId);
     window.setTimeout(() => {
       systemCardRefs.current[systemId]?.scrollIntoView({
         block: 'nearest',
