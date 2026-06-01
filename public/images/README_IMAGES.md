@@ -10,6 +10,7 @@ For Vite/React, public assets can be referenced directly as:
 
 Recommended usage:
 
+- `cabin_panorama_placeholder.svg` — stitched placeholder interior panorama for the panoramic in-ship UI
 - `cockpit_background.webp` — main cockpit/home screen hero background
 - `title_background.webp` — title/start screen
 - `nebula_vista_01.webp`, `nebula_vista_02.webp`, `nebula_vista_03.webp` — travel/voyage backgrounds

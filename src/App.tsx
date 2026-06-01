@@ -1,6 +1,6 @@
 import type { CSSProperties } from 'react';
 import { useEffect, useMemo, useState } from 'react';
-import { getSystemThumbnail, getTravelVista } from './assets/imageAssets';
+import { getSystemThumbnail, getTravelVista, imageAssets } from './assets/imageAssets';
 import { getEncounter } from './data/encounters';
 import { getJournalEntry } from './data/journal';
 import { getRadioMessage } from './data/radio';
@@ -227,6 +227,7 @@ function PanoramicCabinExperience({
   const sceneStyle = {
     '--scene-offset-x': activeScene.x,
     '--scene-offset-y': activeScene.y,
+    '--scene-panorama': `url(${imageAssets.cabinPanoramaPlaceholder})`,
     '--space-view': `url(${getSystemThumbnail(currentSystem.id)})`
   } as CSSProperties;
 
@@ -234,39 +235,10 @@ function PanoramicCabinExperience({
     <div className={`cabin-experience view-${activeView}`} style={sceneStyle}>
       <div className="cabin-viewport">
         <div className="cabin-stage" aria-hidden="true">
-          <div className="scene-cell ambient-cell top-left" />
-          <div className="scene-cell scene-map">
-            <div className="ceiling-arch" />
-            <div className="ceiling-projector" />
-            <div className="ceiling-ribs" />
+          <div className="scene-panorama-art" />
+          <div className="scene-cockpit-window-hotspot">
+            <div className="cockpit-window-view" />
           </div>
-          <div className="scene-cell ambient-cell top-right" />
-          <div className="scene-cell scene-ship">
-            <div className="ship-bunk" />
-            <div className="ship-storage" />
-            <div className="ship-monitor ship-monitor-stats" />
-            <div className="ship-monitor ship-monitor-upgrades" />
-          </div>
-          <div className="scene-cell scene-cockpit">
-            <div className="cockpit-band cockpit-band-top" />
-            <div className="cockpit-window-frame">
-              <div className="cockpit-window-view" />
-            </div>
-            <div className="cockpit-band cockpit-band-bottom" />
-          </div>
-          <div className="scene-cell scene-radio">
-            <div className="radio-stack" />
-            <div className="radio-screen-blank" />
-            <div className="radio-knob-cluster" />
-          </div>
-          <div className="scene-cell ambient-cell bottom-left" />
-          <div className="scene-cell scene-journal">
-            <div className="journal-seat-edge" />
-            <div className="journal-tablet-shell" />
-            <div className="journal-hand-rest journal-hand-left" />
-            <div className="journal-hand-rest journal-hand-right" />
-          </div>
-          <div className="scene-cell ambient-cell bottom-right" />
         </div>
         <div className="scene-vignette" />
       </div>

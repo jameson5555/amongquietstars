@@ -2,6 +2,12 @@
   "basePath": "/images/",
   "assets": [
     {
+      "id": "cabin_panorama_placeholder",
+      "file": "/images/cabin_panorama_placeholder.svg",
+      "width": 3000,
+      "height": 3000
+    },
+    {
       "id": "cockpit_background",
       "file": "/images/cockpit_background.webp",
       "width": 941,
@@ -74,5 +80,5 @@
       "height": 699
     }
   ],
-  "notes": "Place WebP files in public/images. In React/Vite, reference them as /images/<filename>.webp."
+  "notes": "Place image files in public/images. In React/Vite, reference them as /images/<filename>.<ext>."
 }

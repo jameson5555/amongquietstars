@@ -1,0 +1,215 @@
+<svg width="3000" height="3000" viewBox="0 0 3000 3000" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="1500" y1="0" x2="1500" y2="3000" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#1C2736"/>
+      <stop offset="0.42" stop-color="#0D1420"/>
+      <stop offset="1" stop-color="#070C14"/>
+    </linearGradient>
+    <linearGradient id="panel" x1="0" y1="0" x2="0" y2="1">
+      <stop stop-color="#313A48"/>
+      <stop offset="1" stop-color="#111824"/>
+    </linearGradient>
+    <linearGradient id="matte" x1="0" y1="0" x2="0" y2="1">
+      <stop stop-color="#1F2835"/>
+      <stop offset="1" stop-color="#0B111A"/>
+    </linearGradient>
+    <linearGradient id="warm" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#E6A86D" stop-opacity="0.46"/>
+      <stop offset="1" stop-color="#E6A86D" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="cool" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#7FD7FF" stop-opacity="0.44"/>
+      <stop offset="1" stop-color="#7FD7FF" stop-opacity="0"/>
+    </linearGradient>
+    <filter id="softGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="22"/>
+    </filter>
+  </defs>
+
+  <rect width="3000" height="3000" fill="url(#bg)"/>
+  <rect width="3000" height="3000" fill="url(#cool)" opacity="0.18"/>
+
+  <g opacity="0.6">
+    <rect x="70" y="70" width="860" height="860" rx="44" stroke="#F5D9A8" stroke-opacity="0.08"/>
+    <rect x="1070" y="70" width="860" height="860" rx="44" stroke="#F5D9A8" stroke-opacity="0.08"/>
+    <rect x="2070" y="70" width="860" height="860" rx="44" stroke="#F5D9A8" stroke-opacity="0.08"/>
+    <rect x="70" y="1070" width="860" height="860" rx="44" stroke="#F5D9A8" stroke-opacity="0.08"/>
+    <rect x="1070" y="1070" width="860" height="860" rx="44" stroke="#F5D9A8" stroke-opacity="0.08"/>
+    <rect x="2070" y="1070" width="860" height="860" rx="44" stroke="#F5D9A8" stroke-opacity="0.08"/>
+    <rect x="70" y="2070" width="860" height="860" rx="44" stroke="#F5D9A8" stroke-opacity="0.08"/>
+    <rect x="1070" y="2070" width="860" height="860" rx="44" stroke="#F5D9A8" stroke-opacity="0.08"/>
+    <rect x="2070" y="2070" width="860" height="860" rx="44" stroke="#F5D9A8" stroke-opacity="0.08"/>
+  </g>
+
+  <g>
+    <rect x="1120" y="100" width="760" height="720" rx="260" fill="url(#panel)"/>
+    <ellipse cx="1500" cy="310" rx="190" ry="120" fill="#0C1421" stroke="#8FDCF8" stroke-opacity="0.16"/>
+    <ellipse cx="1500" cy="310" rx="116" ry="74" fill="#86DFFF" fill-opacity="0.26" filter="url(#softGlow)"/>
+    <path d="M1200 500H1800" stroke="#F7E3BA" stroke-opacity="0.08" stroke-width="12" stroke-linecap="round"/>
+    <path d="M1300 560H1700" stroke="#F7E3BA" stroke-opacity="0.08" stroke-width="8" stroke-linecap="round"/>
+    <path d="M1140 640C1240 570 1360 540 1500 540C1640 540 1760 570 1860 640" stroke="#89E0FF" stroke-opacity="0.12" stroke-width="12" stroke-linecap="round"/>
+  </g>
+
+  <g>
+    <rect x="1110" y="1110" width="780" height="138" rx="28" fill="url(#panel)"/>
+    <rect x="1120" y="1712" width="760" height="160" rx="34" fill="url(#panel)"/>
+    <path d="M1170 1320C1170 1218 1252 1136 1354 1136H1646C1748 1136 1830 1218 1830 1320V1540C1830 1622 1770 1694 1690 1708L1500 1740L1310 1708C1230 1694 1170 1622 1170 1540V1320Z" fill="url(#matte)"/>
+    <path d="M1210 1364C1210 1277 1281 1206 1368 1206H1632C1719 1206 1790 1277 1790 1364V1514C1790 1601 1719 1672 1632 1672H1368C1281 1672 1210 1601 1210 1514V1364Z" fill="#091321"/>
+    <path d="M1210 1364C1210 1277 1281 1206 1368 1206H1632C1719 1206 1790 1277 1790 1364V1514C1790 1601 1719 1672 1632 1672H1368C1281 1672 1210 1601 1210 1514V1364Z" stroke="#F7E3BA" stroke-opacity="0.08" stroke-width="10"/>
+    <path d="M1238 1248H1762" stroke="#F8E8C7" stroke-opacity="0.08" stroke-width="10" stroke-linecap="round"/>
+    <path d="M1170 1750H1830" stroke="#F8E8C7" stroke-opacity="0.05" stroke-width="8" stroke-linecap="round"/>
+  </g>
+
+  <g>
+    <rect x="180" y="1120" width="420" height="320" rx="34" fill="#3A2E33"/>
+    <rect x="202" y="1142" width="376" height="276" rx="26" fill="#5C4D4A"/>
+    <rect x="220" y="1560" width="280" height="142" rx="28" fill="#2A313A"/>
+    <rect x="600" y="1180" width="220" height="210" rx="28" fill="#08111A" stroke="#8DDFFF" stroke-opacity="0.2"/>
+    <rect x="580" y="1496" width="244" height="284" rx="28" fill="#08111A" stroke="#8DDFFF" stroke-opacity="0.16"/>
+    <rect x="144" y="1098" width="712" height="760" rx="48" stroke="#F5D9A8" stroke-opacity="0.08"/>
+    <rect x="176" y="1098" width="680" height="760" rx="48" fill="url(#warm)" opacity="0.22"/>
+  </g>
+
+  <g>
+    <rect x="2200" y="1140" width="470" height="660" rx="36" fill="url(#panel)"/>
+    <rect x="2284" y="1260" width="302" height="200" rx="26" fill="#071019" stroke="#8FDFFF" stroke-opacity="0.2"/>
+    <rect x="2256" y="1528" width="356" height="132" rx="24" fill="#202A37"/>
+    <circle cx="2326" cy="1594" r="24" fill="#D7B37A"/>
+    <circle cx="2434" cy="1594" r="24" fill="#D7B37A"/>
+    <circle cx="2542" cy="1594" r="24" fill="#D7B37A"/>
+    <rect x="2144" y="1098" width="712" height="760" rx="48" stroke="#F5D9A8" stroke-opacity="0.08"/>
+  </g>
+
+  <g>
+    <rect x="1188" y="2266" width="624" height="412" rx="40" fill="#081019" stroke="#F5D9A8" stroke-opacity="0.1"/>
+    <rect x="1250" y="2332" width="500" height="280" rx="28" fill="#111A26"/>
+    <path d="M1110 2590C1230 2480 1358 2430 1500 2430C1642 2430 1770 2480 1890 2590V2730H1110V2590Z" fill="#2E3947" fill-opacity="0.7"/>
+    <ellipse cx="1210" cy="2636" rx="118" ry="74" fill="#374251"/>
+    <ellipse cx="1790" cy="2636" rx="118" ry="74" fill="#374251"/>
+    <rect x="1098" y="2098" width="804" height="760" rx="48" stroke="#F5D9A8" stroke-opacity="0.08"/>
+  </g>
+
+  <g opacity="0.22">
+    <circle cx="364" cy="362" r="140" fill="#6DBBFF"/>
+    <circle cx="2640" cy="380" r="120" fill="#F1BE7A"/>
+    <circle cx="398" cy="2640" r="116" fill="#7AD6FF"/>
+    <circle cx="2612" cy="2612" r="160" fill="#F0B37B"/>
+  </g>
+</svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 3000 3000" role="img" aria-labelledby="title desc">
+  <title id="title">Among Quiet Stars stitched cabin panorama placeholder</title>
+  <desc id="desc">A stitched panoramic spaceship interior with matte cockpit, ceiling chart, aft cabin, journal tablet, and radio console panels designed for UI overlays.</desc>
+  <defs>
+    <linearGradient id="bgAmbient" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#18263a"/>
+      <stop offset="100%" stop-color="#070d17"/>
+    </linearGradient>
+    <linearGradient id="panelSteel" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#303a4a"/>
+      <stop offset="55%" stop-color="#161d29"/>
+      <stop offset="100%" stop-color="#0a0f17"/>
+    </linearGradient>
+    <linearGradient id="panelWarm" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#41363f"/>
+      <stop offset="100%" stop-color="#12131a"/>
+    </linearGradient>
+    <linearGradient id="screenBlank" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#112131"/>
+      <stop offset="100%" stop-color="#040911"/>
+    </linearGradient>
+    <radialGradient id="tealGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#9ae8ff" stop-opacity="0.45"/>
+      <stop offset="45%" stop-color="#4aa9d1" stop-opacity="0.18"/>
+      <stop offset="100%" stop-color="#07111d" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="amberGlow" cx="50%" cy="40%" r="60%">
+      <stop offset="0%" stop-color="#ffd79b" stop-opacity="0.24"/>
+      <stop offset="100%" stop-color="#0d1218" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="softShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="20" stdDeviation="22" flood-color="#000000" flood-opacity="0.35"/>
+    </filter>
+    <pattern id="stars" width="220" height="220" patternUnits="userSpaceOnUse">
+      <circle cx="24" cy="34" r="1.2" fill="#fff7d4" opacity="0.75"/>
+      <circle cx="110" cy="62" r="1.8" fill="#97ddff" opacity="0.72"/>
+      <circle cx="172" cy="28" r="1.1" fill="#ffffff" opacity="0.7"/>
+      <circle cx="72" cy="148" r="1.4" fill="#ffe9b0" opacity="0.7"/>
+      <circle cx="185" cy="176" r="1.3" fill="#d6f5ff" opacity="0.75"/>
+      <circle cx="20" cy="190" r="1.7" fill="#ffffff" opacity="0.85"/>
+    </pattern>
+  </defs>
+
+  <rect width="3000" height="3000" fill="#070d15"/>
+
+  <g opacity="0.7">
+    <rect x="0" y="0" width="1000" height="1000" fill="url(#bgAmbient)"/>
+    <rect x="1000" y="0" width="1000" height="1000" fill="#141d29"/>
+    <rect x="2000" y="0" width="1000" height="1000" fill="url(#bgAmbient)"/>
+    <rect x="0" y="1000" width="1000" height="1000" fill="#17161d"/>
+    <rect x="1000" y="1000" width="1000" height="1000" fill="#0f1620"/>
+    <rect x="2000" y="1000" width="1000" height="1000" fill="#111723"/>
+    <rect x="0" y="2000" width="1000" height="1000" fill="url(#bgAmbient)"/>
+    <rect x="1000" y="2000" width="1000" height="1000" fill="#131b26"/>
+    <rect x="2000" y="2000" width="1000" height="1000" fill="url(#bgAmbient)"/>
+  </g>
+
+  <g opacity="0.18">
+    <circle cx="1500" cy="440" r="340" fill="url(#tealGlow)"/>
+    <circle cx="520" cy="1330" r="320" fill="url(#amberGlow)"/>
+    <circle cx="2480" cy="1320" r="260" fill="url(#amberGlow)"/>
+    <circle cx="1500" cy="2500" r="220" fill="url(#amberGlow)"/>
+  </g>
+
+  <g>
+    <path d="M1160 90 C1320 18 1680 18 1840 90 L1882 140 L1118 140 Z" fill="#394454" opacity="0.95"/>
+    <path d="M1200 142 H1800 C1828 142 1850 164 1850 192 V434 C1850 496 1800 548 1738 548 H1262 C1200 548 1150 496 1150 434 V192 C1150 164 1172 142 1200 142 Z" fill="url(#panelSteel)"/>
+    <ellipse cx="1500" cy="265" rx="190" ry="140" fill="url(#tealGlow)" opacity="0.75"/>
+    <ellipse cx="1500" cy="265" rx="120" ry="90" fill="#122437" stroke="#77d8ff" stroke-opacity="0.22"/>
+    <rect x="1240" y="372" width="520" height="104" rx="26" fill="#0a111a" stroke="#8cdfff" stroke-opacity="0.12"/>
+    <path d="M1244 372 H1360 M1640 372 H1756" stroke="#f7d495" stroke-opacity="0.12" stroke-width="6"/>
+  </g>
+
+  <g filter="url(#softShadow)">
+    <rect x="96" y="1090" width="780" height="800" rx="54" fill="#1d1b22"/>
+    <rect x="148" y="1166" width="420" height="268" rx="42" fill="#4d3b3f" opacity="0.68"/>
+    <rect x="176" y="1198" width="364" height="190" rx="34" fill="#87736e" opacity="0.3"/>
+    <rect x="186" y="1526" width="316" height="170" rx="26" fill="#2a2c33"/>
+    <rect x="596" y="1160" width="220" height="170" rx="24" fill="url(#screenBlank)" stroke="#7bddff" stroke-opacity="0.18"/>
+    <rect x="596" y="1434" width="220" height="274" rx="24" fill="url(#screenBlank)" stroke="#7bddff" stroke-opacity="0.18"/>
+    <rect x="610" y="1174" width="192" height="142" rx="16" fill="#0a141e" opacity="0.9"/>
+    <rect x="610" y="1448" width="192" height="246" rx="16" fill="#09121a" opacity="0.92"/>
+  </g>
+
+  <g filter="url(#softShadow)">
+    <rect x="1110" y="1048" width="780" height="140" rx="30" fill="url(#panelSteel)"/>
+    <rect x="1076" y="1780" width="848" height="188" rx="42" fill="url(#panelSteel)"/>
+    <path d="M1185 1210 H1815 C1860 1210 1896 1246 1896 1292 V1666 C1896 1714 1856 1754 1808 1754 H1192 C1144 1754 1104 1714 1104 1666 V1292 C1104 1246 1140 1210 1185 1210 Z" fill="#2b3646"/>
+    <path d="M1214 1236 H1786 C1822 1236 1850 1264 1850 1300 V1640 C1850 1676 1822 1704 1786 1704 H1214 C1178 1704 1150 1676 1150 1640 V1300 C1150 1264 1178 1236 1214 1236 Z" fill="none" stroke="#f6d28b" stroke-opacity="0.18" stroke-width="12"/>
+    <path d="M1238 1260 Q1500 1104 1762 1260 L1742 1678 H1258 Z" fill="#101824" opacity="0.9"/>
+  </g>
+
+  <g filter="url(#softShadow)">
+    <rect x="2200" y="1118" width="600" height="736" rx="56" fill="url(#panelSteel)"/>
+    <rect x="2302" y="1258" width="392" height="206" rx="28" fill="url(#screenBlank)" stroke="#7bddff" stroke-opacity="0.18"/>
+    <rect x="2330" y="1512" width="338" height="194" rx="30" fill="#1c2430"/>
+    <circle cx="2388" cy="1606" r="28" fill="#f6d28b" opacity="0.9"/>
+    <circle cx="2500" cy="1606" r="28" fill="#f6d28b" opacity="0.9"/>
+    <circle cx="2612" cy="1606" r="28" fill="#f6d28b" opacity="0.9"/>
+    <rect x="2308" y="1758" width="380" height="44" rx="20" fill="#252d39"/>
+  </g>
+
+  <g filter="url(#softShadow)">
+    <path d="M1246 2250 H1754 C1804 2250 1844 2290 1844 2340 V2700 C1844 2750 1804 2790 1754 2790 H1246 C1196 2790 1156 2750 1156 2700 V2340 C1156 2290 1196 2250 1246 2250 Z" fill="url(#screenBlank)" stroke="#f7d495" stroke-opacity="0.16" stroke-width="8"/>
+    <path d="M1310 2174 H1690 C1734 2174 1770 2210 1770 2254 V2326 H1230 V2254 C1230 2210 1266 2174 1310 2174 Z" fill="#364253"/>
+    <path d="M1160 2572 C1252 2628 1306 2716 1320 2806 H1180 C1152 2724 1128 2648 1160 2572 Z" fill="#414a59" opacity="0.82"/>
+    <path d="M1840 2572 C1748 2628 1694 2716 1680 2806 H1820 C1848 2724 1872 2648 1840 2572 Z" fill="#414a59" opacity="0.82"/>
+  </g>
+
+  <g opacity="0.16">
+    <rect x="1128" y="1238" width="744" height="462" fill="url(#stars)"/>
+  </g>
+
+  <g opacity="0.08" stroke="#f6d28b">
+    <path d="M0 1000 H3000 M0 2000 H3000 M1000 0 V3000 M2000 0 V3000" stroke-width="4"/>
+  </g>
+</svg>

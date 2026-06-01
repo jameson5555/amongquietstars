@@ -1,6 +1,7 @@
 const publicAsset = (path: string) => `${import.meta.env.BASE_URL}${path.replace(/^\//, '')}`;
 
 export const imageAssets = {
+  cabinPanoramaPlaceholder: publicAsset('images/cabin_panorama_placeholder.svg'),
   cockpitBackground: publicAsset('images/cockpit_background.webp'),
   titleBackground: publicAsset('images/title_background.webp'),
   nebulaVista01: publicAsset('images/nebula_vista_01.webp'),
