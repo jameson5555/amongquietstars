@@ -26,6 +26,14 @@ export const getVisibleSystems = (state: PlayerState): StarSystem[] =>
     known: state.discoveredSystemIds.includes(system.id)
   }));
 
+export const getTravelSpeedMultiplier = (_state: PlayerState) => 1;
+
+export const getTravelDurationMs = (destination: StarSystem, state: PlayerState) => {
+  const baseMs = 30_000 + destination.distance * 10_000;
+  const cappedMs = Math.min(120_000, baseMs);
+  return Math.round(cappedMs / getTravelSpeedMultiplier(state));
+};
+
 export const pickEncounterForSystem = (systemId: string, state: PlayerState): Encounter => {
   const system = getSystem(systemId);
   const firstUncompleted = system.encounterIds

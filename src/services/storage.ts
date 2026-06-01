@@ -43,6 +43,7 @@ export const loadPlayerState = (): PlayerState => {
     return {
       resources: { ...initial.resources, ...parsed.resources },
       currentSystemId: parsed.currentSystemId ?? initial.currentSystemId,
+      activeTravel: parsed.activeTravel,
       discoveredSystemIds: unique([...initial.discoveredSystemIds, ...(parsed.discoveredSystemIds ?? [])]),
       completedEncounterIds: parsed.completedEncounterIds ?? initial.completedEncounterIds,
       journalEntryIds: parsed.journalEntryIds ?? initial.journalEntryIds,

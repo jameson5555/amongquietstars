@@ -1,17 +1,18 @@
 import type { CSSProperties } from 'react';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { getSystemThumbnail, getTravelVista, imageAssets } from './assets/imageAssets';
 import { getEncounter } from './data/encounters';
 import { getJournalEntry } from './data/journal';
 import { getRadioMessage } from './data/radio';
 import { getSystem } from './data/systems';
 import { shipUpgrades } from './data/upgrades';
-import { beginTravel, getMysteryLabel, getVisibleSystems, pickEncounterForSystem, resolveChoice } from './services/gameLogic';
+import { beginTravel, getTravelDurationMs, getVisibleSystems, pickEncounterForSystem, resolveChoice } from './services/gameLogic';
 import { getCurrentLead, getLeadDestinationName, type CurrentLead } from './services/leads';
 import { createInitialState, loadPlayerState, resetPlayerState, savePlayerState } from './services/storage';
 import type {
   Encounter,
   EncounterChoice,
+  ActiveTravelState,
   JournalEntry,
   PlayerState,
   RadioMessage,
@@ -33,27 +34,11 @@ const navItems: Array<{ id: PrimaryViewId; label: string }> = [
 
 const resourceLabels: Array<keyof PlayerState['resources']> = ['fuel', 'supplies', 'hull', 'credits'];
 
-const sceneOffsets: Record<PrimaryViewId, { label: string; description: string }> = {
-  cockpit: {
-    label: 'Forward canopy',
-    description: 'The forward glass opens onto the system beyond your bow.'
-  },
-  map: {
-    label: 'Overhead chart',
-    description: 'The ceiling projector blooms into a navigational field.'
-  },
-  journal: {
-    label: 'Lap console',
-    description: 'A tablet settles into your hands for patient notes.'
-  },
-  ship: {
-    label: 'Aft cabin',
-    description: 'Warm bunks, stores, and maintenance screens fill the stern view.'
-  },
-  radio: {
-    label: 'Starboard radio',
-    description: 'A side console hums with quiet traffic and strange edges.'
-  }
+const formatDuration = (ms: number) => {
+  const totalSeconds = Math.max(0, Math.ceil(ms / 1000));
+  const minutes = Math.floor(totalSeconds / 60);
+  const seconds = totalSeconds % 60;
+  return `${minutes}:${seconds.toString().padStart(2, '0')}`;
 };
 
 const isDefined = <T,>(value: T | undefined): value is T => value !== undefined;
@@ -67,6 +52,7 @@ function App() {
   const [travel, setTravel] = useState<TravelState | null>(null);
   const [activeEncounterId, setActiveEncounterId] = useState<string | null>(null);
   const [choiceResult, setChoiceResult] = useState<string | null>(null);
+  const [now, setNow] = useState(() => Date.now());
 
   const currentSystem = getSystem(state.currentSystemId);
   const visibleSystems = useMemo(() => getVisibleSystems(state), [state]);
@@ -74,10 +60,56 @@ function App() {
   const journal = state.journalEntryIds.map(getJournalEntry).filter(isDefined);
   const radioHistory = state.radioHistoryIds.map(getRadioMessage).filter(isDefined);
   const activeEncounter = activeEncounterId ? getEncounter(activeEncounterId) : undefined;
+  const activeTravel = state.activeTravel;
 
   useEffect(() => {
     savePlayerState(state);
   }, [state]);
+
+  useEffect(() => {
+    if (!activeTravel) {
+      return;
+    }
+
+    const intervalId = window.setInterval(() => {
+      setNow(Date.now());
+    }, 1000);
+
+    return () => {
+      window.clearInterval(intervalId);
+    };
+  }, [activeTravel]);
+
+  useEffect(() => {
+    if (!activeTravel || now < activeTravel.arrivesAt) {
+      return;
+    }
+
+    const destination = getSystem(activeTravel.toSystemId);
+    const nextState = beginTravel(
+      {
+        ...state,
+        activeTravel: undefined
+      },
+      destination
+    );
+
+    setState({
+      ...nextState,
+      activeTravel: undefined
+    });
+    setTravel(null);
+    setChoiceResult(null);
+
+    if (nextState.currentSystemId !== destination.id) {
+      setActiveEncounterId(null);
+      setView('cockpit');
+      return;
+    }
+
+    setActiveEncounterId(activeTravel.encounterId);
+    setView('encounter');
+  }, [activeTravel, now, state]);
 
   const goTo = (nextView: ViewId) => {
     setChoiceResult(null);
@@ -85,18 +117,30 @@ function App() {
   };
 
   const startTravel = (destination: StarSystem) => {
-    if (!destination.known || destination.id === state.currentSystemId) {
+    if (!destination.known || destination.id === state.currentSystemId || state.activeTravel) {
       return;
     }
 
     const encounter = pickEncounterForSystem(destination.id, state);
-    setTravel({
+    const departedAt = Date.now();
+    const durationMs = getTravelDurationMs(destination, state);
+    const nextTravel: ActiveTravelState = {
       fromSystemId: state.currentSystemId,
       toSystemId: destination.id,
-      encounterId: encounter.id
-    });
+      encounterId: encounter.id,
+      departedAt,
+      arrivesAt: departedAt + durationMs,
+      durationMs
+    };
+
+    setState((current) => ({
+      ...current,
+      activeTravel: nextTravel
+    }));
+    setTravel(nextTravel);
+    setNow(departedAt);
     setChoiceResult(null);
-    setView('travel');
+    setView('cockpit');
   };
 
   const followLead = () => {
@@ -111,7 +155,10 @@ function App() {
 
     const destination = getSystem(travel.toSystemId);
     const nextState = beginTravel(state, destination);
-    setState(nextState);
+    setState({
+      ...nextState,
+      activeTravel: undefined
+    });
     setTravel(null);
 
     if (nextState.currentSystemId !== destination.id) {
@@ -146,13 +193,14 @@ function App() {
             <PanoramicCabinExperience
               activeView={view}
               currentSystem={currentSystem}
+              activeTravel={activeTravel}
+              now={now}
               currentLead={currentLead}
               state={state}
               systems={visibleSystems}
               recommendedSystemId={currentLead.destinationId}
               journal={journal}
               radioHistory={radioHistory}
-              mysteryProgress={state.mysteryProgress}
               onLeadAction={followLead}
               onTravel={startTravel}
               onReset={resetSave}
@@ -189,31 +237,32 @@ function App() {
 function PanoramicCabinExperience({
   activeView,
   currentSystem,
+  activeTravel,
+  now,
   currentLead,
   state,
   systems,
   recommendedSystemId,
   journal,
   radioHistory,
-  mysteryProgress,
   onLeadAction,
   onTravel,
   onReset
 }: {
   activeView: PrimaryViewId;
   currentSystem: StarSystem;
+  activeTravel?: ActiveTravelState;
+  now: number;
   currentLead: CurrentLead;
   state: PlayerState;
   systems: StarSystem[];
   recommendedSystemId?: string;
   journal: JournalEntry[];
   radioHistory: RadioMessage[];
-  mysteryProgress: number;
   onLeadAction: () => void;
   onTravel: (system: StarSystem) => void;
   onReset: () => void;
 }) {
-  const activeScene = sceneOffsets[activeView];
   const [readyView, setReadyView] = useState<PrimaryViewId>(activeView);
 
   const overlaysReady = readyView === activeView;
@@ -240,7 +289,9 @@ function PanoramicCabinExperience({
 
   return (
     <div
-      className={`cabin-experience view-${activeView} ${overlaysReady ? 'overlays-ready' : 'overlays-transitioning'}`}
+      className={`cabin-experience view-${activeView} ${activeTravel ? 'travel-active' : ''} ${
+        overlaysReady ? 'overlays-ready' : 'overlays-transitioning'
+      }`}
       style={sceneStyle}
     >
       <div className="cabin-viewport">
@@ -257,21 +308,17 @@ function PanoramicCabinExperience({
         <div className="scene-vignette" />
       </div>
 
-      <div className="scene-status" aria-live="polite">
-        <span>{activeScene.label}</span>
-        <strong>{activeScene.description}</strong>
-      </div>
-
       <CabinOverlay
         activeView={activeView}
         currentSystem={currentSystem}
+        activeTravel={activeTravel}
+        now={now}
         currentLead={currentLead}
         state={state}
         systems={systems}
         recommendedSystemId={recommendedSystemId}
         journal={journal}
         radioHistory={radioHistory}
-        mysteryProgress={mysteryProgress}
         onLeadAction={onLeadAction}
         onTravel={onTravel}
         onReset={onReset}
@@ -283,39 +330,64 @@ function PanoramicCabinExperience({
 function CabinOverlay({
   activeView,
   currentSystem,
+  activeTravel,
+  now,
   currentLead,
   state,
   systems,
   recommendedSystemId,
   journal,
   radioHistory,
-  mysteryProgress,
   onLeadAction,
   onTravel,
   onReset
 }: {
   activeView: PrimaryViewId;
   currentSystem: StarSystem;
+  activeTravel?: ActiveTravelState;
+  now: number;
   currentLead: CurrentLead;
   state: PlayerState;
   systems: StarSystem[];
   recommendedSystemId?: string;
   journal: JournalEntry[];
   radioHistory: RadioMessage[];
-  mysteryProgress: number;
   onLeadAction: () => void;
   onTravel: (system: StarSystem) => void;
   onReset: () => void;
 }) {
+  const activeDestination = activeTravel ? getSystem(activeTravel.toSystemId) : undefined;
+  const travelRemainingMs = activeTravel ? activeTravel.arrivesAt - now : 0;
+  const [selectedSystemId, setSelectedSystemId] = useState(recommendedSystemId ?? currentSystem.id);
+  const systemCardRefs = useRef<Record<string, HTMLElement | null>>({});
+
+  useEffect(() => {
+    setSelectedSystemId(recommendedSystemId ?? currentSystem.id);
+  }, [activeView, currentSystem.id, recommendedSystemId]);
+
+  const selectMapSystem = (systemId: string) => {
+    setSelectedSystemId(systemId);
+    window.setTimeout(() => {
+      systemCardRefs.current[systemId]?.scrollIntoView({
+        block: 'nearest',
+        behavior: 'smooth'
+      });
+    }, 0);
+  };
+
   switch (activeView) {
     case 'cockpit':
       return (
         <div className="overlay-layer cockpit-overlay">
           <div className="overlay-band cockpit-top-band">
             <div className="holo-panel holo-compact">
-              <p className="eyebrow">Orbit status</p>
-              <h2>{currentSystem.name}</h2>
-              <p>Stable orbit. Quiet lane. Survey windows open beyond the canopy.</p>
+              <p className="eyebrow">{activeTravel && activeDestination ? 'In transit' : 'Orbit status'}</p>
+              <h2>{activeTravel && activeDestination ? `To ${activeDestination.name}` : currentSystem.name}</h2>
+              <p>
+                {activeTravel && activeDestination
+                  ? `Arriving in ${formatDuration(travelRemainingMs)}`
+                  : 'Stable orbit. Survey windows open.'}
+              </p>
             </div>
           </div>
           <div className="overlay-band cockpit-bottom-band">
@@ -331,7 +403,7 @@ function CabinOverlay({
               </div>
             </div>
             <div className="holo-panel resource-holo-panel">
-              <p className="eyebrow">Ship status</p>
+              <p className="eyebrow">{activeTravel ? 'Travel systems' : 'Ship status'}</p>
               <ResourceStrip state={state} compact />
             </div>
           </div>
@@ -341,36 +413,41 @@ function CabinOverlay({
       return (
         <div className="overlay-layer map-overlay">
           <div className="overlay-shell map-shell">
-            <div className="screen-heading overlay-heading">
+            <div className="map-screen-panel">
               <p className="eyebrow">Star map</p>
-              <h2>Choose the next quiet light</h2>
-              <p>Recommended leads glow warmer. Unknown systems stay dim until rumors or readings uncover them.</p>
+              <div className="sector-map ceiling-map" aria-label="Star systems map">
+                {systems.map((system) => (
+                  <button
+                    className={`map-node ${system.known ? 'known' : 'unknown'} ${system.id === currentSystem.id ? 'current' : ''} ${
+                      system.id === recommendedSystemId ? 'recommended' : ''
+                    } ${system.id === selectedSystemId ? 'selected' : ''}`}
+                    key={system.id}
+                    type="button"
+                    style={{ left: `${system.position.x}%`, top: `${system.position.y}%` }}
+                    onClick={() => selectMapSystem(system.id)}
+                    aria-pressed={system.id === selectedSystemId}
+                    aria-label={`${system.name}, ${system.known ? 'known' : 'unknown'} system`}
+                  >
+                    <span />
+                  </button>
+                ))}
+              </div>
             </div>
 
-            <div className="sector-map ceiling-map" aria-label="Star systems map">
-              {systems.map((system) => (
-                <button
-                  className={`map-node ${system.known ? 'known' : 'unknown'} ${system.id === currentSystem.id ? 'current' : ''} ${
-                    system.id === recommendedSystemId ? 'recommended' : ''
-                  }`}
-                  key={system.id}
-                  type="button"
-                  style={{ left: `${system.position.x}%`, top: `${system.position.y}%` }}
-                  onClick={() => onTravel(system)}
-                  disabled={!system.known || system.id === currentSystem.id}
-                  aria-label={`${system.name}, ${system.known ? 'known' : 'unknown'} system`}
-                >
-                  <span />
-                </button>
-              ))}
-            </div>
-
-            <div className="system-list overlay-system-list">
+            <div className="system-list overlay-system-list route-list-panel">
               {systems.map((system) => {
                 const isRecommended = system.id === recommendedSystemId;
 
                 return (
-                  <article className={`system-card ${!system.known ? 'muted' : ''} ${isRecommended ? 'recommended' : ''}`} key={system.id}>
+                  <article
+                    className={`system-card ${!system.known ? 'muted' : ''} ${isRecommended ? 'recommended' : ''} ${
+                      system.id === selectedSystemId ? 'selected' : ''
+                    }`}
+                    key={system.id}
+                    ref={(element) => {
+                      systemCardRefs.current[system.id] = element;
+                    }}
+                  >
                     <img src={getSystemThumbnail(system.id)} alt="" className="system-thumb" />
                     <div className="system-main">
                       <div className="entry-topline">
@@ -386,10 +463,16 @@ function CabinOverlay({
                       <button
                         className="small-action"
                         type="button"
-                        disabled={!system.known || system.id === currentSystem.id}
+                        disabled={!system.known || system.id === currentSystem.id || Boolean(activeTravel)}
                         onClick={() => onTravel(system)}
                       >
-                        {system.id === currentSystem.id ? 'Here' : system.known ? 'Travel' : 'Unknown'}
+                        {activeTravel
+                          ? 'In transit'
+                          : system.id === currentSystem.id
+                            ? 'Here'
+                            : system.known
+                              ? 'Travel'
+                              : 'Unknown'}
                       </button>
                     </div>
                   </article>
@@ -403,12 +486,6 @@ function CabinOverlay({
       return (
         <div className="overlay-layer journal-overlay">
           <div className="tablet-surface">
-            <div className="screen-heading overlay-heading tablet-heading">
-              <p className="eyebrow">Journal of Wonders</p>
-              <h2>{getMysteryLabel(mysteryProgress)} notes</h2>
-              <p>Your notebook waits for the next quiet clue.</p>
-            </div>
-
             {journal.length === 0 ? (
               <div className="empty-state tablet-empty">
                 No discoveries logged yet. Follow the current lead from the cockpit and the first odd reading will mark this tablet.
@@ -441,7 +518,6 @@ function CabinOverlay({
             <div className="screen-heading overlay-heading">
               <p className="eyebrow">Ship registry</p>
               <h2>Among Quiet Stars</h2>
-              <p>Aft systems run warm and quiet. Home is always one swivel behind you.</p>
             </div>
             <div className="ship-resources-grid" aria-label="Ship resources">
               {resourceLabels.map((resource) => (
@@ -455,8 +531,9 @@ function CabinOverlay({
 
           <div className="ship-upgrades-panel overlay-shell">
             <div className="screen-heading overlay-heading compact-heading">
-              <p className="eyebrow">Future upgrades</p>
+              <p className="eyebrow">Available upgrades</p>
               <h2>Workshop queue</h2>
+              <p>Preview modules for future installation.</p>
             </div>
             <div className="upgrade-list overlay-upgrade-list">
               {shipUpgrades.map((upgrade) => (
@@ -480,9 +557,7 @@ function CabinOverlay({
         <div className="overlay-layer radio-overlay">
           <div className="radio-display overlay-shell">
             <div className="screen-heading overlay-heading compact-heading">
-              <p className="eyebrow">Explorer Radio</p>
-              <h2>Soft traffic, strange edges</h2>
-              <p>The starboard set collects weather, work calls, and things stranger than either.</p>
+              <p className="eyebrow">Saved transmissions</p>
             </div>
             <div className="radio-list overlay-radio-list">
               {radioHistory.map((message) => (

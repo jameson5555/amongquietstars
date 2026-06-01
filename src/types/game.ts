@@ -83,6 +83,7 @@ export interface Resources {
 export interface PlayerState {
   resources: Resources;
   currentSystemId: string;
+  activeTravel?: ActiveTravelState;
   discoveredSystemIds: string[];
   completedEncounterIds: string[];
   journalEntryIds: string[];
@@ -95,4 +96,10 @@ export interface TravelState {
   fromSystemId: string;
   toSystemId: string;
   encounterId: string;
+}
+
+export interface ActiveTravelState extends TravelState {
+  departedAt: number;
+  arrivesAt: number;
+  durationMs: number;
 }

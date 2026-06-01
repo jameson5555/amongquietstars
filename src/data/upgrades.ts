@@ -23,6 +23,13 @@ export const shipUpgrades: ShipUpgrade[] = [
     installed: false
   },
   {
+    id: 'quiet-drive-tuning',
+    name: 'Quiet Drive Tuning',
+    description: 'A smoother field cycle for shorter waits between distant lights.',
+    cost: 210,
+    installed: false
+  },
+  {
     id: 'larger-fuel-tank',
     name: 'Larger Fuel Tank',
     description: 'A practical comfort: a little farther before the warning light.',
