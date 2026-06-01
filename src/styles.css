@@ -170,9 +170,20 @@ button {
   font-size: 0.7rem;
 }
 
-.nav-button.active,
+.nav-button.active {
+  border-color: rgba(151, 223, 255, 0.46);
+  background:
+    radial-gradient(circle at 50% 0%, rgba(151, 223, 255, 0.24), transparent 58%),
+    linear-gradient(180deg, rgba(246, 210, 139, 0.2), rgba(12, 26, 40, 0.56));
+  box-shadow:
+    inset 0 0 18px rgba(104, 220, 255, 0.18),
+    0 0 16px rgba(246, 210, 139, 0.16);
+  color: #fff1bf;
+  text-shadow: 0 0 10px rgba(151, 223, 255, 0.5);
+}
+
 .primary-action {
-  background: linear-gradient(135deg, #ffc66d, #e879b5 52%, #77d8ff);
+  background: linear-gradient(135deg, #ffd98d, #8fe7ff);
   border-color: transparent;
   color: #20112f;
 }
@@ -2141,6 +2152,130 @@ body {
   max-height: min(31vh, 280px);
 }
 
+/* Text-only screen overlays: the generated art supplies the physical panels. */
+
+.cabin-experience {
+  --screen-transform: none;
+}
+
+.cabin-experience .overlay-band,
+.cabin-experience .overlay-shell,
+.cabin-experience .tablet-surface,
+.cabin-experience .holo-panel,
+.cabin-experience .ship-screen-panel,
+.cabin-experience .ship-upgrades-panel,
+.cabin-experience .radio-display {
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  backdrop-filter: none;
+  color: #dff8ff;
+  text-shadow:
+    0 0 8px rgba(130, 230, 255, 0.52),
+    0 0 18px rgba(80, 190, 255, 0.2);
+}
+
+.cabin-experience .holo-panel,
+.cabin-experience .overlay-shell,
+.cabin-experience .tablet-surface,
+.cabin-experience .ship-screen-panel,
+.cabin-experience .ship-upgrades-panel,
+.cabin-experience .radio-display {
+  transform: var(--screen-transform);
+  transform-origin: center;
+}
+
+.cabin-experience .system-card,
+.cabin-experience .journal-entry,
+.cabin-experience .upgrade-card,
+.cabin-experience .radio-message,
+.cabin-experience .ship-resource {
+  border-color: rgba(151, 223, 255, 0.1);
+  background: transparent;
+  box-shadow: none;
+}
+
+.cabin-experience .ship-resource {
+  padding: 8px 0;
+}
+
+.cabin-experience .ceiling-map {
+  border-color: rgba(151, 223, 255, 0.12);
+  background: transparent;
+  box-shadow: none;
+}
+
+.cabin-experience .radio-message,
+.cabin-experience .journal-entry,
+.cabin-experience .upgrade-card,
+.cabin-experience .system-card {
+  padding-inline: 0;
+}
+
+.cabin-experience .overlay-heading h2,
+.cabin-experience .holo-panel h2,
+.cabin-experience .holo-panel h3,
+.cabin-experience .tablet-heading h2,
+.cabin-experience .section-title {
+  color: #fff0b7;
+}
+
+.cabin-experience .overlay-heading p,
+.cabin-experience .holo-panel p,
+.cabin-experience .tablet-surface p,
+.cabin-experience .radio-message p,
+.cabin-experience .upgrade-card p,
+.cabin-experience .system-card p,
+.cabin-experience .tablet-empty,
+.cabin-experience .radio-empty {
+  color: rgba(222, 246, 255, 0.88);
+}
+
+.cabin-experience .eyebrow,
+.cabin-experience .entry-topline span,
+.cabin-experience .entry-topline strong {
+  color: #9ee7ff;
+  text-shadow: 0 0 10px rgba(116, 218, 255, 0.6);
+}
+
+.cabin-experience .primary-action,
+.cabin-experience .small-action,
+.cabin-experience .reset-button {
+  border-color: rgba(151, 223, 255, 0.24);
+  background: rgba(7, 20, 31, 0.36);
+  color: #fff1bf;
+  box-shadow: inset 0 0 16px rgba(96, 220, 255, 0.1);
+  text-shadow: 0 0 10px rgba(151, 223, 255, 0.38);
+}
+
+.view-cockpit .cockpit-top-band .holo-panel {
+  --screen-transform: perspective(520px) rotateX(-3deg) skewX(-1deg);
+}
+
+.view-cockpit .cockpit-bottom-band .holo-panel {
+  --screen-transform: perspective(620px) rotateX(6deg) skewX(1.5deg);
+}
+
+.view-map .map-shell {
+  --screen-transform: perspective(760px) rotateX(2deg) skewX(-1.4deg);
+}
+
+.view-journal .tablet-surface {
+  --screen-transform: perspective(720px) rotateX(5deg) skewX(-1deg);
+}
+
+.view-ship .ship-screen-panel {
+  --screen-transform: perspective(680px) rotateY(-4deg) skewY(0.5deg);
+}
+
+.view-ship .ship-upgrades-panel {
+  --screen-transform: perspective(720px) rotateY(-3deg) skewY(-0.6deg);
+}
+
+.view-radio .radio-display {
+  --screen-transform: perspective(720px) rotateY(-4deg) skewY(0.7deg);
+}
+
 /* Transition-aware overlay booting */
 
 .scene-status,
@@ -2187,7 +2322,7 @@ body {
 .overlays-ready .ship-screen-panel,
 .overlays-ready .ship-upgrades-panel,
 .overlays-ready .radio-display {
-  animation: panel-boot 360ms ease-out both;
+  animation: panel-boot 520ms steps(2, end) both;
 }
 
 .overlays-ready .holo-panel::after,
@@ -2201,9 +2336,15 @@ body {
   inset: 0;
   pointer-events: none;
   border-radius: inherit;
-  background: linear-gradient(180deg, rgba(151, 223, 255, 0.16), rgba(151, 223, 255, 0));
+  background:
+    repeating-linear-gradient(
+      180deg,
+      rgba(151, 223, 255, 0.16) 0 1px,
+      transparent 1px 4px
+    ),
+    linear-gradient(180deg, rgba(151, 223, 255, 0.22), rgba(151, 223, 255, 0));
   mix-blend-mode: screen;
-  animation: screen-scan 460ms ease-out both;
+  animation: screen-scan 620ms ease-out both;
 }
 
 @keyframes overlay-boot {
@@ -2227,13 +2368,31 @@ body {
 }
 
 @keyframes panel-boot {
-  from {
+  0% {
     opacity: 0;
-    transform: translate3d(0, 10px, 0) scale(0.985);
+    filter: brightness(0.6) saturate(0.7);
+    transform: var(--screen-transform) translate3d(0, 8px, 0) scale(0.985);
   }
-  to {
+  18% {
+    opacity: 0.82;
+    filter: brightness(1.55) saturate(1.2);
+    transform: var(--screen-transform) translate3d(0, 2px, 0) scale(0.995);
+  }
+  31% {
+    opacity: 0.26;
+    filter: brightness(0.8);
+  }
+  48% {
+    opacity: 0.95;
+    filter: brightness(1.2);
+  }
+  63% {
+    opacity: 0.58;
+  }
+  100% {
     opacity: 1;
-    transform: translate3d(0, 0, 0) scale(1);
+    filter: brightness(1);
+    transform: var(--screen-transform) translate3d(0, 0, 0) scale(1);
   }
 }
 

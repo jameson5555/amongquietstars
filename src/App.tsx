@@ -24,11 +24,11 @@ const primaryViewIds = ['cockpit', 'map', 'journal', 'ship', 'radio'] as const;
 type PrimaryViewId = (typeof primaryViewIds)[number];
 
 const navItems: Array<{ id: PrimaryViewId; label: string }> = [
-  { id: 'cockpit', label: 'Cockpit' },
   { id: 'map', label: 'Map' },
-  { id: 'journal', label: 'Journal' },
   { id: 'ship', label: 'Ship' },
-  { id: 'radio', label: 'Radio' }
+  { id: 'cockpit', label: 'Cockpit' },
+  { id: 'radio', label: 'Radio' },
+  { id: 'journal', label: 'Journal' }
 ];
 
 const resourceLabels: Array<keyof PlayerState['resources']> = ['fuel', 'supplies', 'hull', 'credits'];
