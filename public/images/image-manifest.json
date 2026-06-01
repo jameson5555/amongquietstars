@@ -10,32 +10,32 @@
     {
       "id": "view_cockpit_forward",
       "file": "/images/view_cockpit_forward.webp",
-      "width": 1600,
-      "height": 1000
+      "width": 941,
+      "height": 1672
     },
     {
       "id": "view_map_ceiling",
       "file": "/images/view_map_ceiling.webp",
-      "width": 1600,
-      "height": 1000
+      "width": 941,
+      "height": 1672
     },
     {
       "id": "view_journal_tablet",
       "file": "/images/view_journal_tablet.webp",
-      "width": 1600,
-      "height": 1000
+      "width": 941,
+      "height": 1672
     },
     {
       "id": "view_ship_aft",
       "file": "/images/view_ship_aft.webp",
-      "width": 1600,
-      "height": 1000
+      "width": 941,
+      "height": 1672
     },
     {
       "id": "view_radio_console",
       "file": "/images/view_radio_console.webp",
-      "width": 1600,
-      "height": 1000
+      "width": 941,
+      "height": 1672
     },
     {
       "id": "cockpit_background",

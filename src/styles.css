@@ -894,6 +894,7 @@ button {
   --shell-panel-strong: rgba(7, 13, 28, 0.88);
   --shell-border: rgba(255, 222, 160, 0.18);
   --shell-shadow: 0 24px 60px rgba(1, 4, 10, 0.48);
+  --phone-frame-width: 430px;
 }
 
 body {
@@ -903,7 +904,7 @@ body {
 }
 
 .app-shell {
-  padding: 10px 10px calc(var(--nav-height) + max(12px, env(safe-area-inset-bottom)));
+  padding: max(8px, env(safe-area-inset-top)) 8px calc(var(--nav-height) + max(10px, env(safe-area-inset-bottom)));
   background:
     radial-gradient(circle at 50% -10%, rgba(74, 127, 194, 0.24), transparent 28%),
     radial-gradient(circle at 50% 120%, rgba(247, 174, 95, 0.12), transparent 32%),
@@ -911,12 +912,12 @@ body {
 }
 
 .game-frame {
-  width: min(100%, 1120px);
-  gap: 12px;
+  width: min(100%, var(--phone-frame-width));
+  gap: 8px;
 }
 
 .screen-panel {
-  border-radius: 22px;
+  border-radius: 18px;
 }
 
 .screen-panel.cabin-panel {
@@ -935,14 +936,14 @@ body {
 }
 
 .bottom-nav {
-  width: min(calc(100% - 20px), 1120px);
-  border-radius: 18px;
+  width: min(calc(100% - 16px), var(--phone-frame-width));
+  border-radius: 16px;
   background: rgba(6, 10, 18, 0.8);
   box-shadow: 0 16px 42px rgba(1, 3, 8, 0.44);
 }
 
 .nav-button {
-  font-size: 0.78rem;
+  font-size: 0.68rem;
   letter-spacing: 0.04em;
   text-transform: uppercase;
 }
@@ -1694,6 +1695,7 @@ body {
 
 .view-cockpit .art-cockpit {
   transform: scale(1) translate3d(0%, 0, 0);
+  background-position: 50% center;
 }
 
 .view-cockpit .art-ship {
@@ -1710,6 +1712,7 @@ body {
 
 .view-ship .art-ship {
   transform: scale(1) translate3d(0%, 0, 0);
+  background-position: 50% center;
 }
 
 .view-ship .art-radio {
@@ -1726,6 +1729,7 @@ body {
 
 .view-radio .art-radio {
   transform: scale(1) translate3d(0%, 0, 0);
+  background-position: 50% center;
 }
 
 .art-map,
@@ -1743,13 +1747,14 @@ body {
 .view-journal .art-journal {
   opacity: 1;
   transform: scale(1) translate3d(0, 0, 0);
+  background-position: 50% center;
 }
 
 .scene-cockpit-window-hotspot {
-  left: 24.2%;
-  top: 30.6%;
-  width: 51.6%;
-  height: 35.4%;
+  left: 7.5%;
+  top: 18.6%;
+  width: 85%;
+  height: 45.8%;
   padding: 1.15%;
   border-radius: 9.5% 9.5% 12% 12%;
   overflow: hidden;
@@ -1777,9 +1782,17 @@ body {
 }
 
 .scene-status {
-  left: 22px;
-  top: 20px;
-  max-width: min(390px, calc(100% - 44px));
+  left: 10px;
+  right: 10px;
+  top: 10px;
+  max-width: none;
+  padding: 7px 9px;
+  border-radius: 12px;
+}
+
+.scene-status strong {
+  font-size: 0.76rem;
+  line-height: 1.25;
 }
 
 .overlay-layer {
@@ -1793,30 +1806,57 @@ body {
 
 .cockpit-top-band {
   position: absolute;
-  left: 25.2%;
-  top: 5.6%;
-  width: 52.6%;
+  left: 10px;
+  right: 10px;
+  top: 60px;
+  width: auto;
   padding: 0;
   background: transparent;
 }
 
 .cockpit-top-band .holo-panel {
   width: 100%;
-  padding: 12px 16px;
+  padding: 9px 11px;
   text-align: center;
 }
 
 .cockpit-bottom-band {
-  left: 20.2%;
-  right: 16.6%;
-  bottom: 3.8%;
-  gap: 12px;
-  grid-template-columns: minmax(0, 1.55fr) minmax(220px, 0.9fr);
+  left: 10px;
+  right: 10px;
+  bottom: 10px;
+  gap: 8px;
+  grid-template-columns: 1fr;
 }
 
 .current-lead-panel,
 .resource-holo-panel {
-  min-height: 132px;
+  min-height: auto;
+  padding: 11px 12px;
+}
+
+.current-lead-panel h3 {
+  font-size: 1rem;
+}
+
+.current-lead-panel p:not(.eyebrow) {
+  margin-top: 5px;
+  font-size: 0.82rem;
+  line-height: 1.32;
+}
+
+.lead-footer {
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.resource-holo-panel .resource-strip {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px 10px;
+  margin-top: 8px;
+}
+
+.resource-holo-panel .resource {
+  padding-bottom: 3px;
 }
 
 .map-overlay {
@@ -1828,12 +1868,12 @@ body {
 
 .map-shell {
   position: absolute;
-  top: 18.6%;
+  top: 60px;
   left: 50%;
   transform: translateX(-50%);
-  width: min(1080px, calc(100% - 180px));
-  max-height: 60%;
-  padding: 16px;
+  width: calc(100% - 20px);
+  max-height: calc(100% - 74px);
+  padding: 12px;
   background:
     radial-gradient(circle at 50% 0%, rgba(137, 232, 255, 0.1), transparent 46%),
     linear-gradient(180deg, rgba(7, 14, 24, 0.76), rgba(5, 10, 18, 0.92)),
@@ -1844,12 +1884,12 @@ body {
 }
 
 .ceiling-map {
-  height: min(26vh, 240px);
-  border-radius: 22px;
+  height: min(26vh, 188px);
+  border-radius: 16px;
 }
 
 .overlay-system-list {
-  max-height: min(19vh, 210px);
+  max-height: min(36vh, 300px);
 }
 
 .journal-overlay {
@@ -1860,18 +1900,18 @@ body {
 .tablet-surface {
   position: absolute;
   left: 50%;
-  bottom: 16.6%;
+  bottom: 10px;
   transform: translateX(-50%);
-  width: min(640px, calc(100% - 300px));
-  max-height: 54%;
-  padding: 16px;
+  width: calc(100% - 20px);
+  max-height: calc(100% - 82px);
+  padding: 12px;
   background:
     linear-gradient(180deg, rgba(13, 18, 27, 0.9), rgba(6, 10, 16, 0.96)),
     #11161f;
 }
 
 .tablet-journal-list {
-  max-height: min(26vh, 248px);
+  max-height: min(50vh, 420px);
 }
 
 .ship-overlay {
@@ -1884,25 +1924,26 @@ body {
 .ship-screen-panel,
 .ship-upgrades-panel {
   position: absolute;
-  right: 14.4%;
-  width: 22%;
+  left: 10px;
+  right: 10px;
+  width: auto;
 }
 
 .ship-screen-panel {
-  top: 9.2%;
-  min-height: 19%;
-  max-height: 24%;
-}
-
-.ship-upgrades-panel {
-  top: 39.2%;
-  bottom: auto;
-  width: 25.6%;
+  top: 60px;
+  min-height: auto;
   max-height: 31%;
 }
 
+.ship-upgrades-panel {
+  top: auto;
+  bottom: 10px;
+  width: auto;
+  max-height: 45%;
+}
+
 .overlay-upgrade-list {
-  max-height: min(18vh, 170px);
+  max-height: min(24vh, 220px);
 }
 
 .radio-overlay {
@@ -1914,16 +1955,17 @@ body {
 
 .radio-display {
   position: absolute;
-  left: 50.4%;
-  right: auto;
-  top: 17.4%;
-  width: 31.8%;
-  max-height: 35.8%;
-  padding: 14px;
+  left: 10px;
+  right: 10px;
+  top: auto;
+  bottom: 10px;
+  width: auto;
+  max-height: calc(100% - 82px);
+  padding: 12px;
 }
 
 .overlay-radio-list {
-  max-height: min(18vh, 176px);
+  max-height: min(48vh, 400px);
   overflow: auto;
 }
 
@@ -2006,6 +2048,97 @@ body {
     bottom: 12px;
     max-height: calc(100% - 138px);
   }
+}
+
+/* Portrait mobile screen alignment, applied at every viewport width. */
+
+.scene-status {
+  left: 10px;
+  right: 10px;
+  top: 10px;
+}
+
+.view-cockpit .cockpit-top-band {
+  left: 13%;
+  right: 13%;
+  top: 5.8%;
+  width: auto;
+}
+
+.view-cockpit .cockpit-top-band .holo-panel {
+  padding: 8px 10px;
+}
+
+.view-cockpit .cockpit-bottom-band {
+  left: 7%;
+  right: 7%;
+  bottom: 7.2%;
+  grid-template-columns: 1fr;
+  max-height: 25%;
+  overflow: auto;
+}
+
+.view-map .map-shell {
+  left: 8.5%;
+  right: 8.5%;
+  top: 17.4%;
+  bottom: 12.5%;
+  width: auto;
+  max-height: none;
+  transform: none;
+}
+
+.view-map .overlay-system-list {
+  max-height: min(34vh, 300px);
+}
+
+.view-journal .tablet-surface {
+  left: 20%;
+  right: 17%;
+  top: 29%;
+  bottom: 13%;
+  width: auto;
+  max-height: none;
+  transform: none;
+}
+
+.view-journal .tablet-journal-list {
+  max-height: min(38vh, 330px);
+}
+
+.view-ship .ship-screen-panel,
+.view-ship .ship-upgrades-panel {
+  left: 32.5%;
+  right: 8.5%;
+  width: auto;
+}
+
+.view-ship .ship-screen-panel {
+  top: 13.2%;
+  max-height: 19%;
+}
+
+.view-ship .ship-upgrades-panel {
+  top: 38.5%;
+  bottom: 30.5%;
+  max-height: none;
+}
+
+.view-ship .overlay-upgrade-list {
+  max-height: min(18vh, 180px);
+}
+
+.view-radio .radio-display {
+  left: 15.5%;
+  right: 7%;
+  top: 18.5%;
+  bottom: 42%;
+  width: auto;
+  max-height: none;
+}
+
+.view-radio .overlay-radio-list {
+  max-height: min(31vh, 280px);
 }
 
 /* Transition-aware overlay booting */
