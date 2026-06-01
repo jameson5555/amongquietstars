@@ -1996,3 +1996,125 @@ body {
     max-height: calc(100% - 138px);
   }
 }
+
+/* Transition-aware overlay booting */
+
+.scene-status,
+.overlay-layer {
+  filter: blur(0);
+}
+
+.scene-status {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+  transition:
+    opacity 180ms ease,
+    transform 280ms ease,
+    filter 280ms ease;
+}
+
+.overlay-layer {
+  opacity: 1;
+  transition: opacity 220ms ease, filter 280ms ease;
+}
+
+.overlays-transitioning .overlay-layer,
+.overlays-transitioning .scene-status {
+  opacity: 0;
+  filter: blur(8px);
+  pointer-events: none;
+}
+
+.overlays-transitioning .scene-status {
+  transform: translate3d(0, -8px, 0);
+}
+
+.overlays-ready .overlay-layer {
+  animation: overlay-boot 320ms ease-out both;
+}
+
+.overlays-ready .scene-status {
+  animation: overlay-status-boot 260ms ease-out both;
+}
+
+.overlays-ready .holo-panel,
+.overlays-ready .overlay-shell,
+.overlays-ready .tablet-surface,
+.overlays-ready .ship-screen-panel,
+.overlays-ready .ship-upgrades-panel,
+.overlays-ready .radio-display {
+  animation: panel-boot 360ms ease-out both;
+}
+
+.overlays-ready .holo-panel::after,
+.overlays-ready .overlay-shell::after,
+.overlays-ready .tablet-surface::after,
+.overlays-ready .ship-screen-panel::after,
+.overlays-ready .ship-upgrades-panel::after,
+.overlays-ready .radio-display::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  background: linear-gradient(180deg, rgba(151, 223, 255, 0.16), rgba(151, 223, 255, 0));
+  mix-blend-mode: screen;
+  animation: screen-scan 460ms ease-out both;
+}
+
+@keyframes overlay-boot {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes overlay-status-boot {
+  from {
+    opacity: 0;
+    transform: translate3d(0, -10px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes panel-boot {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 10px, 0) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+@keyframes screen-scan {
+  from {
+    opacity: 0.9;
+    transform: translate3d(0, -18%, 0);
+  }
+  to {
+    opacity: 0;
+    transform: translate3d(0, 112%, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .overlay-layer,
+  .scene-status,
+  .holo-panel,
+  .overlay-shell,
+  .tablet-surface,
+  .ship-screen-panel,
+  .ship-upgrades-panel,
+  .radio-display {
+    animation: none;
+    transition: none;
+    filter: none;
+  }
+}

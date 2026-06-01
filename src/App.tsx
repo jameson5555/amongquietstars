@@ -214,6 +214,21 @@ function PanoramicCabinExperience({
   onReset: () => void;
 }) {
   const activeScene = sceneOffsets[activeView];
+  const [overlaysReady, setOverlaysReady] = useState(false);
+
+  useEffect(() => {
+    setOverlaysReady(false);
+
+    const delay = activeView === 'map' || activeView === 'journal' ? 360 : 760;
+    const timeoutId = window.setTimeout(() => {
+      setOverlaysReady(true);
+    }, delay);
+
+    return () => {
+      window.clearTimeout(timeoutId);
+    };
+  }, [activeView]);
+
   const sceneStyle = {
     '--art-cockpit': `url(${imageAssets.viewCockpitForward})`,
     '--art-map': `url(${imageAssets.viewMapCeiling})`,
@@ -224,7 +239,10 @@ function PanoramicCabinExperience({
   } as CSSProperties;
 
   return (
-    <div className={`cabin-experience view-${activeView}`} style={sceneStyle}>
+    <div
+      className={`cabin-experience view-${activeView} ${overlaysReady ? 'overlays-ready' : 'overlays-transitioning'}`}
+      style={sceneStyle}
+    >
       <div className="cabin-viewport">
         <div className="cabin-stage" aria-hidden="true">
           <div className="scene-art-plate art-cockpit" />
