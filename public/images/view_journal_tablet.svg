@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1000" role="img" aria-labelledby="title desc">
+  <title id="title">Journal tablet view</title>
+  <desc id="desc">Downward view toward a tablet and lap tray designed for journal overlays.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#223142"/>
+      <stop offset="100%" stop-color="#0b1018"/>
+    </linearGradient>
+    <linearGradient id="seat" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#404d5d"/>
+      <stop offset="100%" stop-color="#1a2330"/>
+    </linearGradient>
+    <linearGradient id="tablet" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#1a2430"/>
+      <stop offset="100%" stop-color="#090f16"/>
+    </linearGradient>
+  </defs>
+  <rect width="1600" height="1000" fill="url(#bg)"/>
+  <path d="M380 714 C510 642 634 604 800 604 C966 604 1090 642 1220 714 V1000 H380 Z" fill="#24303c"/>
+  <rect x="410" y="566" width="780" height="238" rx="42" fill="url(#seat)"/>
+  <rect x="458" y="238" width="684" height="524" rx="42" fill="#121a25" stroke="#f3d5a3" stroke-opacity="0.1" stroke-width="6"/>
+  <rect x="492" y="274" width="616" height="452" rx="24" fill="url(#tablet)" stroke="#8fe5ff" stroke-opacity="0.18" stroke-width="4"/>
+  <rect x="530" y="312" width="540" height="376" rx="18" fill="#0d141d"/>
+  <path d="M568 362 H1032" stroke="#f3d5a3" stroke-opacity="0.09" stroke-width="8" stroke-linecap="round"/>
+  <path d="M568 420 H1032" stroke="#8fe5ff" stroke-opacity="0.07" stroke-width="6" stroke-linecap="round"/>
+  <path d="M568 476 H1032" stroke="#f3d5a3" stroke-opacity="0.05" stroke-width="4" stroke-linecap="round"/>
+  <path d="M568 540 H1032" stroke="#8fe5ff" stroke-opacity="0.05" stroke-width="4" stroke-linecap="round"/>
+  <ellipse cx="320" cy="834" rx="182" ry="122" fill="#4c5767" opacity="0.72"/>
+  <ellipse cx="1280" cy="834" rx="182" ry="122" fill="#4c5767" opacity="0.72"/>
+  <ellipse cx="364" cy="804" rx="118" ry="78" fill="#394556" opacity="0.95"/>
+  <ellipse cx="1236" cy="804" rx="118" ry="78" fill="#394556" opacity="0.95"/>
+</svg>

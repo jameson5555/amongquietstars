@@ -33,34 +33,24 @@ const navItems: Array<{ id: PrimaryViewId; label: string }> = [
 
 const resourceLabels: Array<keyof PlayerState['resources']> = ['fuel', 'supplies', 'hull', 'credits'];
 
-const sceneOffsets: Record<PrimaryViewId, { x: string; y: string; label: string; description: string }> = {
+const sceneOffsets: Record<PrimaryViewId, { label: string; description: string }> = {
   cockpit: {
-    x: '-33.333%',
-    y: '-33.333%',
     label: 'Forward canopy',
     description: 'The forward glass opens onto the system beyond your bow.'
   },
   map: {
-    x: '-33.333%',
-    y: '0%',
     label: 'Overhead chart',
     description: 'The ceiling projector blooms into a navigational field.'
   },
   journal: {
-    x: '-33.333%',
-    y: '-66.666%',
     label: 'Lap console',
     description: 'A tablet settles into your hands for patient notes.'
   },
   ship: {
-    x: '0%',
-    y: '-33.333%',
     label: 'Aft cabin',
     description: 'Warm bunks, stores, and maintenance screens fill the stern view.'
   },
   radio: {
-    x: '-66.666%',
-    y: '-33.333%',
     label: 'Starboard radio',
     description: 'A side console hums with quiet traffic and strange edges.'
   }
@@ -225,9 +215,11 @@ function PanoramicCabinExperience({
 }) {
   const activeScene = sceneOffsets[activeView];
   const sceneStyle = {
-    '--scene-offset-x': activeScene.x,
-    '--scene-offset-y': activeScene.y,
-    '--scene-panorama': `url(${imageAssets.cabinPanoramaPlaceholder})`,
+    '--art-cockpit': `url(${imageAssets.viewCockpitForward})`,
+    '--art-map': `url(${imageAssets.viewMapCeiling})`,
+    '--art-journal': `url(${imageAssets.viewJournalTablet})`,
+    '--art-ship': `url(${imageAssets.viewShipAft})`,
+    '--art-radio': `url(${imageAssets.viewRadioConsole})`,
     '--space-view': `url(${getSystemThumbnail(currentSystem.id)})`
   } as CSSProperties;
 
@@ -235,8 +227,12 @@ function PanoramicCabinExperience({
     <div className={`cabin-experience view-${activeView}`} style={sceneStyle}>
       <div className="cabin-viewport">
         <div className="cabin-stage" aria-hidden="true">
-          <div className="scene-panorama-art" />
-          <div className="scene-cockpit-window-hotspot">
+          <div className="scene-art-plate art-cockpit" />
+          <div className="scene-art-plate art-map" />
+          <div className="scene-art-plate art-journal" />
+          <div className="scene-art-plate art-ship" />
+          <div className="scene-art-plate art-radio" />
+          <div className="scene-cockpit-window-hotspot" aria-hidden={activeView !== 'cockpit'}>
             <div className="cockpit-window-view" />
           </div>
         </div>
