@@ -2,11 +2,11 @@ const publicAsset = (path: string) => `${import.meta.env.BASE_URL}${path.replace
 
 export const imageAssets = {
   cabinPanoramaPlaceholder: publicAsset('images/cabin_panorama_placeholder.svg'),
-  viewCockpitForward: publicAsset('images/view_cockpit_forward.svg'),
-  viewMapCeiling: publicAsset('images/view_map_ceiling.svg'),
-  viewJournalTablet: publicAsset('images/view_journal_tablet.svg'),
-  viewShipAft: publicAsset('images/view_ship_aft.svg'),
-  viewRadioConsole: publicAsset('images/view_radio_console.svg'),
+  viewCockpitForward: publicAsset('images/view_cockpit_forward.webp'),
+  viewMapCeiling: publicAsset('images/view_map_ceiling.webp'),
+  viewJournalTablet: publicAsset('images/view_journal_tablet.webp'),
+  viewShipAft: publicAsset('images/view_ship_aft.webp'),
+  viewRadioConsole: publicAsset('images/view_radio_console.webp'),
   cockpitBackground: publicAsset('images/cockpit_background.webp'),
   titleBackground: publicAsset('images/title_background.webp'),
   nebulaVista01: publicAsset('images/nebula_vista_01.webp'),

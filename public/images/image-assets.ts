@@ -2,6 +2,12 @@
 // Place these files in /public/images and import/reference these paths directly.
 
 export const imageAssets = {
+  cabinPanoramaPlaceholder: '/images/cabin_panorama_placeholder.svg',
+  viewCockpitForward: '/images/view_cockpit_forward.webp',
+  viewMapCeiling: '/images/view_map_ceiling.webp',
+  viewJournalTablet: '/images/view_journal_tablet.webp',
+  viewShipAft: '/images/view_ship_aft.webp',
+  viewRadioConsole: '/images/view_radio_console.webp',
   cockpitBackground: '/images/cockpit_background.webp',
   nebulaVista01: '/images/nebula_vista_01.webp',
   nebulaVista02: '/images/nebula_vista_02.webp',
