@@ -1647,7 +1647,7 @@ body {
 .scene-art-plate {
   inset: 0;
   opacity: 0;
-  transform: scale(1.03) translate3d(0, 10px, 0);
+  pointer-events: none;
   transition:
     opacity 520ms ease,
     transform 900ms cubic-bezier(0.22, 1, 0.36, 1);
@@ -1676,11 +1676,67 @@ body {
   background-image: var(--art-radio);
 }
 
+.art-cockpit,
+.art-ship,
+.art-radio {
+  transform: scale(1.02) translate3d(0, 0, 0);
+}
+
 .view-cockpit .art-cockpit,
-.view-map .art-map,
-.view-journal .art-journal,
 .view-ship .art-ship,
 .view-radio .art-radio {
+  opacity: 1;
+}
+
+.view-cockpit .art-cockpit {
+  transform: scale(1) translate3d(0%, 0, 0);
+}
+
+.view-cockpit .art-ship {
+  transform: scale(1.02) translate3d(-100%, 0, 0);
+}
+
+.view-cockpit .art-radio {
+  transform: scale(1.02) translate3d(100%, 0, 0);
+}
+
+.view-ship .art-cockpit {
+  transform: scale(1.02) translate3d(100%, 0, 0);
+}
+
+.view-ship .art-ship {
+  transform: scale(1) translate3d(0%, 0, 0);
+}
+
+.view-ship .art-radio {
+  transform: scale(1.02) translate3d(200%, 0, 0);
+}
+
+.view-radio .art-cockpit {
+  transform: scale(1.02) translate3d(-100%, 0, 0);
+}
+
+.view-radio .art-ship {
+  transform: scale(1.02) translate3d(-200%, 0, 0);
+}
+
+.view-radio .art-radio {
+  transform: scale(1) translate3d(0%, 0, 0);
+}
+
+.art-map,
+.art-journal {
+  transform: scale(1.02) translate3d(0, 14px, 0);
+}
+
+.view-map .art-cockpit,
+.view-journal .art-cockpit {
+  opacity: 1;
+  transform: scale(1) translate3d(0, 0, 0);
+}
+
+.view-map .art-map,
+.view-journal .art-journal {
   opacity: 1;
   transform: scale(1) translate3d(0, 0, 0);
 }
