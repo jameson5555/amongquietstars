@@ -24,12 +24,11 @@ import type {
 const primaryViewIds = ['cockpit', 'map', 'journal', 'ship', 'radio'] as const;
 type PrimaryViewId = (typeof primaryViewIds)[number];
 
-const navItems: Array<{ id: PrimaryViewId; label: string }> = [
+const navItems: Array<{ id: Exclude<PrimaryViewId, 'journal'>; label: string }> = [
   { id: 'map', label: 'Map' },
   { id: 'ship', label: 'Ship' },
   { id: 'cockpit', label: 'Cockpit' },
-  { id: 'radio', label: 'Radio' },
-  { id: 'journal', label: 'Journal' }
+  { id: 'radio', label: 'Radio' }
 ];
 
 const resourceLabels: Array<keyof PlayerState['resources']> = ['fuel', 'supplies', 'hull', 'credits'];
@@ -65,6 +64,22 @@ function App() {
   useEffect(() => {
     savePlayerState(state);
   }, [state]);
+
+  useEffect(() => {
+    if (view === 'journal' && state.journalEntryIds.length > 0) {
+      const hasUnread = state.journalEntryIds.some(
+        (id) => !state.readJournalEntryIds.includes(id)
+      );
+      if (hasUnread) {
+        setState((current) => ({
+          ...current,
+          readJournalEntryIds: Array.from(
+            new Set([...current.readJournalEntryIds, ...current.journalEntryIds])
+          )
+        }));
+      }
+    }
+  }, [view, state.journalEntryIds, state.readJournalEntryIds]);
 
   useEffect(() => {
     if (!activeTravel) {
@@ -224,6 +239,36 @@ function App() {
             />
           )}
         </section>
+
+        {/* Floating Journal Button */}
+        <button
+          className={`journal-fab ${view === 'journal' ? 'active' : ''}`}
+          type="button"
+          onClick={() => goTo(view === 'journal' ? 'cockpit' : 'journal')}
+          aria-label="Journal"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className="journal-icon"
+          >
+            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+            <line x1="10" y1="6" x2="16" y2="6" />
+            <line x1="10" y1="10" x2="16" y2="10" />
+            <line x1="10" y1="14" x2="16" y2="14" />
+          </svg>
+          {state.journalEntryIds.filter((id) => !state.readJournalEntryIds.includes(id)).length > 0 && view !== 'journal' && (
+            <span className="journal-badge" aria-label={`${state.journalEntryIds.filter((id) => !state.readJournalEntryIds.includes(id)).length} unread entries`}>
+              {state.journalEntryIds.filter((id) => !state.readJournalEntryIds.includes(id)).length}
+            </span>
+          )}
+        </button>
 
         <nav className="bottom-nav" aria-label="Primary navigation">
           {navItems.map((item) => (

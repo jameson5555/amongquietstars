@@ -19,6 +19,7 @@ export const createInitialState = (): PlayerState => ({
   discoveredSystemIds: ['lumen-rest', 'vela-rest', 'marrowlight', 'pale-current', 'kites-end', 'orison-belt', 'tallow-star'],
   completedEncounterIds: [],
   journalEntryIds: [],
+  readJournalEntryIds: [],
   radioHistoryIds: [...defaultRadioIds],
   mysteryProgress: 0,
   emergencyTowUsed: false
@@ -47,6 +48,7 @@ export const loadPlayerState = (): PlayerState => {
       discoveredSystemIds: unique([...initial.discoveredSystemIds, ...(parsed.discoveredSystemIds ?? [])]),
       completedEncounterIds: parsed.completedEncounterIds ?? initial.completedEncounterIds,
       journalEntryIds: parsed.journalEntryIds ?? initial.journalEntryIds,
+      readJournalEntryIds: parsed.readJournalEntryIds ?? initial.readJournalEntryIds,
       radioHistoryIds: parsed.radioHistoryIds ?? initial.radioHistoryIds,
       mysteryProgress: parsed.mysteryProgress ?? initial.mysteryProgress,
       emergencyTowUsed: parsed.emergencyTowUsed ?? initial.emergencyTowUsed
