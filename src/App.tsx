@@ -95,44 +95,32 @@ function App() {
       }
 
       const destination = getSystem(activeTravel.toSystemId);
-      let arrivedAtDestination = false;
-
-      setState((current) => {
-        if (current.activeTravel?.arrivesAt !== activeTravel.arrivesAt) {
-          return current;
-        }
-
-        const nextState = beginTravel(
-          {
-            ...current,
-            activeTravel: undefined
-          },
-          destination
-        );
-        arrivedAtDestination = nextState.currentSystemId === destination.id;
-
-        return {
-          ...nextState,
+      const nextState = beginTravel(
+        {
+          ...state,
           activeTravel: undefined
-        };
-      });
+        },
+        destination
+      );
+      const arrived = nextState.currentSystemId === destination.id;
+
+      setState(nextState);
       setTravel(null);
       setChoiceResult(null);
 
-      if (!arrivedAtDestination) {
+      if (arrived) {
+        setActiveEncounterId(activeTravel.encounterId);
+        setView('encounter');
+      } else {
         setActiveEncounterId(null);
         setView('cockpit');
-        return;
       }
-
-      setActiveEncounterId(activeTravel.encounterId);
-      setView('encounter');
     }, 1000);
 
     return () => {
       window.clearInterval(intervalId);
     };
-  }, [activeTravel]);
+  }, [activeTravel, state]);
 
   const goTo = (nextView: ViewId) => {
     setChoiceResult(null);
