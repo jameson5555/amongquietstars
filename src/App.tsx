@@ -65,21 +65,6 @@ function App() {
     savePlayerState(state);
   }, [state]);
 
-  useEffect(() => {
-    if (view === 'journal' && state.journalEntryIds.length > 0) {
-      const hasUnread = state.journalEntryIds.some(
-        (id) => !state.readJournalEntryIds.includes(id)
-      );
-      if (hasUnread) {
-        setState((current) => ({
-          ...current,
-          readJournalEntryIds: Array.from(
-            new Set([...current.readJournalEntryIds, ...current.journalEntryIds])
-          )
-        }));
-      }
-    }
-  }, [view, state.journalEntryIds, state.readJournalEntryIds]);
 
   useEffect(() => {
     if (!activeTravel) {
@@ -125,6 +110,19 @@ function App() {
   const goTo = (nextView: ViewId) => {
     setChoiceResult(null);
     setView(nextView);
+    if (nextView === 'journal' && state.journalEntryIds.length > 0) {
+      const hasUnread = state.journalEntryIds.some(
+        (id) => !state.readJournalEntryIds.includes(id)
+      );
+      if (hasUnread) {
+        setState((current) => ({
+          ...current,
+          readJournalEntryIds: Array.from(
+            new Set([...current.readJournalEntryIds, ...current.journalEntryIds])
+          )
+        }));
+      }
+    }
   };
 
   const startTravel = (destination: StarSystem) => {
@@ -155,8 +153,7 @@ function App() {
   };
 
   const followLead = () => {
-    setChoiceResult(null);
-    setView(currentLead.actionView);
+    goTo(currentLead.actionView);
   };
 
   const finishTravel = () => {
