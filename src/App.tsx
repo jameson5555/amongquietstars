@@ -1,6 +1,6 @@
 import type { CSSProperties, PointerEvent } from 'react';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { getSystemThumbnail, getTravelVista, imageAssets } from './assets/imageAssets';
+import { getDestinationArt, getSystemThumbnail, getTravelVista, imageAssets } from './assets/imageAssets';
 import { getEncounter } from './data/encounters';
 import { getJournalEntry } from './data/journal';
 import { getRadioMessage } from './data/radio';
@@ -24,6 +24,7 @@ import type {
 const primaryViewIds = ['map', 'cockpit', 'radio', 'ship'] as const;
 type PrimaryViewId = (typeof primaryViewIds)[number];
 type ScreenViewId = Exclude<ViewId, 'journal'>;
+type ArrivalApproach = { systemId: string; encounterId: string };
 
 const navItems: Array<{ id: PrimaryViewId; label: string }> = [
   { id: 'map', label: 'Map' },
@@ -53,6 +54,7 @@ function App() {
   const [travel, setTravel] = useState<TravelState | null>(null);
   const [activeEncounterId, setActiveEncounterId] = useState<string | null>(null);
   const [choiceResult, setChoiceResult] = useState<string | null>(null);
+  const [arrivalApproach, setArrivalApproach] = useState<ArrivalApproach | null>(null);
   const [now, setNow] = useState(() => Date.now());
 
   const currentSystem = getSystem(state.currentSystemId);
@@ -97,8 +99,12 @@ function App() {
       setChoiceResult(null);
 
       if (arrived) {
-        setActiveEncounterId(activeTravel.encounterId);
-        setView('encounter');
+        setActiveEncounterId(null);
+        setArrivalApproach({
+          systemId: destination.id,
+          encounterId: activeTravel.encounterId
+        });
+        setView('cockpit');
         setJournalOpen(false);
       } else {
         setActiveEncounterId(null);
@@ -110,6 +116,23 @@ function App() {
       window.clearInterval(intervalId);
     };
   }, [activeTravel, state]);
+
+  useEffect(() => {
+    if (!arrivalApproach) {
+      return;
+    }
+
+    const timeoutId = window.setTimeout(() => {
+      setActiveEncounterId(arrivalApproach.encounterId);
+      setArrivalApproach(null);
+      setChoiceResult(null);
+      setView('encounter');
+    }, 1500);
+
+    return () => {
+      window.clearTimeout(timeoutId);
+    };
+  }, [arrivalApproach]);
 
   const markJournalRead = () => {
     if (state.journalEntryIds.length > 0) {
@@ -183,6 +206,7 @@ function App() {
       activeTravel: nextTravel
     }));
     setTravel(nextTravel);
+    setArrivalApproach(null);
     setNow(departedAt);
     setChoiceResult(null);
     setView('cockpit');
@@ -205,6 +229,7 @@ function App() {
       activeTravel: undefined
     });
     setTravel(null);
+    setArrivalApproach(null);
 
     if (nextState.currentSystemId !== destination.id) {
       setActiveEncounterId(null);
@@ -213,8 +238,12 @@ function App() {
       return;
     }
 
-    setActiveEncounterId(travel.encounterId);
-    setView('encounter');
+    setActiveEncounterId(null);
+    setArrivalApproach({
+      systemId: destination.id,
+      encounterId: travel.encounterId
+    });
+    setView('cockpit');
     setJournalOpen(false);
   };
 
@@ -228,6 +257,7 @@ function App() {
     setState(createInitialState());
     setTravel(null);
     setActiveEncounterId(null);
+    setArrivalApproach(null);
     setChoiceResult(null);
     setView('cockpit');
     setJournalOpen(false);
@@ -242,6 +272,7 @@ function App() {
               activeView={view}
               currentSystem={currentSystem}
               activeTravel={activeTravel}
+              arrivalApproach={arrivalApproach}
               now={now}
               currentLead={currentLead}
               state={state}
@@ -320,6 +351,7 @@ function PanoramicCabinExperience({
   activeView,
   currentSystem,
   activeTravel,
+  arrivalApproach,
   now,
   currentLead,
   state,
@@ -334,6 +366,7 @@ function PanoramicCabinExperience({
   activeView: PrimaryViewId;
   currentSystem: StarSystem;
   activeTravel?: ActiveTravelState;
+  arrivalApproach: ArrivalApproach | null;
   now: number;
   currentLead: CurrentLead;
   state: PlayerState;
@@ -361,12 +394,19 @@ function PanoramicCabinExperience({
     };
   }, [activeView]);
 
+  const windowSystem = arrivalApproach ? getSystem(arrivalApproach.systemId) : currentSystem;
+  const windowDestinationArt = getDestinationArt(windowSystem.id);
+  const destinationStyle = {
+    '--destination-size': `${windowDestinationArt.size}%`,
+    '--destination-x': `${windowDestinationArt.x}%`,
+    '--destination-y': `${windowDestinationArt.y}%`
+  } as CSSProperties;
+
   const sceneStyle = {
     '--art-cockpit': `url(${imageAssets.viewCockpitForward})`,
     '--art-map': `url(${imageAssets.viewMapCeiling})`,
     '--art-ship': `url(${imageAssets.viewShipAft})`,
-    '--art-radio': `url(${imageAssets.viewRadioConsole})`,
-    '--space-view': `url(${getSystemThumbnail(currentSystem.id)})`
+    '--art-radio': `url(${imageAssets.viewRadioConsole})`
   } as CSSProperties;
 
   const handlePointerDown = (event: PointerEvent<HTMLDivElement>) => {
@@ -398,6 +438,8 @@ function PanoramicCabinExperience({
   return (
     <div
       className={`cabin-experience view-${activeView} ${activeTravel ? 'travel-active' : ''} ${
+        arrivalApproach ? 'arrival-approach' : ''
+      } ${
         overlaysReady ? 'overlays-ready' : 'overlays-transitioning'
       }`}
       style={sceneStyle}
@@ -414,7 +456,15 @@ function PanoramicCabinExperience({
           <div className="scene-art-plate art-ship" />
           <div className="scene-art-plate art-radio" />
           <div className="scene-cockpit-window-hotspot" aria-hidden={activeView !== 'cockpit'}>
-            <div className="cockpit-window-view" />
+            <div className="cockpit-window-view">
+              <div className="cockpit-starfield" />
+              <img
+                src={windowDestinationArt.src}
+                alt=""
+                className={`cockpit-destination-art destination-${windowDestinationArt.kind}`}
+                style={destinationStyle}
+              />
+            </div>
           </div>
         </div>
         <div className="scene-vignette" />
@@ -424,6 +474,7 @@ function PanoramicCabinExperience({
         activeView={activeView}
         currentSystem={currentSystem}
         activeTravel={activeTravel}
+        arrivalApproach={arrivalApproach}
         now={now}
         currentLead={currentLead}
         state={state}
@@ -442,6 +493,7 @@ function CabinOverlay({
   activeView,
   currentSystem,
   activeTravel,
+  arrivalApproach,
   now,
   currentLead,
   state,
@@ -455,6 +507,7 @@ function CabinOverlay({
   activeView: PrimaryViewId;
   currentSystem: StarSystem;
   activeTravel?: ActiveTravelState;
+  arrivalApproach: ArrivalApproach | null;
   now: number;
   currentLead: CurrentLead;
   state: PlayerState;
@@ -466,6 +519,7 @@ function CabinOverlay({
   onReset: () => void;
 }) {
   const activeDestination = activeTravel ? getSystem(activeTravel.toSystemId) : undefined;
+  const arrivingDestination = arrivalApproach ? getSystem(arrivalApproach.systemId) : undefined;
   const travelRemainingMs = activeTravel ? activeTravel.arrivesAt - now : 0;
   const [selectedMapSystemId, setSelectedMapSystemId] = useState<string>();
   const selectedSystemId = selectedMapSystemId ?? recommendedSystemId ?? currentSystem.id;
@@ -487,12 +541,26 @@ function CabinOverlay({
         <div className="overlay-layer cockpit-overlay">
           <div className="overlay-band cockpit-top-band">
             <div className="holo-panel holo-compact">
-              <p className="eyebrow">{activeTravel && activeDestination ? 'In transit' : 'Orbit status'}</p>
-              <h2>{activeTravel && activeDestination ? `To ${activeDestination.name}` : currentSystem.name}</h2>
+              <p className="eyebrow">
+                {arrivalApproach && arrivingDestination
+                  ? 'Final approach'
+                  : activeTravel && activeDestination
+                    ? 'In transit'
+                    : 'Orbit status'}
+              </p>
+              <h2>
+                {arrivalApproach && arrivingDestination
+                  ? arrivingDestination.name
+                  : activeTravel && activeDestination
+                    ? `To ${activeDestination.name}`
+                    : currentSystem.name}
+              </h2>
               <p>
-                {activeTravel && activeDestination
-                  ? `Arriving in ${formatDuration(travelRemainingMs)}`
-                  : 'Stable orbit. Survey windows open.'}
+                {arrivalApproach && arrivingDestination
+                  ? 'Completing approach. Stand by.'
+                  : activeTravel && activeDestination
+                    ? `Arriving in ${formatDuration(travelRemainingMs)}`
+                    : 'Stable orbit. Survey windows open.'}
               </p>
             </div>
           </div>

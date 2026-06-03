@@ -19,12 +19,13 @@ Recommended usage:
 - `view_radio_console.webp` — portrait starboard radio console plate with an embedded message display
 - `cockpit_background.webp` — main cockpit/home screen hero background
 - `title_background.webp` — title/start screen
-- `nebula_vista_01.webp`, `nebula_vista_02.webp`, `nebula_vista_03.webp` — travel/voyage backgrounds
-- `space_station_lumen_rest.webp` — home station / docked state
-- `asteroid_belt_outpost.webp` — asteroid/field encounter background
-- `planet_*.webp` — star map or system detail tiles
+- `nebula_vista_01.webp`, `nebula_vista_02.webp`, `nebula_vista_03.webp` — opaque full-window travel/voyage backdrops
+- `space_station_lumen_rest.webp` — transparent destination object for Glass Harbor / station views
+- `asteroid_belt_outpost.webp` — transparent destination object for asteroid/outpost systems
+- `planet_*.webp` — transparent destination objects for cockpit/map/encounter use
 - `journal_pages_background.webp` — Journal of Wonders header/background
 
 A manifest is included as `image-manifest.json`, and a TypeScript helper is included as `image-assets.ts`. PNG fallbacks are intentionally omitted because the app targets modern browsers.
 
 The cockpit cutout is generated from `source-images/view_cockpit_forward_source.png` with `npm run assets:cockpit-window`.
+Destination objects/backdrops are generated from `source-images/*_source.png` with `npm run assets:destinations`.

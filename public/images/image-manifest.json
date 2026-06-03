@@ -53,55 +53,55 @@
       "id": "nebula_vista_01",
       "file": "/images/nebula_vista_01.webp",
       "width": 1200,
-      "height": 597
+      "height": 760
     },
     {
       "id": "nebula_vista_02",
       "file": "/images/nebula_vista_02.webp",
       "width": 1200,
-      "height": 548
+      "height": 760
     },
     {
       "id": "nebula_vista_03",
       "file": "/images/nebula_vista_03.webp",
       "width": 1200,
-      "height": 611
+      "height": 760
     },
     {
       "id": "space_station_lumen_rest",
       "file": "/images/space_station_lumen_rest.webp",
-      "width": 1200,
-      "height": 484
+      "width": 768,
+      "height": 768
     },
     {
       "id": "asteroid_belt_outpost",
       "file": "/images/asteroid_belt_outpost.webp",
-      "width": 1200,
-      "height": 403
+      "width": 768,
+      "height": 768
     },
     {
       "id": "planet_lumen_rest",
       "file": "/images/planet_lumen_rest.webp",
       "width": 768,
-      "height": 616
+      "height": 768
     },
     {
       "id": "planet_vela_rest",
       "file": "/images/planet_vela_rest.webp",
       "width": 768,
-      "height": 583
+      "height": 768
     },
     {
       "id": "planet_marrowlight",
       "file": "/images/planet_marrowlight.webp",
       "width": 768,
-      "height": 567
+      "height": 768
     },
     {
       "id": "planet_bluewake",
       "file": "/images/planet_bluewake.webp",
       "width": 768,
-      "height": 489
+      "height": 768
     },
     {
       "id": "journal_pages_background",

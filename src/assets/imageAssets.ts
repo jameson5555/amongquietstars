@@ -24,6 +24,16 @@ export const imageAssets = {
 
 export type ImageAssetKey = keyof typeof imageAssets;
 
+export type DestinationArtKind = 'object' | 'backdrop';
+
+export interface DestinationArt {
+  src: string;
+  kind: DestinationArtKind;
+  size: number;
+  x: number;
+  y: number;
+}
+
 export const systemThumbnails: Record<string, string> = {
   'lumen-rest': imageAssets.planetLumenRest,
   'vela-rest': imageAssets.planetVelaRest,
@@ -38,6 +48,21 @@ export const systemThumbnails: Record<string, string> = {
 };
 
 export const getSystemThumbnail = (systemId: string) => systemThumbnails[systemId] ?? imageAssets.nebulaVista01;
+
+export const destinationArt: Record<string, DestinationArt> = {
+  'lumen-rest': { src: imageAssets.planetLumenRest, kind: 'object', size: 36, x: 56, y: 43 },
+  'vela-rest': { src: imageAssets.planetVelaRest, kind: 'object', size: 34, x: 55, y: 43 },
+  marrowlight: { src: imageAssets.planetMarrowlight, kind: 'object', size: 34, x: 54, y: 44 },
+  bluewake: { src: imageAssets.planetBluewake, kind: 'object', size: 34, x: 55, y: 43 },
+  'kites-end': { src: imageAssets.asteroidBeltOutpost, kind: 'object', size: 42, x: 55, y: 45 },
+  'orison-belt': { src: imageAssets.asteroidBeltOutpost, kind: 'object', size: 42, x: 55, y: 45 },
+  'pale-current': { src: imageAssets.nebulaVista02, kind: 'backdrop', size: 100, x: 50, y: 50 },
+  'tallow-star': { src: imageAssets.nebulaVista03, kind: 'backdrop', size: 100, x: 50, y: 50 },
+  'glass-harbor': { src: imageAssets.spaceStationLumenRest, kind: 'object', size: 40, x: 54, y: 44 },
+  'ember-shoal': { src: imageAssets.nebulaVista01, kind: 'backdrop', size: 100, x: 50, y: 50 }
+};
+
+export const getDestinationArt = (systemId: string) => destinationArt[systemId] ?? destinationArt['ember-shoal']!;
 
 export const getTravelVista = (destinationId: string) => {
   const vistas = [imageAssets.nebulaVista01, imageAssets.nebulaVista02, imageAssets.nebulaVista03];

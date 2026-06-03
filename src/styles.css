@@ -1821,17 +1821,61 @@ body {
   width: 100%;
   height: 100%;
   background:
-    linear-gradient(180deg, rgba(7, 13, 27, 0.28), rgba(7, 13, 27, 0.1) 44%, rgba(7, 13, 27, 0.24)),
-    radial-gradient(circle at 62% 55%, transparent 0 16%, rgba(3, 8, 16, 0.18) 44%, rgba(3, 8, 16, 0.58) 78%),
-    var(--space-view),
-    radial-gradient(circle at 30% 30%, #88d5ff 0 1px, transparent 1px),
-    radial-gradient(circle at 62% 42%, #f8ebbf 0 1.5px, transparent 1.5px),
     radial-gradient(circle at 22% 26%, rgba(118, 190, 255, 0.28), transparent 18%),
     linear-gradient(180deg, #030914, #071a31 62%, #040914);
-  background-repeat: no-repeat, no-repeat, no-repeat, repeat, repeat, no-repeat, no-repeat;
-  background-size: cover, cover, min(34%, 300px) auto, 180px 180px, 220px 220px, cover, cover;
-  background-position: center, center, 55% 42%, center, center, center, center;
   box-shadow: inset 0 0 60px rgba(4, 11, 22, 0.18);
+}
+
+.cockpit-starfield,
+.cockpit-destination-art {
+  position: absolute;
+  pointer-events: none;
+}
+
+.cockpit-starfield {
+  inset: 0;
+  background:
+    linear-gradient(180deg, rgba(7, 13, 27, 0.28), rgba(7, 13, 27, 0.1) 44%, rgba(7, 13, 27, 0.24)),
+    radial-gradient(circle at 62% 55%, transparent 0 16%, rgba(3, 8, 16, 0.18) 44%, rgba(3, 8, 16, 0.58) 78%),
+    radial-gradient(circle at 30% 30%, #88d5ff 0 1px, transparent 1px),
+    radial-gradient(circle at 62% 42%, #f8ebbf 0 1.5px, transparent 1.5px),
+    linear-gradient(180deg, rgba(3, 9, 20, 0.08), rgba(3, 9, 20, 0.28));
+  background-size: cover, cover, 180px 180px, 220px 220px, cover;
+  background-position: center;
+}
+
+.cockpit-destination-art {
+  left: var(--destination-x);
+  top: var(--destination-y);
+  width: var(--destination-size);
+  height: auto;
+  max-width: none;
+  transform: translate3d(-50%, -50%, 0) scale(1);
+  transform-origin: center;
+  filter: saturate(0.95) brightness(0.9);
+  transition:
+    opacity 260ms ease,
+    transform 800ms cubic-bezier(0.22, 1, 0.36, 1),
+    filter 800ms ease;
+}
+
+.destination-object {
+  object-fit: contain;
+}
+
+.destination-backdrop {
+  inset: 0;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: translate3d(0, 0, 0) scale(1);
+  filter: saturate(0.9) brightness(0.72);
+}
+
+.arrival-approach .cockpit-destination-art {
+  animation: destination-approach 1500ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 .travel-active .cockpit-window-view {
@@ -1840,6 +1884,11 @@ body {
     radial-gradient(circle at 50% 52%, rgba(64, 154, 255, 0.26), transparent 44%),
     linear-gradient(180deg, #020817, #06162a 52%, #020711);
   animation: hyperdrive-window 900ms ease-in-out infinite;
+}
+
+.travel-active .cockpit-starfield,
+.travel-active .cockpit-destination-art {
+  opacity: 0;
 }
 
 .travel-active .cockpit-window-view::before,
@@ -2600,6 +2649,36 @@ body {
     transform: scale(1.28);
     opacity: 0;
     filter: blur(1.4px);
+  }
+}
+
+@keyframes destination-approach {
+  from {
+    opacity: 0.9;
+    transform: translate3d(-50%, -50%, 0) scale(0.86);
+    filter: saturate(0.86) brightness(0.72) blur(0.2px);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(-50%, -50%, 0) scale(1.08);
+    filter: saturate(1) brightness(0.96) blur(0);
+  }
+}
+
+.arrival-approach .destination-backdrop {
+  animation-name: destination-backdrop-approach;
+}
+
+@keyframes destination-backdrop-approach {
+  from {
+    opacity: 0.86;
+    transform: translate3d(0, 0, 0) scale(1);
+    filter: saturate(0.82) brightness(0.62);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1.08);
+    filter: saturate(0.98) brightness(0.82);
   }
 }
 

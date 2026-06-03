@@ -9,6 +9,7 @@
     "preview": "vite preview --host 127.0.0.1",
     "assets": "node scripts/generate-assets.mjs",
     "assets:cockpit-window": "node scripts/cut-cockpit-window.mjs",
+    "assets:destinations": "node scripts/process-destination-images.mjs",
     "lint": "eslint .",
     "typecheck": "tsc -b"
   },
