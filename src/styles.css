@@ -1787,19 +1787,22 @@ body {
 }
 
 .scene-cockpit-window-hotspot {
-  inset: 0;
+  left: 17.2%;
+  top: 15%;
+  width: 64.3%;
+  height: 39.2%;
   z-index: 1;
   overflow: hidden;
   opacity: 0;
   clip-path: polygon(
-    24.5% 15%,
-    77.5% 15%,
-    81.5% 22.5%,
-    79% 48.5%,
-    76.8% 54.2%,
-    24% 54.2%,
-    20.6% 48.5%,
-    17.2% 23%
+    11.4% 0%,
+    93.8% 0%,
+    100% 19.1%,
+    96.1% 85.5%,
+    93% 100%,
+    10.6% 100%,
+    5.3% 85.5%,
+    0% 20.4%
   );
   pointer-events: none;
   transition:
@@ -1838,8 +1841,8 @@ body {
     radial-gradient(circle at 22% 26%, rgba(118, 190, 255, 0.28), transparent 18%),
     linear-gradient(180deg, #030914, #071a31 62%, #040914);
   background-repeat: no-repeat, no-repeat, no-repeat, repeat, repeat, no-repeat, no-repeat;
-  background-size: cover, cover, min(58%, 520px) auto, 180px 180px, 220px 220px, cover, cover;
-  background-position: center, center, 64% 58%, center, center, center, center;
+  background-size: cover, cover, min(62%, 360px) auto, 180px 180px, 220px 220px, cover, cover;
+  background-position: center, center, 66% 70%, center, center, center, center;
   box-shadow: inset 0 0 60px rgba(4, 11, 22, 0.18);
 }
 
