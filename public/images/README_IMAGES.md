@@ -27,4 +27,4 @@ Recommended usage:
 
 A manifest is included as `image-manifest.json`, and a TypeScript helper is included as `image-assets.ts`. PNG fallbacks are intentionally omitted because the app targets modern browsers.
 
-The cockpit cutout is generated from `source-images/view_cockpit_forward_source.webp` with `npm run assets:cockpit-window`.
+The cockpit cutout is generated from `source-images/view_cockpit_forward_source.png` with `npm run assets:cockpit-window`.
