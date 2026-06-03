@@ -1868,7 +1868,7 @@ body {
     67px 53px,
     149px 83px,
     center;
-  animation: starfield-drift 34s linear infinite;
+  animation: starfield-drift 220s linear infinite;
 }
 
 .cockpit-starfield::before,
@@ -1890,17 +1890,20 @@ body {
 }
 
 .cockpit-starfield::after {
-  left: 78%;
-  top: 18%;
+  left: 76%;
+  top: 14%;
   width: 2px;
-  height: 180px;
+  height: 150px;
   border-radius: 999px;
   background: linear-gradient(180deg, transparent, rgba(255, 244, 200, 0.94), rgba(132, 219, 255, 0.54), transparent);
-  box-shadow: 0 0 12px rgba(150, 225, 255, 0.34);
+  box-shadow:
+    0 0 12px rgba(150, 225, 255, 0.34),
+    -330px 240px 0 -0.5px rgba(255, 231, 165, 0.62),
+    -70px 420px 0 -0.75px rgba(138, 218, 255, 0.52);
   opacity: 0;
   transform: translate3d(0, 0, 0) rotate(58deg) scaleY(0.35);
   transform-origin: 50% 0%;
-  animation: cockpit-meteor 12s ease-in-out infinite;
+  animation: cockpit-meteor 29s ease-in-out infinite;
 }
 
 .cockpit-destination-art {
@@ -2030,7 +2033,7 @@ body {
 }
 
 .resource-holo-panel .resource-strip {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(1, minmax(0, 1fr));
   gap: 6px 10px;
   margin-top: 8px;
 }
@@ -2682,13 +2685,13 @@ body {
     background-position:
       center,
       center,
-      108px 148px,
-      186px 138px,
-      194px 238px,
-      318px 230px,
-      300px 342px,
-      404px 336px,
-      570px 442px,
+      34px 36px,
+      68px 49px,
+      42px 92px,
+      120px 64px,
+      58px 130px,
+      104px 86px,
+      190px 116px,
       center;
   }
 }
@@ -2710,20 +2713,44 @@ body {
 
 @keyframes cockpit-meteor {
   0%,
-  68% {
+  18% {
     opacity: 0;
     transform: translate3d(0, 0, 0) rotate(58deg) scaleY(0.25);
   }
-  72% {
-    opacity: 0.9;
+  21% {
+    opacity: 0.78;
   }
+  25% {
+    opacity: 0;
+    transform: translate3d(-320px, 250px, 0) rotate(58deg) scaleY(0.92);
+  }
+  26%,
+  48% {
+    opacity: 0;
+    transform: translate3d(-360px, 210px, 0) rotate(69deg) scaleY(0.22);
+  }
+  51% {
+    opacity: 0.64;
+  }
+  55% {
+    opacity: 0;
+    transform: translate3d(150px, 520px, 0) rotate(69deg) scaleY(0.78);
+  }
+  56%,
   78% {
     opacity: 0;
-    transform: translate3d(-360px, 280px, 0) rotate(58deg) scaleY(1);
+    transform: translate3d(-70px, 360px, 0) rotate(43deg) scaleY(0.18);
+  }
+  81% {
+    opacity: 0.58;
+  }
+  85% {
+    opacity: 0;
+    transform: translate3d(-470px, 90px, 0) rotate(43deg) scaleY(0.66);
   }
   100% {
     opacity: 0;
-    transform: translate3d(-360px, 280px, 0) rotate(58deg) scaleY(0.25);
+    transform: translate3d(-470px, 90px, 0) rotate(43deg) scaleY(0.18);
   }
 }
 
