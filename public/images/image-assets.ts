@@ -13,6 +13,7 @@ export const imageAssets = {
   nebulaVista01: '/images/nebula_vista_01.webp',
   nebulaVista02: '/images/nebula_vista_02.webp',
   nebulaVista03: '/images/nebula_vista_03.webp',
+  hyperdriveTunnel: '/images/hyperdrive.gif',
   spaceStationLumenRest: '/images/space_station_lumen_rest.webp',
   asteroidBeltOutpost: '/images/asteroid_belt_outpost.webp',
   planetLumenRest: '/images/planet_lumen_rest.webp',

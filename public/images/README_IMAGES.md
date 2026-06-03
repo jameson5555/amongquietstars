@@ -20,6 +20,7 @@ Recommended usage:
 - `cockpit_background.webp` — main cockpit/home screen hero background
 - `title_background.webp` — title/start screen
 - `nebula_vista_01.webp`, `nebula_vista_02.webp`, `nebula_vista_03.webp` — opaque full-window travel/voyage backdrops
+- `hyperdrive.gif` — animated radial star-tunnel shown through the cockpit window during active travel
 - `space_station_lumen_rest.webp` — transparent destination object for Glass Harbor / station views
 - `asteroid_belt_outpost.webp` — transparent destination object for asteroid/outpost systems
 - `planet_*.webp` — transparent destination objects for cockpit/map/encounter use

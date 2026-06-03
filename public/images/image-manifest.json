@@ -68,6 +68,12 @@
       "height": 760
     },
     {
+      "id": "hyperdrive",
+      "file": "/images/hyperdrive.gif",
+      "width": 500,
+      "height": 500
+    },
+    {
       "id": "space_station_lumen_rest",
       "file": "/images/space_station_lumen_rest.webp",
       "width": 768,

@@ -464,6 +464,7 @@ function PanoramicCabinExperience({
                 className={`cockpit-destination-art destination-${windowDestinationArt.kind}`}
                 style={destinationStyle}
               />
+              <img src={imageAssets.hyperdriveTunnel} alt="" className="cockpit-hyperdrive-art" />
             </div>
           </div>
         </div>
