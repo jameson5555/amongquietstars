@@ -1890,19 +1890,20 @@ body {
 }
 
 .cockpit-starfield::after {
-  left: 76%;
-  top: 14%;
-  width: 2px;
-  height: 150px;
+  left: 82%;
+  top: 18%;
+  width: 126px;
+  height: 6px;
   border-radius: 999px;
-  background: linear-gradient(180deg, transparent, rgba(255, 244, 200, 0.94), rgba(132, 219, 255, 0.54), transparent);
+  background:
+    radial-gradient(circle at 100% 50%, rgba(255, 247, 210, 0.98) 0 2.8px, rgba(140, 223, 255, 0.66) 3.8px, transparent 7px),
+    linear-gradient(90deg, transparent 0%, rgba(126, 213, 255, 0.03) 18%, rgba(126, 213, 255, 0.2) 58%, rgba(255, 239, 178, 0.84) 92%, transparent 100%);
   box-shadow:
-    0 0 12px rgba(150, 225, 255, 0.34),
-    -330px 240px 0 -0.5px rgba(255, 231, 165, 0.62),
-    -70px 420px 0 -0.75px rgba(138, 218, 255, 0.52);
+    0 0 10px rgba(150, 225, 255, 0.28),
+    6px 0 12px rgba(255, 238, 172, 0.24);
   opacity: 0;
-  transform: translate3d(0, 0, 0) rotate(58deg) scaleY(0.35);
-  transform-origin: 50% 0%;
+  transform: rotate(146deg) scaleX(0.42);
+  transform-origin: 100% 50%;
   animation: cockpit-meteor 29s ease-in-out infinite;
 }
 
@@ -2713,44 +2714,58 @@ body {
 
 @keyframes cockpit-meteor {
   0%,
-  18% {
+  14% {
+    left: 82%;
+    top: 18%;
     opacity: 0;
-    transform: translate3d(0, 0, 0) rotate(58deg) scaleY(0.25);
+    transform: rotate(146deg) scaleX(0.4);
   }
-  21% {
+  16% {
     opacity: 0.78;
   }
-  25% {
+  20% {
+    left: 46%;
+    top: 42%;
     opacity: 0;
-    transform: translate3d(-320px, 250px, 0) rotate(58deg) scaleY(0.92);
+    transform: rotate(146deg) scaleX(0.96);
   }
-  26%,
-  48% {
+  21%,
+  45% {
+    left: 18%;
+    top: 24%;
     opacity: 0;
-    transform: translate3d(-360px, 210px, 0) rotate(69deg) scaleY(0.22);
+    transform: rotate(28deg) scaleX(0.36);
   }
-  51% {
+  47% {
     opacity: 0.64;
   }
-  55% {
+  51% {
+    left: 62%;
+    top: 48%;
     opacity: 0;
-    transform: translate3d(150px, 520px, 0) rotate(69deg) scaleY(0.78);
+    transform: rotate(28deg) scaleX(0.82);
   }
-  56%,
-  78% {
+  52%,
+  74% {
+    left: 78%;
+    top: 68%;
     opacity: 0;
-    transform: translate3d(-70px, 360px, 0) rotate(43deg) scaleY(0.18);
+    transform: rotate(203deg) scaleX(0.34);
   }
-  81% {
+  76% {
     opacity: 0.58;
   }
-  85% {
+  80% {
+    left: 36%;
+    top: 50%;
     opacity: 0;
-    transform: translate3d(-470px, 90px, 0) rotate(43deg) scaleY(0.66);
+    transform: rotate(203deg) scaleX(0.78);
   }
   100% {
+    left: 36%;
+    top: 50%;
     opacity: 0;
-    transform: translate3d(-470px, 90px, 0) rotate(43deg) scaleY(0.18);
+    transform: rotate(203deg) scaleX(0.34);
   }
 }
 
