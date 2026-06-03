@@ -1,4 +1,4 @@
-import type { CSSProperties } from 'react';
+import type { CSSProperties, PointerEvent } from 'react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { getSystemThumbnail, getTravelVista, imageAssets } from './assets/imageAssets';
 import { getEncounter } from './data/encounters';
@@ -21,14 +21,15 @@ import type {
   ViewId
 } from './types/game';
 
-const primaryViewIds = ['cockpit', 'map', 'journal', 'ship', 'radio'] as const;
+const primaryViewIds = ['map', 'cockpit', 'radio', 'ship'] as const;
 type PrimaryViewId = (typeof primaryViewIds)[number];
+type ScreenViewId = Exclude<ViewId, 'journal'>;
 
-const navItems: Array<{ id: Exclude<PrimaryViewId, 'journal'>; label: string }> = [
+const navItems: Array<{ id: PrimaryViewId; label: string }> = [
   { id: 'map', label: 'Map' },
-  { id: 'ship', label: 'Ship' },
   { id: 'cockpit', label: 'Cockpit' },
-  { id: 'radio', label: 'Radio' }
+  { id: 'radio', label: 'Radio' },
+  { id: 'ship', label: 'Ship' }
 ];
 
 const resourceLabels: Array<keyof PlayerState['resources']> = ['fuel', 'supplies', 'hull', 'credits'];
@@ -42,12 +43,13 @@ const formatDuration = (ms: number) => {
 
 const isDefined = <T,>(value: T | undefined): value is T => value !== undefined;
 
-const isPrimaryView = (view: ViewId): view is PrimaryViewId =>
+const isPrimaryView = (view: ViewId | ScreenViewId): view is PrimaryViewId =>
   primaryViewIds.includes(view as PrimaryViewId);
 
 function App() {
   const [state, setState] = useState<PlayerState>(() => loadPlayerState());
-  const [view, setView] = useState<ViewId>('cockpit');
+  const [view, setView] = useState<ScreenViewId>('cockpit');
+  const [journalOpen, setJournalOpen] = useState(false);
   const [travel, setTravel] = useState<TravelState | null>(null);
   const [activeEncounterId, setActiveEncounterId] = useState<string | null>(null);
   const [choiceResult, setChoiceResult] = useState<string | null>(null);
@@ -60,6 +62,7 @@ function App() {
   const radioHistory = state.radioHistoryIds.map(getRadioMessage).filter(isDefined);
   const activeEncounter = activeEncounterId ? getEncounter(activeEncounterId) : undefined;
   const activeTravel = state.activeTravel;
+  const unreadJournalCount = state.journalEntryIds.filter((id) => !state.readJournalEntryIds.includes(id)).length;
 
   useEffect(() => {
     savePlayerState(state);
@@ -96,6 +99,7 @@ function App() {
       if (arrived) {
         setActiveEncounterId(activeTravel.encounterId);
         setView('encounter');
+        setJournalOpen(false);
       } else {
         setActiveEncounterId(null);
         setView('cockpit');
@@ -107,10 +111,8 @@ function App() {
     };
   }, [activeTravel, state]);
 
-  const goTo = (nextView: ViewId) => {
-    setChoiceResult(null);
-    setView(nextView);
-    if (nextView === 'journal' && state.journalEntryIds.length > 0) {
+  const markJournalRead = () => {
+    if (state.journalEntryIds.length > 0) {
       const hasUnread = state.journalEntryIds.some(
         (id) => !state.readJournalEntryIds.includes(id)
       );
@@ -123,6 +125,40 @@ function App() {
         }));
       }
     }
+  };
+
+  const openJournal = () => {
+    setChoiceResult(null);
+    markJournalRead();
+    setJournalOpen(true);
+    if (!isPrimaryView(view)) {
+      setView('cockpit');
+    }
+  };
+
+  const closeJournal = () => {
+    setJournalOpen(false);
+  };
+
+  const goTo = (nextView: ViewId) => {
+    setChoiceResult(null);
+    if (nextView === 'journal') {
+      openJournal();
+      return;
+    }
+
+    setJournalOpen(false);
+    setView(nextView);
+  };
+
+  const navigateCabin = (direction: 1 | -1) => {
+    if (!isPrimaryView(view)) {
+      return;
+    }
+
+    const currentIndex = primaryViewIds.indexOf(view);
+    const nextIndex = (currentIndex + direction + primaryViewIds.length) % primaryViewIds.length;
+    goTo(primaryViewIds[nextIndex]!);
   };
 
   const startTravel = (destination: StarSystem) => {
@@ -150,6 +186,7 @@ function App() {
     setNow(departedAt);
     setChoiceResult(null);
     setView('cockpit');
+    setJournalOpen(false);
   };
 
   const followLead = () => {
@@ -172,11 +209,13 @@ function App() {
     if (nextState.currentSystemId !== destination.id) {
       setActiveEncounterId(null);
       setView('cockpit');
+      setJournalOpen(false);
       return;
     }
 
     setActiveEncounterId(travel.encounterId);
     setView('encounter');
+    setJournalOpen(false);
   };
 
   const chooseEncounterOption = (encounter: Encounter, choice: EncounterChoice) => {
@@ -191,6 +230,7 @@ function App() {
     setActiveEncounterId(null);
     setChoiceResult(null);
     setView('cockpit');
+    setJournalOpen(false);
   };
 
   return (
@@ -207,11 +247,11 @@ function App() {
               state={state}
               systems={visibleSystems}
               recommendedSystemId={currentLead.destinationId}
-              journal={journal}
               radioHistory={radioHistory}
               onLeadAction={followLead}
               onTravel={startTravel}
               onReset={resetSave}
+              onNavigate={navigateCabin}
             />
           )}
           {view === 'travel' && travel && <TravelScreen travel={travel} onFinish={finishTravel} />}
@@ -220,17 +260,21 @@ function App() {
               encounter={activeEncounter}
               choiceResult={choiceResult}
               onChoose={chooseEncounterOption}
-              onDone={() => goTo('journal')}
+              onDone={openJournal}
             />
+          )}
+          {isPrimaryView(view) && journalOpen && (
+            <JournalOverlay journal={journal} onClose={closeJournal} />
           )}
         </section>
 
         {/* Floating Journal Button */}
         <button
-          className={`journal-fab ${view === 'journal' ? 'active' : ''}`}
+          className={`journal-fab ${journalOpen ? 'active' : ''}`}
           type="button"
-          onClick={() => goTo(view === 'journal' ? 'cockpit' : 'journal')}
+          onClick={() => (journalOpen ? closeJournal() : openJournal())}
           aria-label="Journal"
+          aria-pressed={journalOpen}
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -248,9 +292,9 @@ function App() {
             <line x1="10" y1="10" x2="16" y2="10" />
             <line x1="10" y1="14" x2="16" y2="14" />
           </svg>
-          {state.journalEntryIds.filter((id) => !state.readJournalEntryIds.includes(id)).length > 0 && view !== 'journal' && (
-            <span className="journal-badge" aria-label={`${state.journalEntryIds.filter((id) => !state.readJournalEntryIds.includes(id)).length} unread entries`}>
-              {state.journalEntryIds.filter((id) => !state.readJournalEntryIds.includes(id)).length}
+          {unreadJournalCount > 0 && !journalOpen && (
+            <span className="journal-badge" aria-label={`${unreadJournalCount} unread entries`}>
+              {unreadJournalCount}
             </span>
           )}
         </button>
@@ -281,11 +325,11 @@ function PanoramicCabinExperience({
   state,
   systems,
   recommendedSystemId,
-  journal,
   radioHistory,
   onLeadAction,
   onTravel,
-  onReset
+  onReset,
+  onNavigate
 }: {
   activeView: PrimaryViewId;
   currentSystem: StarSystem;
@@ -295,18 +339,19 @@ function PanoramicCabinExperience({
   state: PlayerState;
   systems: StarSystem[];
   recommendedSystemId?: string;
-  journal: JournalEntry[];
   radioHistory: RadioMessage[];
   onLeadAction: () => void;
   onTravel: (system: StarSystem) => void;
   onReset: () => void;
+  onNavigate: (direction: 1 | -1) => void;
 }) {
   const [readyView, setReadyView] = useState<PrimaryViewId>(activeView);
+  const swipeStartRef = useRef<{ x: number; y: number; pointerId: number } | null>(null);
 
   const overlaysReady = readyView === activeView;
 
   useEffect(() => {
-    const delay = activeView === 'map' || activeView === 'journal' ? 360 : 760;
+    const delay = activeView === 'map' ? 360 : 760;
     const timeoutId = window.setTimeout(() => {
       setReadyView(activeView);
     }, delay);
@@ -319,11 +364,36 @@ function PanoramicCabinExperience({
   const sceneStyle = {
     '--art-cockpit': `url(${imageAssets.viewCockpitForward})`,
     '--art-map': `url(${imageAssets.viewMapCeiling})`,
-    '--art-journal': `url(${imageAssets.viewJournalTablet})`,
     '--art-ship': `url(${imageAssets.viewShipAft})`,
     '--art-radio': `url(${imageAssets.viewRadioConsole})`,
     '--space-view': `url(${getSystemThumbnail(currentSystem.id)})`
   } as CSSProperties;
+
+  const handlePointerDown = (event: PointerEvent<HTMLDivElement>) => {
+    swipeStartRef.current = {
+      x: event.clientX,
+      y: event.clientY,
+      pointerId: event.pointerId
+    };
+  };
+
+  const handlePointerUp = (event: PointerEvent<HTMLDivElement>) => {
+    const start = swipeStartRef.current;
+    swipeStartRef.current = null;
+
+    if (!start || start.pointerId !== event.pointerId) {
+      return;
+    }
+
+    const deltaX = event.clientX - start.x;
+    const deltaY = event.clientY - start.y;
+
+    if (Math.abs(deltaX) < 48 || Math.abs(deltaX) < Math.abs(deltaY) * 1.25) {
+      return;
+    }
+
+    onNavigate(deltaX < 0 ? 1 : -1);
+  };
 
   return (
     <div
@@ -331,12 +401,16 @@ function PanoramicCabinExperience({
         overlaysReady ? 'overlays-ready' : 'overlays-transitioning'
       }`}
       style={sceneStyle}
+      onPointerDown={handlePointerDown}
+      onPointerUp={handlePointerUp}
+      onPointerCancel={() => {
+        swipeStartRef.current = null;
+      }}
     >
       <div className="cabin-viewport">
         <div className="cabin-stage" aria-hidden="true">
           <div className="scene-art-plate art-cockpit" />
           <div className="scene-art-plate art-map" />
-          <div className="scene-art-plate art-journal" />
           <div className="scene-art-plate art-ship" />
           <div className="scene-art-plate art-radio" />
           <div className="scene-cockpit-window-hotspot" aria-hidden={activeView !== 'cockpit'}>
@@ -355,7 +429,6 @@ function PanoramicCabinExperience({
         state={state}
         systems={systems}
         recommendedSystemId={recommendedSystemId}
-        journal={journal}
         radioHistory={radioHistory}
         onLeadAction={onLeadAction}
         onTravel={onTravel}
@@ -374,7 +447,6 @@ function CabinOverlay({
   state,
   systems,
   recommendedSystemId,
-  journal,
   radioHistory,
   onLeadAction,
   onTravel,
@@ -388,7 +460,6 @@ function CabinOverlay({
   state: PlayerState;
   systems: StarSystem[];
   recommendedSystemId?: string;
-  journal: JournalEntry[];
   radioHistory: RadioMessage[];
   onLeadAction: () => void;
   onTravel: (system: StarSystem) => void;
@@ -517,35 +588,6 @@ function CabinOverlay({
           </div>
         </div>
       );
-    case 'journal':
-      return (
-        <div className="overlay-layer journal-overlay">
-          <div className="tablet-surface">
-            {journal.length === 0 ? (
-              <div className="empty-state tablet-empty">
-                No discoveries logged yet. Follow the current lead from the cockpit and the first odd reading will mark this tablet.
-              </div>
-            ) : (
-              <div className="journal-list tablet-journal-list">
-                {journal.map((entry) => (
-                  <article className="journal-entry" key={entry.id}>
-                    <div className="entry-topline">
-                      <span>{entry.category}</span>
-                      <strong>{entry.status}</strong>
-                    </div>
-                    <h3>{entry.title}</h3>
-                    <p>{entry.observation}</p>
-                    <footer>
-                      <span>{entry.location}</span>
-                      {entry.relatedDiscoveries.length > 0 && <span>{entry.relatedDiscoveries.length} linked note(s)</span>}
-                    </footer>
-                  </article>
-                ))}
-              </div>
-            )}
-          </div>
-        </div>
-      );
     case 'ship':
       return (
         <div className="overlay-layer ship-overlay">
@@ -611,6 +653,44 @@ function CabinOverlay({
         </div>
       );
   }
+}
+
+function JournalOverlay({ journal, onClose }: { journal: JournalEntry[]; onClose: () => void }) {
+  return (
+    <div className="journal-modal" role="dialog" aria-modal="true" aria-label="Journal">
+      <button className="journal-backdrop" type="button" aria-label="Close journal" onClick={onClose} />
+      <div className="journal-tablet-frame">
+        <img src={imageAssets.journalTabletOverlay} alt="" className="journal-tablet-art" />
+        <div className="tablet-surface">
+          {journal.length === 0 ? (
+            <div className="empty-state tablet-empty">
+              No discoveries logged yet. Follow the current lead from the cockpit and the first odd reading will mark this tablet.
+            </div>
+          ) : (
+            <div className="journal-list tablet-journal-list">
+              {journal.map((entry) => (
+                <article className="journal-entry" key={entry.id}>
+                  <div className="entry-topline">
+                    <span>{entry.category}</span>
+                    <strong>{entry.status}</strong>
+                  </div>
+                  <h3>{entry.title}</h3>
+                  <p>{entry.observation}</p>
+                  <footer>
+                    <span>{entry.location}</span>
+                    {entry.relatedDiscoveries.length > 0 && <span>{entry.relatedDiscoveries.length} linked note(s)</span>}
+                  </footer>
+                </article>
+              ))}
+            </div>
+          )}
+        </div>
+        <button className="journal-close-button" type="button" onClick={onClose} aria-label="Close journal">
+          Close
+        </button>
+      </div>
+    </div>
+  );
 }
 
 function ResourceStrip({ state, compact = false }: { state: PlayerState; compact?: boolean }) {

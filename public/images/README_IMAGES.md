@@ -12,8 +12,9 @@ Recommended usage:
 
 - `cabin_panorama_placeholder.svg` — stitched placeholder interior panorama for the panoramic in-ship UI
 - `view_cockpit_forward.webp` — portrait cozy painterly forward cockpit plate with embedded top/bottom overlay screens and a tall canopy opening
-- `view_map_ceiling.webp` — portrait upward cockpit view with two embedded navigation screens and the forward canopy visible below
-- `view_journal_tablet.webp` — portrait downward lap-tablet plate for journal overlays
+- `view_map_ceiling.webp` — portrait port-side cabin view with two embedded navigation screens and cockpit context at the edge
+- `view_journal_tablet.webp` — portrait downward lap-tablet plate retained as a fallback
+- `journal_tablet_overlay.webp` — transparent tablet cutout for the floating journal overlay
 - `view_ship_aft.webp` — portrait aft cabin plate with two embedded monitor zones for ship stats and upgrades
 - `view_radio_console.webp` — portrait starboard radio console plate with an embedded message display
 - `cockpit_background.webp` — main cockpit/home screen hero background

@@ -6,6 +6,7 @@ export const imageAssets = {
   viewCockpitForward: '/images/view_cockpit_forward.webp',
   viewMapCeiling: '/images/view_map_ceiling.webp',
   viewJournalTablet: '/images/view_journal_tablet.webp',
+  journalTabletOverlay: '/images/journal_tablet_overlay.webp',
   viewShipAft: '/images/view_ship_aft.webp',
   viewRadioConsole: '/images/view_radio_console.webp',
   cockpitBackground: '/images/cockpit_background.webp',

@@ -26,6 +26,12 @@
       "height": 1672
     },
     {
+      "id": "journal_tablet_overlay",
+      "file": "/images/journal_tablet_overlay.webp",
+      "width": 941,
+      "height": 1672
+    },
+    {
       "id": "view_ship_aft",
       "file": "/images/view_ship_aft.webp",
       "width": 941,

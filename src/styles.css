@@ -978,6 +978,7 @@ body {
   height: 100%;
   overflow: hidden;
   isolation: isolate;
+  touch-action: pan-y;
 }
 
 .cabin-viewport {
@@ -1693,10 +1694,6 @@ body {
   background-image: var(--art-map);
 }
 
-.art-journal {
-  background-image: var(--art-journal);
-}
-
 .art-ship {
   background-image: var(--art-ship);
 }
@@ -1706,15 +1703,35 @@ body {
 }
 
 .art-cockpit,
+.art-map,
 .art-ship,
 .art-radio {
   transform: scale(1.02) translate3d(0, 0, 0);
 }
 
+.view-map .art-map,
 .view-cockpit .art-cockpit,
 .view-ship .art-ship,
 .view-radio .art-radio {
   opacity: 1;
+}
+
+.view-map .art-map {
+  transform: scale(1) translate3d(0%, 0, 0);
+  background-position: 50% center;
+}
+
+.view-map .art-cockpit {
+  opacity: 0.32;
+  transform: scale(1.02) translate3d(100%, 0, 0);
+}
+
+.view-map .art-radio {
+  transform: scale(1.02) translate3d(200%, 0, 0);
+}
+
+.view-map .art-ship {
+  transform: scale(1.02) translate3d(-100%, 0, 0);
 }
 
 .view-cockpit .art-cockpit {
@@ -1722,16 +1739,41 @@ body {
   background-position: 50% center;
 }
 
-.view-cockpit .art-ship {
+.view-cockpit .art-map {
   transform: scale(1.02) translate3d(-100%, 0, 0);
+}
+
+.view-cockpit .art-ship {
+  transform: scale(1.02) translate3d(200%, 0, 0);
 }
 
 .view-cockpit .art-radio {
   transform: scale(1.02) translate3d(100%, 0, 0);
 }
 
-.view-ship .art-cockpit {
+.view-radio .art-map {
+  transform: scale(1.02) translate3d(-200%, 0, 0);
+}
+
+.view-radio .art-cockpit {
+  transform: scale(1.02) translate3d(-100%, 0, 0);
+}
+
+.view-radio .art-ship {
   transform: scale(1.02) translate3d(100%, 0, 0);
+}
+
+.view-radio .art-radio {
+  transform: scale(1) translate3d(0%, 0, 0);
+  background-position: 50% center;
+}
+
+.view-ship .art-map {
+  transform: scale(1.02) translate3d(100%, 0, 0);
+}
+
+.view-ship .art-cockpit {
+  transform: scale(1.02) translate3d(-200%, 0, 0);
 }
 
 .view-ship .art-ship {
@@ -1740,38 +1782,7 @@ body {
 }
 
 .view-ship .art-radio {
-  transform: scale(1.02) translate3d(200%, 0, 0);
-}
-
-.view-radio .art-cockpit {
   transform: scale(1.02) translate3d(-100%, 0, 0);
-}
-
-.view-radio .art-ship {
-  transform: scale(1.02) translate3d(-200%, 0, 0);
-}
-
-.view-radio .art-radio {
-  transform: scale(1) translate3d(0%, 0, 0);
-  background-position: 50% center;
-}
-
-.art-map,
-.art-journal {
-  transform: scale(1.02) translate3d(0, 14px, 0);
-}
-
-.view-map .art-cockpit,
-.view-journal .art-cockpit {
-  opacity: 1;
-  transform: scale(1) translate3d(0, 0, 0);
-}
-
-.view-map .art-map,
-.view-journal .art-journal {
-  opacity: 1;
-  transform: scale(1) translate3d(0, 0, 0);
-  background-position: 50% center;
 }
 
 .scene-cockpit-window-hotspot {
@@ -2152,13 +2163,13 @@ body {
 }
 
 .view-map .map-shell {
-  left: 8%;
-  right: 8%;
-  top: 14.5%;
-  bottom: 13.5%;
+  left: 15%;
+  right: 14%;
+  top: 16%;
+  bottom: 12%;
   display: grid;
-  grid-template-rows: 37% 30%;
-  gap: 8.5%;
+  grid-template-rows: 42% 34%;
+  gap: 8%;
   padding: 0;
   width: auto;
   max-height: none;
@@ -2191,25 +2202,6 @@ body {
 }
 
 .view-map .overlay-system-list::-webkit-scrollbar {
-  display: none;
-}
-
-.view-journal .tablet-surface {
-  left: 20%;
-  right: 17%;
-  top: 29%;
-  bottom: 13%;
-  width: auto;
-  max-height: none;
-  transform: none;
-}
-
-.view-journal .tablet-journal-list {
-  max-height: min(38vh, 330px);
-  scrollbar-width: none;
-}
-
-.view-journal .tablet-journal-list::-webkit-scrollbar {
   display: none;
 }
 
@@ -2294,16 +2286,16 @@ body {
 }
 
 .view-radio .radio-message p,
-.view-journal .journal-entry p {
+.journal-modal .journal-entry p {
   font-size: 0.78rem;
   line-height: 1.34;
 }
 
-.view-journal .journal-entry {
+.journal-modal .journal-entry {
   padding-block: 9px;
 }
 
-.view-journal .journal-entry h3 {
+.journal-modal .journal-entry h3 {
   margin: 3px 0;
   font-size: 0.9rem;
 }
@@ -2419,10 +2411,6 @@ body {
 
 .view-map .map-shell {
   --screen-transform: perspective(760px) rotateX(2deg) skewX(-1.4deg);
-}
-
-.view-journal .tablet-surface {
-  --screen-transform: perspective(720px) rotateX(5deg) skewX(-1deg);
 }
 
 .view-ship .ship-screen-panel {
@@ -2622,6 +2610,172 @@ body {
     animation: none;
     transition: none;
     filter: none;
+  }
+}
+
+/* Journal tablet overlay */
+.journal-modal {
+  position: absolute;
+  inset: 0;
+  z-index: 24;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.journal-backdrop {
+  position: absolute;
+  inset: 0;
+  min-height: 0;
+  border: 0;
+  border-radius: 0;
+  background:
+    radial-gradient(circle at 50% 48%, rgba(22, 34, 48, 0.34), transparent 42%),
+    rgba(1, 4, 9, 0.64);
+  backdrop-filter: blur(3px) saturate(0.82);
+  -webkit-backdrop-filter: blur(3px) saturate(0.82);
+  cursor: pointer;
+  animation: journal-backdrop-in 180ms ease-out both;
+}
+
+.journal-tablet-frame {
+  position: relative;
+  width: min(92%, 388px);
+  aspect-ratio: 941 / 1672;
+  max-height: calc(100% - 26px);
+  filter: drop-shadow(0 24px 38px rgba(0, 0, 0, 0.58));
+  transform-origin: 50% 72%;
+  animation: journal-tablet-boot 520ms steps(2, end) both;
+}
+
+.journal-tablet-art {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  pointer-events: none;
+  user-select: none;
+}
+
+.journal-modal .tablet-surface {
+  position: absolute;
+  left: 17.5%;
+  right: 16.5%;
+  top: 18%;
+  bottom: 16%;
+  width: auto;
+  max-height: none;
+  padding: 12px 11px;
+  overflow: hidden;
+  border: 0;
+  border-radius: 16px;
+  background: transparent;
+  box-shadow: none;
+  color: #dff8ff;
+  text-shadow:
+    0 0 8px rgba(130, 230, 255, 0.48),
+    0 0 18px rgba(80, 190, 255, 0.18);
+  transform: perspective(760px) rotateX(4deg) skewX(-0.6deg);
+}
+
+.journal-modal .tablet-surface::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  background:
+    repeating-linear-gradient(
+      180deg,
+      rgba(151, 223, 255, 0.14) 0 1px,
+      transparent 1px 5px
+    ),
+    linear-gradient(180deg, rgba(151, 223, 255, 0.2), transparent);
+  mix-blend-mode: screen;
+  animation: screen-scan 680ms ease-out both;
+}
+
+.journal-modal .tablet-journal-list {
+  height: 100%;
+  max-height: none;
+  overflow: auto;
+  scrollbar-width: none;
+}
+
+.journal-modal .tablet-journal-list::-webkit-scrollbar {
+  display: none;
+}
+
+.journal-modal .journal-entry {
+  border-color: rgba(151, 223, 255, 0.12);
+  background: transparent;
+  box-shadow: none;
+}
+
+.journal-modal .entry-topline span,
+.journal-modal .entry-topline strong {
+  color: #9ee7ff;
+}
+
+.journal-modal .journal-entry h3 {
+  color: #fff0b7;
+}
+
+.journal-modal .tablet-empty {
+  display: grid;
+  place-items: center;
+  height: 100%;
+  color: rgba(222, 246, 255, 0.9);
+}
+
+.journal-close-button {
+  position: absolute;
+  left: 50%;
+  bottom: 7.5%;
+  transform: translateX(-50%);
+  min-height: 34px;
+  padding: 7px 14px;
+  border-color: rgba(151, 223, 255, 0.24);
+  background: rgba(7, 20, 31, 0.42);
+  color: #fff1bf;
+  box-shadow: inset 0 0 16px rgba(96, 220, 255, 0.1);
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+@keyframes journal-backdrop-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes journal-tablet-boot {
+  0% {
+    opacity: 0;
+    filter: brightness(0.64) saturate(0.72) drop-shadow(0 18px 28px rgba(0, 0, 0, 0.48));
+    transform: translate3d(0, 20px, 0) scale(0.96) rotateX(7deg);
+  }
+  18% {
+    opacity: 0.88;
+    filter: brightness(1.4) saturate(1.16) drop-shadow(0 24px 38px rgba(0, 0, 0, 0.58));
+  }
+  32% {
+    opacity: 0.38;
+  }
+  54% {
+    opacity: 1;
+    filter: brightness(1.08) saturate(1.02) drop-shadow(0 24px 38px rgba(0, 0, 0, 0.58));
+  }
+  100% {
+    opacity: 1;
+    filter: brightness(1) saturate(1) drop-shadow(0 24px 38px rgba(0, 0, 0, 0.58));
+    transform: translate3d(0, 0, 0) scale(1) rotateX(0deg);
   }
 }
 
