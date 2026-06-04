@@ -1847,9 +1847,13 @@ body {
 
 .cabin-overlay-plate {
   pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
   transform: scale(1.02) translate3d(0, 0, 0);
-  transition: transform 900ms cubic-bezier(0.22, 1, 0.36, 1);
-  will-change: transform;
+  transition:
+    opacity 180ms ease,
+    visibility 0s linear 180ms;
+  will-change: opacity;
 }
 
 .view-map .controls-map,
@@ -1857,7 +1861,12 @@ body {
 .view-radio .controls-radio,
 .view-ship .controls-ship {
   pointer-events: auto;
+  opacity: 1;
+  visibility: visible;
   transform: scale(1) translate3d(0%, 0, 0);
+  transition:
+    opacity 240ms ease 180ms,
+    visibility 0s linear;
 }
 
 .view-map .controls-cockpit {
