@@ -1866,6 +1866,8 @@ body {
   inset: 0;
   background:
     linear-gradient(180deg, rgba(7, 13, 27, 0.28), rgba(7, 13, 27, 0.1) 44%, rgba(7, 13, 27, 0.24)),
+    radial-gradient(ellipse at 28% 72%, rgba(85, 137, 181, 0.09), transparent 58%),
+    radial-gradient(ellipse at 82% 18%, rgba(135, 105, 157, 0.06), transparent 44%),
     radial-gradient(circle at 62% 55%, transparent 0 16%, rgba(3, 8, 16, 0.18) 44%, rgba(3, 8, 16, 0.58) 78%),
     radial-gradient(circle at 7% 19%, rgba(255, 247, 210, 0.88) 0 0.7px, transparent 1.2px),
     radial-gradient(circle at 13% 76%, rgba(147, 218, 255, 0.58) 0 0.8px, transparent 1.3px),
@@ -1920,32 +1922,33 @@ body {
 .cockpit-starfield::after {
   inset: -2%;
   background:
-    radial-gradient(circle at 3% 31%, rgba(225, 244, 255, 0.3) 0 0.45px, transparent 0.9px),
-    radial-gradient(circle at 8% 84%, rgba(255, 248, 222, 0.28) 0 0.4px, transparent 0.85px),
-    radial-gradient(circle at 15% 9%, rgba(164, 220, 255, 0.26) 0 0.45px, transparent 0.9px),
-    radial-gradient(circle at 18% 59%, rgba(255, 255, 250, 0.34) 0 0.5px, transparent 1px),
-    radial-gradient(circle at 23% 36%, rgba(255, 231, 183, 0.24) 0 0.4px, transparent 0.85px),
-    radial-gradient(circle at 28% 81%, rgba(194, 232, 255, 0.3) 0 0.45px, transparent 0.9px),
-    radial-gradient(circle at 32% 17%, rgba(255, 255, 248, 0.27) 0 0.4px, transparent 0.85px),
-    radial-gradient(circle at 36% 53%, rgba(168, 221, 255, 0.25) 0 0.45px, transparent 0.9px),
-    radial-gradient(circle at 41% 70%, rgba(255, 241, 207, 0.32) 0 0.5px, transparent 1px),
-    radial-gradient(circle at 46% 4%, rgba(218, 242, 255, 0.24) 0 0.4px, transparent 0.85px),
-    radial-gradient(circle at 49% 88%, rgba(255, 255, 248, 0.28) 0 0.45px, transparent 0.9px),
-    radial-gradient(circle at 55% 41%, rgba(255, 230, 179, 0.23) 0 0.4px, transparent 0.85px),
-    radial-gradient(circle at 61% 63%, rgba(179, 226, 255, 0.3) 0 0.45px, transparent 0.9px),
-    radial-gradient(circle at 64% 19%, rgba(255, 255, 250, 0.26) 0 0.4px, transparent 0.85px),
-    radial-gradient(circle at 69% 92%, rgba(255, 239, 199, 0.25) 0 0.45px, transparent 0.9px),
-    radial-gradient(circle at 72% 34%, rgba(192, 232, 255, 0.28) 0 0.4px, transparent 0.85px),
-    radial-gradient(circle at 78% 77%, rgba(255, 255, 248, 0.32) 0 0.5px, transparent 1px),
-    radial-gradient(circle at 84% 6%, rgba(166, 221, 255, 0.24) 0 0.4px, transparent 0.85px),
-    radial-gradient(circle at 88% 46%, rgba(255, 235, 192, 0.26) 0 0.45px, transparent 0.9px),
-    radial-gradient(circle at 93% 68%, rgba(220, 243, 255, 0.3) 0 0.45px, transparent 0.9px),
-    radial-gradient(circle at 97% 26%, rgba(255, 255, 248, 0.25) 0 0.4px, transparent 0.85px);
-  background-repeat: no-repeat;
-  opacity: 0.76;
+    radial-gradient(circle at 23% 37%, rgba(235, 248, 255, 0.72) 0 0.65px, transparent 1.15px),
+    radial-gradient(circle at 67% 18%, rgba(255, 249, 224, 0.66) 0 0.55px, transparent 1px),
+    radial-gradient(circle at 38% 72%, rgba(171, 224, 255, 0.62) 0 0.7px, transparent 1.2px),
+    radial-gradient(circle at 81% 61%, rgba(255, 255, 248, 0.56) 0 0.5px, transparent 0.95px),
+    radial-gradient(circle at 14% 84%, rgba(255, 229, 181, 0.54) 0 0.65px, transparent 1.1px),
+    radial-gradient(circle at 56% 43%, rgba(211, 240, 255, 0.58) 0 0.55px, transparent 1px),
+    radial-gradient(circle at 74% 88%, rgba(255, 252, 235, 0.5) 0 0.5px, transparent 0.9px);
+  background-size:
+    83px 109px,
+    127px 97px,
+    149px 173px,
+    191px 137px,
+    223px 181px,
+    269px 233px,
+    317px 281px;
+  background-position:
+    7px 19px,
+    43px 11px,
+    17px 61px,
+    89px 37px,
+    31px 103px,
+    137px 71px,
+    53px 149px;
+  opacity: 0.9;
   animation:
     distant-star-drift 300s linear infinite alternate,
-    star-twinkle 9.4s ease-in-out -3.1s infinite alternate;
+    distant-star-twinkle 11.4s ease-in-out -3.1s infinite alternate;
 }
 
 .cockpit-destination-art {
@@ -2720,6 +2723,21 @@ body {
   to {
     opacity: 0.58;
     filter: brightness(0.96);
+  }
+}
+
+@keyframes distant-star-twinkle {
+  from {
+    opacity: 0.72;
+    filter: brightness(0.86);
+  }
+  45% {
+    opacity: 0.94;
+    filter: brightness(1.12);
+  }
+  to {
+    opacity: 0.82;
+    filter: brightness(0.98);
   }
 }
 
