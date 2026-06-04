@@ -2862,17 +2862,6 @@ body {
   }
 }
 
-@keyframes screen-scan {
-  from {
-    opacity: 0.9;
-    transform: translate3d(0, -18%, 0);
-  }
-  to {
-    opacity: 0;
-    transform: translate3d(0, 112%, 0);
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
   .overlay-layer,
   .scene-status,
@@ -2911,33 +2900,33 @@ body {
   border: 0;
   border-radius: 0;
   background:
-    radial-gradient(circle at 50% 48%, rgba(22, 34, 48, 0.34), transparent 42%),
-    rgba(1, 4, 9, 0.64);
-  backdrop-filter: blur(3px) saturate(0.82);
-  -webkit-backdrop-filter: blur(3px) saturate(0.82);
+    radial-gradient(circle at 30% 72%, rgba(30, 48, 66, 0.2), transparent 46%),
+    rgba(1, 4, 9, 0.42);
+  backdrop-filter: blur(8px) saturate(0.78) brightness(0.82);
+  -webkit-backdrop-filter: blur(8px) saturate(0.78) brightness(0.82);
   cursor: pointer;
-  animation: journal-backdrop-in 320ms ease-out both;
+  animation: journal-backdrop-in 280ms linear both;
 }
 
 .journal-modal.closing .journal-backdrop {
-  animation: journal-backdrop-out 360ms ease-in both;
+  animation: journal-backdrop-out 300ms linear both;
 }
 
 .journal-tablet-frame {
   position: absolute;
   left: -2%;
-  bottom: -10%;
+  bottom: -6%;
   width: min(88%, 370px);
   aspect-ratio: 941 / 1672;
   max-height: calc(100% - 4px);
   filter: drop-shadow(0 24px 38px rgba(0, 0, 0, 0.58));
   transform-origin: 10% 100%;
-  animation: journal-tablet-open 560ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation: journal-tablet-open 480ms cubic-bezier(0.25, 0.75, 0.35, 1) both;
   will-change: opacity, transform, filter;
 }
 
 .journal-modal.closing .journal-tablet-frame {
-  animation: journal-tablet-close 380ms cubic-bezier(0.7, 0, 0.84, 0) both;
+  animation: journal-tablet-close 320ms cubic-bezier(0.55, 0, 0.75, 0.45) both;
 }
 
 .journal-tablet-art {
@@ -2980,12 +2969,12 @@ body {
   background:
     repeating-linear-gradient(
       180deg,
-      rgba(151, 223, 255, 0.14) 0 1px,
+      rgba(151, 223, 255, 0.08) 0 1px,
       transparent 1px 5px
     ),
-    linear-gradient(180deg, rgba(151, 223, 255, 0.2), transparent);
+    linear-gradient(180deg, rgba(151, 223, 255, 0.08), transparent 38%);
   mix-blend-mode: screen;
-  animation: screen-scan 680ms ease-out both;
+  opacity: 0.48;
 }
 
 .journal-modal .tablet-journal-list {
