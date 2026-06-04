@@ -88,16 +88,3 @@ export const resolveChoice = (state: PlayerState, encounter: Encounter, choice: 
   discoveredSystemIds: unique([...state.discoveredSystemIds, ...(choice.unlockSystemIds ?? [])]),
   mysteryProgress: Math.min(6, state.mysteryProgress + (choice.mysteryDelta ?? 0))
 });
-
-export const getMysteryLabel = (progress: number) => {
-  if (progress >= 5) {
-    return 'Pattern';
-  }
-  if (progress >= 3) {
-    return 'Anomaly';
-  }
-  if (progress >= 1) {
-    return 'Coincidence';
-  }
-  return 'Quiet';
-};

@@ -2,12 +2,6 @@
   "basePath": "/images/",
   "assets": [
     {
-      "id": "cabin_panorama_placeholder",
-      "file": "/images/cabin_panorama_placeholder.svg",
-      "width": 3000,
-      "height": 3000
-    },
-    {
       "id": "view_cockpit_forward",
       "file": "/images/view_cockpit_forward.webp",
       "width": 941,
@@ -16,12 +10,6 @@
     {
       "id": "view_map_ceiling",
       "file": "/images/view_map_ceiling.webp",
-      "width": 941,
-      "height": 1672
-    },
-    {
-      "id": "view_journal_tablet",
-      "file": "/images/view_journal_tablet.webp",
       "width": 941,
       "height": 1672
     },
@@ -40,12 +28,6 @@
     {
       "id": "view_radio_console",
       "file": "/images/view_radio_console.webp",
-      "width": 941,
-      "height": 1672
-    },
-    {
-      "id": "cockpit_background",
-      "file": "/images/cockpit_background.webp",
       "width": 941,
       "height": 1672
     },
@@ -108,18 +90,6 @@
       "file": "/images/planet_bluewake.webp",
       "width": 768,
       "height": 768
-    },
-    {
-      "id": "journal_pages_background",
-      "file": "/images/journal_pages_background.webp",
-      "width": 1440,
-      "height": 322
-    },
-    {
-      "id": "title_background",
-      "file": "/images/title_background.webp",
-      "width": 1200,
-      "height": 699
     }
   ],
   "notes": "Place image files in public/images. In React/Vite, reference them as /images/<filename>.<ext>."

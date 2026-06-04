@@ -1,15 +1,11 @@
 const publicAsset = (path: string) => `${import.meta.env.BASE_URL}${path.replace(/^\//, '')}`;
 
 export const imageAssets = {
-  cabinPanoramaPlaceholder: publicAsset('images/cabin_panorama_placeholder.svg'),
   viewCockpitForward: publicAsset('images/view_cockpit_forward.webp'),
   viewMapCeiling: publicAsset('images/view_map_ceiling.webp'),
-  viewJournalTablet: publicAsset('images/view_journal_tablet.webp'),
   journalTabletOverlay: publicAsset('images/journal_tablet_overlay.webp'),
   viewShipAft: publicAsset('images/view_ship_aft.webp'),
   viewRadioConsole: publicAsset('images/view_radio_console.webp'),
-  cockpitBackground: publicAsset('images/cockpit_background.webp'),
-  titleBackground: publicAsset('images/title_background.webp'),
   nebulaVista01: publicAsset('images/nebula_vista_01.webp'),
   nebulaVista02: publicAsset('images/nebula_vista_02.webp'),
   nebulaVista03: publicAsset('images/nebula_vista_03.webp'),
@@ -19,23 +15,18 @@ export const imageAssets = {
   planetLumenRest: publicAsset('images/planet_lumen_rest.webp'),
   planetVelaRest: publicAsset('images/planet_vela_rest.webp'),
   planetMarrowlight: publicAsset('images/planet_marrowlight.webp'),
-  planetBluewake: publicAsset('images/planet_bluewake.webp'),
-  journalPagesBackground: publicAsset('images/journal_pages_background.webp')
+  planetBluewake: publicAsset('images/planet_bluewake.webp')
 } as const;
 
-export type ImageAssetKey = keyof typeof imageAssets;
-
-export type DestinationArtKind = 'object' | 'backdrop';
-
-export interface DestinationArt {
+interface DestinationArt {
   src: string;
-  kind: DestinationArtKind;
+  kind: 'object' | 'backdrop';
   size: number;
   x: number;
   y: number;
 }
 
-export const systemThumbnails: Record<string, string> = {
+const systemThumbnails: Record<string, string> = {
   'lumen-rest': imageAssets.planetLumenRest,
   'vela-rest': imageAssets.planetVelaRest,
   marrowlight: imageAssets.planetMarrowlight,
@@ -50,7 +41,7 @@ export const systemThumbnails: Record<string, string> = {
 
 export const getSystemThumbnail = (systemId: string) => systemThumbnails[systemId] ?? imageAssets.nebulaVista01;
 
-export const destinationArt: Record<string, DestinationArt> = {
+const destinationArt: Record<string, DestinationArt> = {
   'lumen-rest': { src: imageAssets.planetLumenRest, kind: 'object', size: 36, x: 50, y: 37 },
   'vela-rest': { src: imageAssets.planetVelaRest, kind: 'object', size: 34, x: 50, y: 37 },
   marrowlight: { src: imageAssets.planetMarrowlight, kind: 'object', size: 34, x: 50, y: 37 },

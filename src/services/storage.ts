@@ -6,7 +6,7 @@ const SAVE_KEY = 'among-quiet-stars.save.v1';
 
 const unique = <T>(items: T[]) => Array.from(new Set(items));
 
-export const initialResources: Resources = {
+const initialResources: Resources = {
   fuel: 72,
   supplies: 18,
   hull: 96,

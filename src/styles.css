@@ -49,7 +49,6 @@ button {
   padding: max(8px, env(safe-area-inset-top)) 10px calc(var(--nav-height) + max(12px, env(safe-area-inset-bottom)));
   background:
     linear-gradient(180deg, rgba(12, 7, 24, 0.28), rgba(12, 7, 24, 0.88)),
-    var(--title-backdrop),
     #10091d;
   background-size: cover;
   background-position: center;

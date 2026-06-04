@@ -132,4 +132,3 @@ writeFileSync(new URL('icon-512.png', iconDir), drawPng(512, 512, iconPixel));
 writeFileSync(new URL('maskable-512.png', iconDir), drawPng(512, 512, iconPixel));
 writeFileSync(new URL('apple-touch-icon.png', iconDir), drawPng(180, 180, iconPixel));
 writeFileSync(new URL('splash-640x1136.png', splashDir), drawPng(640, 1136, splashPixel));
-writeFileSync(new URL('splash-750x1334.png', splashDir), drawPng(750, 1334, splashPixel));
