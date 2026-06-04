@@ -584,7 +584,21 @@ function CabinOverlay({
         <div className="overlay-layer map-overlay">
           <div className="overlay-shell map-shell">
             <div className="map-screen-panel">
-              <p className="eyebrow">Star map</p>
+              <div className="map-heading-row">
+                <p className="eyebrow">Star map</p>
+                <div className="map-legend" aria-label="Map legend">
+                  <span>
+                    <i className="map-legend-marker current" aria-hidden="true" />
+                    You are here
+                  </span>
+                  {recommendedSystemId && (
+                    <span>
+                      <i className="map-legend-marker recommended" aria-hidden="true" />
+                      Current lead
+                    </span>
+                  )}
+                </div>
+              </div>
               <div className="sector-map ceiling-map" aria-label="Star systems map">
                 {systems.map((system) => (
                   <button
@@ -596,7 +610,9 @@ function CabinOverlay({
                     style={{ left: `${system.position.x}%`, top: `${system.position.y}%` }}
                     onClick={() => selectMapSystem(system.id)}
                     aria-pressed={system.id === selectedSystemId}
-                    aria-label={`${system.name}, ${system.known ? 'known' : 'unknown'} system`}
+                    aria-label={`${system.name}, ${system.known ? 'known' : 'unknown'} system${
+                      system.id === currentSystem.id ? ', current location' : ''
+                    }${system.id === recommendedSystemId ? ', current lead' : ''}`}
                   >
                     <span />
                   </button>

@@ -520,23 +520,85 @@ button {
 }
 
 .map-node.current {
-  outline: 2px solid #77d8ff;
+  border-color: rgba(119, 216, 255, 0.82);
+  background: rgba(50, 172, 225, 0.18);
+  box-shadow: 0 0 24px rgba(87, 204, 255, 0.68);
+}
+
+.map-node.current span {
+  background: #79ddff;
+  box-shadow: 0 0 18px #65d8ff;
 }
 
 .map-node.recommended {
-  outline: 2px solid #ffc66d;
+  border-color: rgba(255, 198, 109, 0.88);
+  background: rgba(255, 178, 72, 0.16);
   box-shadow: 0 0 28px rgba(255, 198, 109, 0.55);
 }
 
+.map-node.recommended span {
+  background: #ffc66d;
+  box-shadow: 0 0 18px #ffb44f;
+}
+
 .map-node.selected {
-  outline: 2px solid #9ee7ff;
-  box-shadow:
-    0 0 0 7px rgba(151, 223, 255, 0.16),
-    0 0 24px rgba(151, 223, 255, 0.68);
+  outline: 1px solid rgba(232, 249, 255, 0.92);
+  outline-offset: 4px;
 }
 
 .map-node.unknown {
   opacity: 0.38;
+}
+
+.map-heading-row,
+.map-legend,
+.map-legend span {
+  display: flex;
+  align-items: center;
+}
+
+.map-heading-row {
+  justify-content: space-between;
+  gap: 8px;
+  min-width: 0;
+}
+
+.map-heading-row .eyebrow {
+  margin: 0;
+  white-space: nowrap;
+}
+
+.map-legend {
+  justify-content: flex-end;
+  gap: 8px;
+  min-width: 0;
+  color: rgba(222, 246, 255, 0.78);
+  font-size: 0.54rem;
+  font-weight: 700;
+  letter-spacing: 0.025em;
+  line-height: 1;
+}
+
+.map-legend span {
+  gap: 4px;
+  white-space: nowrap;
+}
+
+.map-legend-marker {
+  width: 6px;
+  height: 6px;
+  flex: 0 0 auto;
+  border-radius: 999px;
+}
+
+.map-legend-marker.current {
+  background: #79ddff;
+  box-shadow: 0 0 7px #65d8ff;
+}
+
+.map-legend-marker.recommended {
+  background: #ffc66d;
+  box-shadow: 0 0 7px #ffb44f;
 }
 
 .system-list,
