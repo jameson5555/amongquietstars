@@ -2900,10 +2900,15 @@ body {
   border: 0;
   border-radius: 0;
   background: rgba(8, 15, 24, 0.08);
-  backdrop-filter: blur(1.5px) saturate(0.5);
   -webkit-backdrop-filter: blur(1.5px) saturate(0.5);
   cursor: pointer;
   animation: journal-backdrop-in 280ms linear both;
+}
+
+@supports (backdrop-filter: blur(1px)) {
+  .journal-backdrop {
+    backdrop-filter: blur(1.5px) saturate(0.5);
+  }
 }
 
 .journal-modal.closing .journal-backdrop {
