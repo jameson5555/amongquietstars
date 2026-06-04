@@ -51,6 +51,7 @@ function App() {
   const [state, setState] = useState<PlayerState>(() => loadPlayerState());
   const [view, setView] = useState<ScreenViewId>('cockpit');
   const [journalOpen, setJournalOpen] = useState(false);
+  const [journalClosing, setJournalClosing] = useState(false);
   const [travel, setTravel] = useState<TravelState | null>(null);
   const [activeEncounterId, setActiveEncounterId] = useState<string | null>(null);
   const [choiceResult, setChoiceResult] = useState<string | null>(null);
@@ -64,6 +65,7 @@ function App() {
   const radioHistory = state.radioHistoryIds.map(getRadioMessage).filter(isDefined);
   const activeEncounter = activeEncounterId ? getEncounter(activeEncounterId) : undefined;
   const activeTravel = state.activeTravel;
+  const journalVisible = journalOpen || journalClosing;
   const unreadJournalCount = state.journalEntryIds.filter((id) => !state.readJournalEntryIds.includes(id)).length;
 
   useEffect(() => {
@@ -106,6 +108,7 @@ function App() {
         });
         setView('cockpit');
         setJournalOpen(false);
+        setJournalClosing(false);
       } else {
         setActiveEncounterId(null);
         setView('cockpit');
@@ -153,6 +156,7 @@ function App() {
   const openJournal = () => {
     setChoiceResult(null);
     markJournalRead();
+    setJournalClosing(false);
     setJournalOpen(true);
     if (!isPrimaryView(view)) {
       setView('cockpit');
@@ -160,7 +164,12 @@ function App() {
   };
 
   const closeJournal = () => {
+    if (!journalOpen) {
+      return;
+    }
+
     setJournalOpen(false);
+    setJournalClosing(true);
   };
 
   const goTo = (nextView: ViewId) => {
@@ -171,6 +180,7 @@ function App() {
     }
 
     setJournalOpen(false);
+    setJournalClosing(false);
     setView(nextView);
   };
 
@@ -211,6 +221,7 @@ function App() {
     setChoiceResult(null);
     setView('cockpit');
     setJournalOpen(false);
+    setJournalClosing(false);
   };
 
   const followLead = () => {
@@ -235,6 +246,7 @@ function App() {
       setActiveEncounterId(null);
       setView('cockpit');
       setJournalOpen(false);
+      setJournalClosing(false);
       return;
     }
 
@@ -245,6 +257,7 @@ function App() {
     });
     setView('cockpit');
     setJournalOpen(false);
+    setJournalClosing(false);
   };
 
   const chooseEncounterOption = (encounter: Encounter, choice: EncounterChoice) => {
@@ -261,6 +274,7 @@ function App() {
     setChoiceResult(null);
     setView('cockpit');
     setJournalOpen(false);
+    setJournalClosing(false);
   };
 
   return (
@@ -294,18 +308,23 @@ function App() {
               onDone={openJournal}
             />
           )}
-          {isPrimaryView(view) && journalOpen && (
-            <JournalOverlay journal={journal} onClose={closeJournal} />
+          {isPrimaryView(view) && journalVisible && (
+            <JournalOverlay
+              journal={journal}
+              closing={journalClosing}
+              onClose={closeJournal}
+              onClosed={() => setJournalClosing(false)}
+            />
           )}
         </section>
 
         {/* Floating Journal Button */}
         <button
-          className={`journal-fab ${journalOpen ? 'active' : ''}`}
+          className={`journal-fab ${journalVisible ? 'active' : ''}`}
           type="button"
-          onClick={() => (journalOpen ? closeJournal() : openJournal())}
+          onClick={() => (journalVisible ? closeJournal() : openJournal())}
           aria-label="Journal"
-          aria-pressed={journalOpen}
+          aria-pressed={journalVisible}
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -323,7 +342,7 @@ function App() {
             <line x1="10" y1="10" x2="16" y2="10" />
             <line x1="10" y1="14" x2="16" y2="14" />
           </svg>
-          {unreadJournalCount > 0 && !journalOpen && (
+          {unreadJournalCount > 0 && !journalVisible && (
             <span className="journal-badge" aria-label={`${unreadJournalCount} unread entries`}>
               {unreadJournalCount}
             </span>
@@ -735,11 +754,28 @@ function CabinOverlay({
   }
 }
 
-function JournalOverlay({ journal, onClose }: { journal: JournalEntry[]; onClose: () => void }) {
+function JournalOverlay({
+  journal,
+  closing,
+  onClose,
+  onClosed
+}: {
+  journal: JournalEntry[];
+  closing: boolean;
+  onClose: () => void;
+  onClosed: () => void;
+}) {
   return (
-    <div className="journal-modal" role="dialog" aria-modal="true" aria-label="Journal">
+    <div className={`journal-modal ${closing ? 'closing' : ''}`} role="dialog" aria-modal="true" aria-label="Journal">
       <button className="journal-backdrop" type="button" aria-label="Close journal" onClick={onClose} />
-      <div className="journal-tablet-frame">
+      <div
+        className="journal-tablet-frame"
+        onAnimationEnd={(event) => {
+          if (event.animationName === 'journal-tablet-close') {
+            onClosed();
+          }
+        }}
+      >
         <img src={imageAssets.journalTabletOverlay} alt="" className="journal-tablet-art" />
         <div className="tablet-surface">
           {journal.length === 0 ? (
@@ -765,9 +801,6 @@ function JournalOverlay({ journal, onClose }: { journal: JournalEntry[]; onClose
             </div>
           )}
         </div>
-        <button className="journal-close-button" type="button" onClick={onClose} aria-label="Close journal">
-          Close
-        </button>
       </div>
     </div>
   );

@@ -2896,10 +2896,12 @@ body {
   position: absolute;
   inset: 0;
   z-index: 24;
-  display: grid;
-  place-items: center;
   overflow: hidden;
   isolation: isolate;
+}
+
+.journal-modal.closing {
+  pointer-events: none;
 }
 
 .journal-backdrop {
@@ -2914,17 +2916,28 @@ body {
   backdrop-filter: blur(3px) saturate(0.82);
   -webkit-backdrop-filter: blur(3px) saturate(0.82);
   cursor: pointer;
-  animation: journal-backdrop-in 180ms ease-out both;
+  animation: journal-backdrop-in 320ms ease-out both;
+}
+
+.journal-modal.closing .journal-backdrop {
+  animation: journal-backdrop-out 360ms ease-in both;
 }
 
 .journal-tablet-frame {
-  position: relative;
-  width: min(92%, 388px);
+  position: absolute;
+  left: -2%;
+  bottom: -10%;
+  width: min(88%, 370px);
   aspect-ratio: 941 / 1672;
-  max-height: calc(100% - 26px);
+  max-height: calc(100% - 4px);
   filter: drop-shadow(0 24px 38px rgba(0, 0, 0, 0.58));
-  transform-origin: 50% 72%;
-  animation: journal-tablet-boot 520ms steps(2, end) both;
+  transform-origin: 10% 100%;
+  animation: journal-tablet-open 560ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  will-change: opacity, transform, filter;
+}
+
+.journal-modal.closing .journal-tablet-frame {
+  animation: journal-tablet-close 380ms cubic-bezier(0.7, 0, 0.84, 0) both;
 }
 
 .journal-tablet-art {
@@ -3003,22 +3016,6 @@ body {
   color: rgba(222, 246, 255, 0.9);
 }
 
-.journal-close-button {
-  position: absolute;
-  left: 50%;
-  bottom: 7.5%;
-  transform: translateX(-50%);
-  min-height: 34px;
-  padding: 7px 14px;
-  border-color: rgba(151, 223, 255, 0.24);
-  background: rgba(7, 20, 31, 0.42);
-  color: #fff1bf;
-  box-shadow: inset 0 0 16px rgba(96, 220, 255, 0.1);
-  font-size: 0.72rem;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-}
-
 @keyframes journal-backdrop-in {
   from {
     opacity: 0;
@@ -3028,27 +3025,38 @@ body {
   }
 }
 
-@keyframes journal-tablet-boot {
-  0% {
-    opacity: 0;
-    filter: brightness(0.64) saturate(0.72) drop-shadow(0 18px 28px rgba(0, 0, 0, 0.48));
-    transform: translate3d(0, 20px, 0) scale(0.96) rotateX(7deg);
-  }
-  18% {
-    opacity: 0.88;
-    filter: brightness(1.4) saturate(1.16) drop-shadow(0 24px 38px rgba(0, 0, 0, 0.58));
-  }
-  32% {
-    opacity: 0.38;
-  }
-  54% {
+@keyframes journal-backdrop-out {
+  from {
     opacity: 1;
-    filter: brightness(1.08) saturate(1.02) drop-shadow(0 24px 38px rgba(0, 0, 0, 0.58));
   }
-  100% {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes journal-tablet-open {
+  from {
+    opacity: 0;
+    filter: brightness(0.78) saturate(0.82) blur(1px) drop-shadow(0 14px 22px rgba(0, 0, 0, 0.38));
+    transform: translate3d(-18%, 22%, 0) scale(0.76) rotate(-3deg);
+  }
+  to {
     opacity: 1;
     filter: brightness(1) saturate(1) drop-shadow(0 24px 38px rgba(0, 0, 0, 0.58));
-    transform: translate3d(0, 0, 0) scale(1) rotateX(0deg);
+    transform: translate3d(0, 0, 0) scale(1) rotate(0deg);
+  }
+}
+
+@keyframes journal-tablet-close {
+  from {
+    opacity: 1;
+    filter: brightness(1) saturate(1) drop-shadow(0 24px 38px rgba(0, 0, 0, 0.58));
+    transform: translate3d(0, 0, 0) scale(1) rotate(0deg);
+  }
+  to {
+    opacity: 0;
+    filter: brightness(0.7) saturate(0.72) blur(1px) drop-shadow(0 8px 14px rgba(0, 0, 0, 0.24));
+    transform: translate3d(-24%, 34%, 0) scale(0.62) rotate(-4deg);
   }
 }
 
