@@ -2900,8 +2900,8 @@ body {
   border: 0;
   border-radius: 0;
   background: rgba(8, 15, 24, 0.08);
-  backdrop-filter: blur(11px) saturate(0.92);
-  -webkit-backdrop-filter: blur(11px) saturate(0.92);
+  backdrop-filter: blur(1.5px) saturate(0.5);
+  -webkit-backdrop-filter: blur(1.5px) saturate(0.5);
   cursor: pointer;
   animation: journal-backdrop-in 280ms linear both;
 }
