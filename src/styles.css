@@ -123,6 +123,35 @@ button {
   overflow: auto;
 }
 
+:where(
+  .screen-panel,
+  .map-shell,
+  .overlay-system-list,
+  .tablet-surface,
+  .tablet-journal-list,
+  .overlay-upgrade-list,
+  .radio-display,
+  .overlay-radio-list,
+  .cockpit-bottom-band
+) {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+:where(
+  .screen-panel,
+  .map-shell,
+  .overlay-system-list,
+  .tablet-surface,
+  .tablet-journal-list,
+  .overlay-upgrade-list,
+  .radio-display,
+  .overlay-radio-list,
+  .cockpit-bottom-band
+)::-webkit-scrollbar {
+  display: none;
+}
+
 .cockpit-panel {
   border: 0;
   border-radius: 0;
@@ -2306,11 +2335,6 @@ body {
   margin: 0;
   max-height: none;
   overflow: auto;
-  scrollbar-width: none;
-}
-
-.view-map .overlay-system-list::-webkit-scrollbar {
-  display: none;
 }
 
 .view-ship .ship-screen-panel,
@@ -2378,11 +2402,6 @@ body {
 
 .view-radio .overlay-radio-list {
   max-height: min(31vh, 280px);
-  scrollbar-width: none;
-}
-
-.view-radio .overlay-radio-list::-webkit-scrollbar {
-  display: none;
 }
 
 .view-radio .overlay-heading {
@@ -2953,11 +2972,6 @@ body {
   height: 100%;
   max-height: none;
   overflow: auto;
-  scrollbar-width: none;
-}
-
-.journal-modal .tablet-journal-list::-webkit-scrollbar {
-  display: none;
 }
 
 .journal-modal .journal-entry {
