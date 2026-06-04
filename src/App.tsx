@@ -378,21 +378,7 @@ function PanoramicCabinExperience({
   onReset: () => void;
   onNavigate: (direction: 1 | -1) => void;
 }) {
-  const [readyView, setReadyView] = useState<PrimaryViewId>(activeView);
   const swipeStartRef = useRef<{ x: number; y: number; pointerId: number } | null>(null);
-
-  const overlaysReady = readyView === activeView;
-
-  useEffect(() => {
-    const delay = activeView === 'map' ? 360 : 760;
-    const timeoutId = window.setTimeout(() => {
-      setReadyView(activeView);
-    }, delay);
-
-    return () => {
-      window.clearTimeout(timeoutId);
-    };
-  }, [activeView]);
 
   const windowSystem = arrivalApproach ? getSystem(arrivalApproach.systemId) : currentSystem;
   const windowDestinationArt = getDestinationArt(windowSystem.id);
@@ -439,8 +425,6 @@ function PanoramicCabinExperience({
     <div
       className={`cabin-experience view-${activeView} ${activeTravel ? 'travel-active' : ''} ${
         arrivalApproach ? 'arrival-approach' : ''
-      } ${
-        overlaysReady ? 'overlays-ready' : 'overlays-transitioning'
       }`}
       style={sceneStyle}
       onPointerDown={handlePointerDown}
@@ -471,21 +455,32 @@ function PanoramicCabinExperience({
         <div className="scene-vignette" />
       </div>
 
-      <CabinOverlay
-        activeView={activeView}
-        currentSystem={currentSystem}
-        activeTravel={activeTravel}
-        arrivalApproach={arrivalApproach}
-        now={now}
-        currentLead={currentLead}
-        state={state}
-        systems={systems}
-        recommendedSystemId={recommendedSystemId}
-        radioHistory={radioHistory}
-        onLeadAction={onLeadAction}
-        onTravel={onTravel}
-        onReset={onReset}
-      />
+      <div className="cabin-overlay-stage">
+        {primaryViewIds.map((viewId) => (
+          <div
+            className={`cabin-overlay-plate controls-${viewId} view-${viewId}`}
+            key={viewId}
+            aria-hidden={viewId !== activeView}
+            inert={viewId !== activeView}
+          >
+            <CabinOverlay
+              activeView={viewId}
+              currentSystem={currentSystem}
+              activeTravel={activeTravel}
+              arrivalApproach={arrivalApproach}
+              now={now}
+              currentLead={currentLead}
+              state={state}
+              systems={systems}
+              recommendedSystemId={recommendedSystemId}
+              radioHistory={radioHistory}
+              onLeadAction={onLeadAction}
+              onTravel={onTravel}
+              onReset={onReset}
+            />
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
