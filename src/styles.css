@@ -1890,21 +1890,18 @@ body {
 }
 
 .cockpit-starfield::after {
-  left: 82%;
-  top: 18%;
-  width: 126px;
-  height: 6px;
+  left: 92%;
+  top: 15%;
+  width: 3px;
+  height: 3px;
   border-radius: 999px;
-  background:
-    radial-gradient(circle at 100% 50%, rgba(255, 247, 210, 0.98) 0 2.8px, rgba(140, 223, 255, 0.66) 3.8px, transparent 7px),
-    linear-gradient(90deg, transparent 0%, rgba(126, 213, 255, 0.03) 18%, rgba(126, 213, 255, 0.2) 58%, rgba(255, 239, 178, 0.84) 92%, transparent 100%);
+  background: rgba(255, 248, 214, 0.98);
   box-shadow:
-    0 0 10px rgba(150, 225, 255, 0.28),
-    6px 0 12px rgba(255, 238, 172, 0.24);
+    0 0 3px 1px rgba(255, 248, 214, 0.82),
+    0 0 10px 3px rgba(135, 219, 255, 0.36);
   opacity: 0;
-  transform: rotate(146deg) scaleX(0.42);
-  transform-origin: 100% 50%;
-  animation: cockpit-meteor 29s ease-in-out infinite;
+  transform: scale(0.55);
+  animation: cockpit-meteor 37s linear infinite;
 }
 
 .cockpit-destination-art {
@@ -2714,58 +2711,98 @@ body {
 
 @keyframes cockpit-meteor {
   0%,
-  14% {
-    left: 82%;
-    top: 18%;
+  12% {
+    left: 92%;
+    top: 15%;
     opacity: 0;
-    transform: rotate(146deg) scaleX(0.4);
+    transform: scale(0.55);
   }
-  16% {
-    opacity: 0.78;
+  12.2% {
+    opacity: 0.96;
   }
-  20% {
-    left: 46%;
-    top: 42%;
+  13.2% {
+    left: 12%;
+    top: 67%;
+    opacity: 0.72;
+    transform: scale(1.25);
+  }
+  13.45% {
+    left: -4%;
+    top: 76%;
     opacity: 0;
-    transform: rotate(146deg) scaleX(0.96);
+    transform: scale(0.7);
   }
-  21%,
-  45% {
-    left: 18%;
+  13.5%,
+  35% {
+    left: 5%;
+    top: 44%;
+    opacity: 0;
+    transform: scale(0.6);
+  }
+  35.2% {
+    opacity: 0.88;
+  }
+  36.15% {
+    left: 88%;
     top: 24%;
+    opacity: 0.68;
+    transform: scale(1.1);
+  }
+  36.4% {
+    left: 104%;
+    top: 20%;
     opacity: 0;
-    transform: rotate(28deg) scaleX(0.36);
+    transform: scale(0.72);
   }
-  47% {
-    opacity: 0.64;
-  }
-  51% {
-    left: 62%;
-    top: 48%;
+  36.45%,
+  61% {
+    left: 72%;
+    top: 94%;
     opacity: 0;
-    transform: rotate(28deg) scaleX(0.82);
+    transform: scale(0.52);
   }
-  52%,
-  74% {
-    left: 78%;
-    top: 68%;
+  61.2% {
+    opacity: 0.82;
+  }
+  62.2% {
+    left: 40%;
+    top: 8%;
+    opacity: 0.62;
+    transform: scale(1.18);
+  }
+  62.45% {
+    left: 34%;
+    top: -8%;
     opacity: 0;
-    transform: rotate(203deg) scaleX(0.34);
+    transform: scale(0.7);
   }
-  76% {
-    opacity: 0.58;
-  }
-  80% {
-    left: 36%;
-    top: 50%;
+  62.5%,
+  84% {
+    left: 16%;
+    top: 7%;
     opacity: 0;
-    transform: rotate(203deg) scaleX(0.78);
+    transform: scale(0.58);
+  }
+  84.2% {
+    opacity: 0.9;
+  }
+  85.2% {
+    left: 82%;
+    top: 83%;
+    opacity: 0.7;
+    transform: scale(1.22);
+  }
+  85.45% {
+    left: 94%;
+    top: 97%;
+    opacity: 0;
+    transform: scale(0.7);
   }
   100% {
-    left: 36%;
-    top: 50%;
+    left: 94%;
+    top: 97%;
     opacity: 0;
-    transform: rotate(203deg) scaleX(0.34);
+    transform: scale(0.7);
   }
 }
 
