@@ -1851,9 +1851,10 @@ body {
   visibility: hidden;
   transform: scale(1.02) translate3d(0, 0, 0);
   transition:
-    opacity 180ms ease,
-    visibility 0s linear 180ms;
-  will-change: opacity;
+    opacity 420ms ease,
+    visibility 0s linear 900ms,
+    transform 900ms cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: opacity, transform;
 }
 
 .view-map .controls-map,
@@ -1865,8 +1866,9 @@ body {
   visibility: visible;
   transform: scale(1) translate3d(0%, 0, 0);
   transition:
-    opacity 240ms ease 180ms,
-    visibility 0s linear;
+    opacity 420ms ease,
+    visibility 0s linear,
+    transform 900ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .view-map .controls-cockpit {
