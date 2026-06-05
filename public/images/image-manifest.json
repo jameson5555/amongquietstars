@@ -32,6 +32,36 @@
       "height": 1672
     },
     {
+      "id": "flyby_ship_courier",
+      "file": "/images/flyby_ship_courier.webp",
+      "width": 220,
+      "height": 45
+    },
+    {
+      "id": "flyby_ship_skiff",
+      "file": "/images/flyby_ship_skiff.webp",
+      "width": 220,
+      "height": 89
+    },
+    {
+      "id": "flyby_ship_tug",
+      "file": "/images/flyby_ship_tug.webp",
+      "width": 220,
+      "height": 137
+    },
+    {
+      "id": "flyby_ship_clipper",
+      "file": "/images/flyby_ship_clipper.webp",
+      "width": 220,
+      "height": 98
+    },
+    {
+      "id": "flyby_ship_scout",
+      "file": "/images/flyby_ship_scout.webp",
+      "width": 220,
+      "height": 131
+    },
+    {
       "id": "nebula_vista_01",
       "file": "/images/nebula_vista_01.webp",
       "width": 1200,

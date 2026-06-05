@@ -1,6 +1,6 @@
 import type { CSSProperties, PointerEvent } from 'react';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { getDestinationArt, getSystemThumbnail, getTravelVista, imageAssets } from './assets/imageAssets';
+import { flybyShipAssets, getDestinationArt, getSystemThumbnail, getTravelVista, imageAssets } from './assets/imageAssets';
 import { getEncounter } from './data/encounters';
 import { getJournalEntry } from './data/journal';
 import { getRadioMessage } from './data/radio';
@@ -25,6 +25,12 @@ const primaryViewIds = ['map', 'cockpit', 'radio', 'ship'] as const;
 type PrimaryViewId = (typeof primaryViewIds)[number];
 type ScreenViewId = Exclude<ViewId, 'journal'>;
 type ArrivalApproach = { systemId: string; encounterId: string };
+type CockpitFlyby = {
+  id: number;
+  src: string;
+  durationMs: number;
+  style: CSSProperties;
+};
 
 const navItems: Array<{ id: PrimaryViewId; label: string }> = [
   { id: 'map', label: 'Map' },
@@ -46,6 +52,35 @@ const isDefined = <T,>(value: T | undefined): value is T => value !== undefined;
 
 const isPrimaryView = (view: ViewId | ScreenViewId): view is PrimaryViewId =>
   primaryViewIds.includes(view as PrimaryViewId);
+
+const randomInRange = (min: number, max: number) => min + Math.random() * (max - min);
+
+const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value));
+
+const createCockpitFlyby = (id: number): CockpitFlyby => {
+  const leftToRight = Math.random() > 0.5;
+  const startY = randomInRange(8, 72);
+  const endY = clamp(startY + randomInRange(-24, 24), -8, 88);
+  const duration = randomInRange(11000, 23000);
+  const size = randomInRange(42, 92);
+
+  return {
+    id,
+    src: flybyShipAssets[Math.floor(Math.random() * flybyShipAssets.length)]!,
+    durationMs: duration,
+    style: {
+      '--flyby-start-x': `${leftToRight ? -30 : 130}%`,
+      '--flyby-end-x': `${leftToRight ? 130 : -30}%`,
+      '--flyby-start-y': `${startY}%`,
+      '--flyby-end-y': `${endY}%`,
+      '--flyby-duration': `${duration}ms`,
+      '--flyby-size': `${size}px`,
+      '--flyby-facing': leftToRight ? 1 : -1,
+      '--flyby-tilt': `${leftToRight ? randomInRange(-7, 7) : randomInRange(173, 187)}deg`,
+      '--flyby-opacity': randomInRange(0.48, 0.82)
+    } as CSSProperties
+  };
+};
 
 function App() {
   const [state, setState] = useState<PlayerState>(() => loadPlayerState());
@@ -411,6 +446,8 @@ function PanoramicCabinExperience({
   onNavigate: (direction: 1 | -1) => void;
 }) {
   const swipeStartRef = useRef<{ x: number; y: number; pointerId: number } | null>(null);
+  const flybyIdRef = useRef(0);
+  const [cockpitFlybys, setCockpitFlybys] = useState<CockpitFlyby[]>([]);
 
   const windowSystem = arrivalApproach ? getSystem(arrivalApproach.systemId) : currentSystem;
   const windowDestinationArt = getDestinationArt(windowSystem.id);
@@ -426,6 +463,42 @@ function PanoramicCabinExperience({
     '--art-ship': `url(${imageAssets.viewShipAft})`,
     '--art-radio': `url(${imageAssets.viewRadioConsole})`
   } as CSSProperties;
+
+  useEffect(() => {
+    if (activeView !== 'cockpit' || activeTravel) {
+      return;
+    }
+
+    let cancelled = false;
+    const timeoutIds: number[] = [];
+
+    const scheduleNextFlyby = (initial: boolean) => {
+      const delay = initial ? randomInRange(7000, 18000) : randomInRange(22000, 68000);
+      const timeoutId = window.setTimeout(() => {
+        if (cancelled) {
+          return;
+        }
+
+        const flyby = createCockpitFlyby((flybyIdRef.current += 1));
+        setCockpitFlybys((current) => [...current, flyby].slice(-2));
+
+        const cleanupTimeoutId = window.setTimeout(() => {
+          setCockpitFlybys((current) => current.filter((item) => item.id !== flyby.id));
+        }, flyby.durationMs + 1200);
+        timeoutIds.push(cleanupTimeoutId);
+
+        scheduleNextFlyby(false);
+      }, delay);
+      timeoutIds.push(timeoutId);
+    };
+
+    scheduleNextFlyby(true);
+
+    return () => {
+      cancelled = true;
+      timeoutIds.forEach((timeoutId) => window.clearTimeout(timeoutId));
+    };
+  }, [activeTravel, activeView]);
 
   const handlePointerDown = (event: PointerEvent<HTMLDivElement>) => {
     swipeStartRef.current = {
@@ -474,6 +547,11 @@ function PanoramicCabinExperience({
           <div className="scene-cockpit-window-hotspot" aria-hidden={activeView !== 'cockpit'}>
             <div className="cockpit-window-view">
               <div className="cockpit-starfield" />
+              <div className="cockpit-flyby-layer" aria-hidden="true">
+                {cockpitFlybys.map((flyby) => (
+                  <img className="cockpit-flyby-ship" key={flyby.id} src={flyby.src} alt="" style={flyby.style} />
+                ))}
+              </div>
               <img
                 src={windowDestinationArt.src}
                 alt=""

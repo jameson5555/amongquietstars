@@ -15,6 +15,7 @@ Recommended usage:
 - `journal_tablet_overlay.webp` — transparent tablet cutout for the floating journal overlay
 - `view_ship_aft.webp` — portrait aft cabin plate with two embedded monitor zones for ship stats and upgrades
 - `view_radio_console.webp` — portrait starboard radio console plate with an embedded message display
+- `flyby_ship_*.webp` — transparent small ship sprites used for sparse randomized cockpit-window fly-bys
 - `nebula_vista_01.webp`, `nebula_vista_02.webp`, `nebula_vista_03.webp` — opaque full-window travel/voyage backdrops
 - `hyperdrive.gif` — animated radial star-tunnel shown through the cockpit window during active travel
 - `space_station_lumen_rest.webp` — transparent destination object for Glass Harbor / station views

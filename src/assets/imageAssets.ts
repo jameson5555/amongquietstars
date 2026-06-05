@@ -6,6 +6,11 @@ export const imageAssets = {
   journalTabletOverlay: publicAsset('images/journal_tablet_overlay.webp'),
   viewShipAft: publicAsset('images/view_ship_aft.webp'),
   viewRadioConsole: publicAsset('images/view_radio_console.webp'),
+  flybyShipCourier: publicAsset('images/flyby_ship_courier.webp'),
+  flybyShipSkiff: publicAsset('images/flyby_ship_skiff.webp'),
+  flybyShipTug: publicAsset('images/flyby_ship_tug.webp'),
+  flybyShipClipper: publicAsset('images/flyby_ship_clipper.webp'),
+  flybyShipScout: publicAsset('images/flyby_ship_scout.webp'),
   nebulaVista01: publicAsset('images/nebula_vista_01.webp'),
   nebulaVista02: publicAsset('images/nebula_vista_02.webp'),
   nebulaVista03: publicAsset('images/nebula_vista_03.webp'),
@@ -17,6 +22,14 @@ export const imageAssets = {
   planetMarrowlight: publicAsset('images/planet_marrowlight.webp'),
   planetBluewake: publicAsset('images/planet_bluewake.webp')
 } as const;
+
+export const flybyShipAssets = [
+  imageAssets.flybyShipCourier,
+  imageAssets.flybyShipSkiff,
+  imageAssets.flybyShipTug,
+  imageAssets.flybyShipClipper,
+  imageAssets.flybyShipScout
+] as const;
 
 interface DestinationArt {
   src: string;

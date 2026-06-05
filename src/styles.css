@@ -1759,11 +1759,16 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .cabin-stage,
   .cabin-overlay-plate,
+  .cockpit-flyby-layer,
   .voyage-art,
   .travel-parallax,
   .voyage-progress .progress-bar {
     animation: none;
     transition: none;
+  }
+
+  .cockpit-flyby-layer {
+    display: none;
   }
 }
 
@@ -2022,7 +2027,9 @@ body {
 
 .cockpit-starfield,
 .cockpit-destination-art,
-.cockpit-hyperdrive-art {
+.cockpit-hyperdrive-art,
+.cockpit-flyby-layer,
+.cockpit-flyby-ship {
   position: absolute;
   pointer-events: none;
 }
@@ -2063,6 +2070,32 @@ body {
   content: "";
   position: absolute;
   pointer-events: none;
+}
+
+.cockpit-flyby-layer {
+  inset: 0;
+  z-index: 1;
+  overflow: hidden;
+}
+
+.cockpit-flyby-ship {
+  left: 0;
+  top: 0;
+  width: var(--flyby-size);
+  height: auto;
+  max-width: none;
+  opacity: 0;
+  filter:
+    drop-shadow(0 0 5px rgba(135, 220, 255, 0.24))
+    saturate(0.9)
+    brightness(0.82);
+  transform:
+    translate3d(var(--flyby-start-x), var(--flyby-start-y), 0)
+    translate(-50%, -50%)
+    scaleX(var(--flyby-facing))
+    rotate(var(--flyby-tilt));
+  animation: cockpit-ship-flyby var(--flyby-duration) linear forwards;
+  will-change: transform, opacity;
 }
 
 .cockpit-starfield::before {
@@ -2117,6 +2150,7 @@ body {
 }
 
 .cockpit-destination-art {
+  z-index: 2;
   left: var(--destination-x);
   top: var(--destination-y);
   width: var(--destination-size);
@@ -2151,6 +2185,7 @@ body {
 }
 
 .cockpit-hyperdrive-art {
+  z-index: 3;
   left: 50%;
   top: 37%;
   width: min(96%, 720px);
@@ -2174,7 +2209,8 @@ body {
 }
 
 .travel-active .cockpit-starfield,
-.travel-active .cockpit-destination-art {
+.travel-active .cockpit-destination-art,
+.travel-active .cockpit-flyby-layer {
   opacity: 0;
 }
 
@@ -2784,6 +2820,36 @@ body {
   }
 }
 
+@keyframes cockpit-ship-flyby {
+  0% {
+    opacity: 0;
+    transform:
+      translate3d(var(--flyby-start-x), var(--flyby-start-y), 0)
+      translate(-50%, -50%)
+      scaleX(var(--flyby-facing))
+      rotate(var(--flyby-tilt))
+      scale(0.86);
+  }
+
+  12% {
+    opacity: var(--flyby-opacity);
+  }
+
+  84% {
+    opacity: var(--flyby-opacity);
+  }
+
+  100% {
+    opacity: 0;
+    transform:
+      translate3d(var(--flyby-end-x), var(--flyby-end-y), 0)
+      translate(-50%, -50%)
+      scaleX(var(--flyby-facing))
+      rotate(var(--flyby-tilt))
+      scale(1.06);
+  }
+}
+
 @keyframes starfield-drift {
   from {
     transform: scale(1.015) translate3d(0, 0, 0);
@@ -3275,7 +3341,7 @@ body {
 
 .view-cockpit .resource-holo-panel .resource-strip {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(1, minmax(0, 1fr));
   gap: 5px 8px;
   margin-top: 7px;
 }
