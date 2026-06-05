@@ -559,7 +559,7 @@ function CabinOverlay({
   const arrivingDestination = arrivalApproach ? getSystem(arrivalApproach.systemId) : undefined;
   const travelRemainingMs = activeTravel ? activeTravel.arrivesAt - now : 0;
   const [selectedMapSystemId, setSelectedMapSystemId] = useState<string>();
-  const selectedSystemId = selectedMapSystemId ?? recommendedSystemId ?? currentSystem.id;
+  const selectedSystemId = pendingMapFocusSystemId ?? selectedMapSystemId ?? recommendedSystemId ?? currentSystem.id;
   const systemCardRefs = useRef<Record<string, HTMLElement | null>>({});
 
   const selectMapSystem = (systemId: string) => {
@@ -577,7 +577,6 @@ function CabinOverlay({
       return;
     }
 
-    setSelectedMapSystemId(pendingMapFocusSystemId);
     window.setTimeout(() => {
       systemCardRefs.current[pendingMapFocusSystemId]?.scrollIntoView({
         block: 'nearest',
