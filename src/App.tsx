@@ -62,7 +62,7 @@ const createCockpitFlyby = (id: number): CockpitFlyby => {
   const startY = randomInRange(8, 72);
   const endY = clamp(startY + randomInRange(-24, 24), -8, 88);
   const duration = randomInRange(11000, 23000);
-  const size = randomInRange(42, 92);
+  const size = randomInRange(64, 120);
 
   return {
     id,
@@ -77,7 +77,7 @@ const createCockpitFlyby = (id: number): CockpitFlyby => {
       '--flyby-size': `${size}px`,
       '--flyby-facing': leftToRight ? 1 : -1,
       '--flyby-tilt': `${leftToRight ? randomInRange(-7, 7) : randomInRange(173, 187)}deg`,
-      '--flyby-opacity': randomInRange(0.48, 0.82)
+      '--flyby-opacity': randomInRange(0.68, 0.95)
     } as CSSProperties
   };
 };
@@ -473,7 +473,7 @@ function PanoramicCabinExperience({
     const timeoutIds: number[] = [];
 
     const scheduleNextFlyby = (initial: boolean) => {
-      const delay = initial ? randomInRange(7000, 18000) : randomInRange(22000, 68000);
+      const delay = initial ? randomInRange(2000, 6000) : randomInRange(12000, 32000);
       const timeoutId = window.setTimeout(() => {
         if (cancelled) {
           return;
