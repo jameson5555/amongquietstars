@@ -56,6 +56,7 @@ function App() {
   const [activeEncounterId, setActiveEncounterId] = useState<string | null>(null);
   const [choiceResult, setChoiceResult] = useState<string | null>(null);
   const [arrivalApproach, setArrivalApproach] = useState<ArrivalApproach | null>(null);
+  const [pendingMapFocusSystemId, setPendingMapFocusSystemId] = useState<string | null>(null);
   const [now, setNow] = useState(() => Date.now());
 
   const currentSystem = getSystem(state.currentSystemId);
@@ -225,6 +226,12 @@ function App() {
   };
 
   const followLead = () => {
+    if (currentLead.destinationId) {
+      setPendingMapFocusSystemId(currentLead.destinationId);
+      goTo('map');
+      return;
+    }
+
     goTo(currentLead.actionView);
   };
 
@@ -292,8 +299,10 @@ function App() {
               state={state}
               systems={visibleSystems}
               recommendedSystemId={currentLead.destinationId}
+              pendingMapFocusSystemId={pendingMapFocusSystemId}
               radioHistory={radioHistory}
               onLeadAction={followLead}
+              onMapFocusHandled={() => setPendingMapFocusSystemId(null)}
               onTravel={startTravel}
               onReset={resetSave}
               onNavigate={navigateCabin}
@@ -376,8 +385,10 @@ function PanoramicCabinExperience({
   state,
   systems,
   recommendedSystemId,
+  pendingMapFocusSystemId,
   radioHistory,
   onLeadAction,
+  onMapFocusHandled,
   onTravel,
   onReset,
   onNavigate
@@ -391,8 +402,10 @@ function PanoramicCabinExperience({
   state: PlayerState;
   systems: StarSystem[];
   recommendedSystemId?: string;
+  pendingMapFocusSystemId: string | null;
   radioHistory: RadioMessage[];
   onLeadAction: () => void;
+  onMapFocusHandled: () => void;
   onTravel: (system: StarSystem) => void;
   onReset: () => void;
   onNavigate: (direction: 1 | -1) => void;
@@ -492,10 +505,13 @@ function PanoramicCabinExperience({
               state={state}
               systems={systems}
               recommendedSystemId={recommendedSystemId}
+              pendingMapFocusSystemId={pendingMapFocusSystemId}
               radioHistory={radioHistory}
               onLeadAction={onLeadAction}
+              onMapFocusHandled={onMapFocusHandled}
               onTravel={onTravel}
               onReset={onReset}
+              visibleView={activeView}
             />
           </div>
         ))}
@@ -514,10 +530,13 @@ function CabinOverlay({
   state,
   systems,
   recommendedSystemId,
+  pendingMapFocusSystemId,
   radioHistory,
   onLeadAction,
+  onMapFocusHandled,
   onTravel,
-  onReset
+  onReset,
+  visibleView
 }: {
   activeView: PrimaryViewId;
   currentSystem: StarSystem;
@@ -528,10 +547,13 @@ function CabinOverlay({
   state: PlayerState;
   systems: StarSystem[];
   recommendedSystemId?: string;
+  pendingMapFocusSystemId: string | null;
   radioHistory: RadioMessage[];
   onLeadAction: () => void;
+  onMapFocusHandled: () => void;
   onTravel: (system: StarSystem) => void;
   onReset: () => void;
+  visibleView: PrimaryViewId;
 }) {
   const activeDestination = activeTravel ? getSystem(activeTravel.toSystemId) : undefined;
   const arrivingDestination = arrivalApproach ? getSystem(arrivalApproach.systemId) : undefined;
@@ -549,6 +571,21 @@ function CabinOverlay({
       });
     }, 0);
   };
+
+  useEffect(() => {
+    if (activeView !== 'map' || visibleView !== 'map' || !pendingMapFocusSystemId) {
+      return;
+    }
+
+    setSelectedMapSystemId(pendingMapFocusSystemId);
+    window.setTimeout(() => {
+      systemCardRefs.current[pendingMapFocusSystemId]?.scrollIntoView({
+        block: 'nearest',
+        behavior: 'smooth'
+      });
+      onMapFocusHandled();
+    }, 0);
+  }, [activeView, onMapFocusHandled, pendingMapFocusSystemId, visibleView]);
 
   switch (activeView) {
     case 'cockpit':
@@ -579,22 +616,24 @@ function CabinOverlay({
               </p>
             </div>
           </div>
-          <div className="overlay-band cockpit-bottom-band">
+          <div className="cockpit-holo-fields">
             <div className="holo-panel current-lead-panel">
               <p className="eyebrow">Current lead</p>
               <h3>{currentLead.title}</h3>
               <p>{currentLead.description}</p>
               <div className="lead-footer">
                 <span>{getLeadDestinationName(currentLead)}</span>
-                <button className="primary-action" type="button" onClick={onLeadAction}>
-                  {currentLead.ctaLabel}
-                </button>
               </div>
             </div>
             <div className="holo-panel resource-holo-panel">
               <p className="eyebrow">{activeTravel ? 'Travel systems' : 'Ship status'}</p>
               <ResourceStrip state={state} compact />
             </div>
+          </div>
+          <div className="cockpit-control-deck">
+            <button className="plot-course-control" type="button" onClick={onLeadAction}>
+              {currentLead.ctaLabel}
+            </button>
           </div>
         </div>
       );
