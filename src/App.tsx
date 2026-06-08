@@ -744,9 +744,9 @@ function CabinOverlay({
             >
               <span className="current-lead-heading">
                 <span className="eyebrow">Current lead</span>
-                <span className="current-lead-title">{currentLead.title}</span>
               </span>
               <span className="current-lead-details" aria-hidden={!leadExpanded}>
+                <span className="current-lead-title">{currentLead.title}</span>
                 <span className="current-lead-description">{currentLead.description}</span>
                 <span className="lead-footer">
                   <span>{getLeadDestinationName(currentLead)}</span>

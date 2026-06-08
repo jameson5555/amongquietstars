@@ -78,7 +78,7 @@ define(['./workbox-7e5eb42b'], (function (workbox) { 'use strict';
    */
   workbox.precacheAndRoute([{
     "url": "/amongquietstars/index.html",
-    "revision": "0.mnsgkluqg98"
+    "revision": "0.g6bmrcrhv9"
   }], {});
   workbox.cleanupOutdatedCaches();
   workbox.registerRoute(new workbox.NavigationRoute(workbox.createHandlerBoundToURL("/amongquietstars/index.html"), {
