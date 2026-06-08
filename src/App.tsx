@@ -64,13 +64,16 @@ const createCockpitFlyby = (id: number): CockpitFlyby => {
   const startY = randomInRange(8, 72);
   const endY = clamp(startY + randomInRange(-18, 18) * (0.65 + depth * 0.35), -8, 88);
   const duration = randomInRange(24000, 36000) - depth * randomInRange(11000, 19000);
-  const size = 26 + depth * 78;
+  const foreground = depth >= 0.6;
+  const size = foreground
+    ? 38 + ((depth - 0.6) / 0.4) * 44
+    : 10 + (depth / 0.6) * 22;
 
   return {
     id,
     src: flybyShipAssets[Math.floor(Math.random() * flybyShipAssets.length)]!,
     durationMs: duration,
-    foreground: depth >= 0.6,
+    foreground,
     style: {
       '--flyby-start-x': `${leftToRight ? -30 : 130}%`,
       '--flyby-end-x': `${leftToRight ? 130 : -30}%`,
