@@ -59,10 +59,12 @@ const clamp = (value: number, min: number, max: number) => Math.min(max, Math.ma
 
 const createCockpitFlyby = (id: number): CockpitFlyby => {
   const leftToRight = Math.random() > 0.5;
+  const depth = Math.random();
   const startY = randomInRange(8, 72);
-  const endY = clamp(startY + randomInRange(-24, 24), -8, 88);
-  const duration = randomInRange(11000, 23000);
-  const size = randomInRange(64, 120);
+  const endY = clamp(startY + randomInRange(-18, 18) * (0.65 + depth * 0.35), -8, 88);
+  const duration = randomInRange(24000, 36000) - depth * randomInRange(11000, 19000);
+  const size = 34 + depth * 104;
+  const opacity = 0.3 + depth * 0.65;
 
   return {
     id,
@@ -76,8 +78,14 @@ const createCockpitFlyby = (id: number): CockpitFlyby => {
       '--flyby-duration': `${duration}ms`,
       '--flyby-size': `${size}px`,
       '--flyby-facing': leftToRight ? 1 : -1,
-      '--flyby-tilt': `${leftToRight ? randomInRange(-7, 7) : randomInRange(173, 187)}deg`,
-      '--flyby-opacity': randomInRange(0.68, 0.95)
+      '--flyby-tilt': `${randomInRange(-6, 6)}deg`,
+      '--flyby-opacity': opacity,
+      '--flyby-blur': `${(1 - depth) * 1.15}px`,
+      '--flyby-brightness': 0.55 + depth * 0.4,
+      '--flyby-saturation': 0.55 + depth * 0.4,
+      '--flyby-shadow-opacity': 0.08 + depth * 0.24,
+      '--flyby-start-scale': 0.88 + depth * 0.04,
+      '--flyby-end-scale': 0.94 + depth * 0.16
     } as CSSProperties
   };
 };

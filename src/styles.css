@@ -2086,9 +2086,10 @@ body {
   max-width: none;
   opacity: 0;
   filter:
-    drop-shadow(0 0 5px rgba(135, 220, 255, 0.24))
-    saturate(0.9)
-    brightness(0.82);
+    blur(var(--flyby-blur))
+    drop-shadow(0 0 5px rgba(135, 220, 255, var(--flyby-shadow-opacity)))
+    saturate(var(--flyby-saturation))
+    brightness(var(--flyby-brightness));
   transform:
     translate3d(-50%, -50%, 0)
     scaleX(var(--flyby-facing))
@@ -2828,7 +2829,7 @@ body {
       translate3d(-50%, -50%, 0)
       scaleX(var(--flyby-facing))
       rotate(var(--flyby-tilt))
-      scale(0.86);
+      scale(var(--flyby-start-scale));
   }
 
   12% {
@@ -2847,7 +2848,7 @@ body {
       translate3d(-50%, -50%, 0)
       scaleX(var(--flyby-facing))
       rotate(var(--flyby-tilt))
-      scale(1.06);
+      scale(var(--flyby-end-scale));
   }
 }
 
