@@ -64,7 +64,7 @@ const createCockpitFlyby = (id: number): CockpitFlyby => {
   const startY = randomInRange(8, 72);
   const endY = clamp(startY + randomInRange(-18, 18) * (0.65 + depth * 0.35), -8, 88);
   const duration = randomInRange(24000, 36000) - depth * randomInRange(11000, 19000);
-  const size = 34 + depth * 104;
+  const size = 26 + depth * 78;
 
   return {
     id,
