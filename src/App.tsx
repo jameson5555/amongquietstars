@@ -456,8 +456,10 @@ function PanoramicCabinExperience({
   onNavigate: (direction: 1 | -1) => void;
 }) {
   const swipeStartRef = useRef<{ x: number; y: number; pointerId: number } | null>(null);
+  const suppressLeadToggleRef = useRef(false);
   const flybyIdRef = useRef(0);
   const [cockpitFlybys, setCockpitFlybys] = useState<CockpitFlyby[]>([]);
+  const [leadExpanded, setLeadExpanded] = useState(false);
 
   const windowSystem = arrivalApproach ? getSystem(arrivalApproach.systemId) : currentSystem;
   const windowDestinationArt = getDestinationArt(windowSystem.id);
@@ -511,6 +513,7 @@ function PanoramicCabinExperience({
   }, [activeTravel, activeView]);
 
   const handlePointerDown = (event: PointerEvent<HTMLDivElement>) => {
+    suppressLeadToggleRef.current = false;
     swipeStartRef.current = {
       x: event.clientX,
       y: event.clientY,
@@ -533,7 +536,20 @@ function PanoramicCabinExperience({
       return;
     }
 
+    suppressLeadToggleRef.current = true;
+    window.setTimeout(() => {
+      suppressLeadToggleRef.current = false;
+    }, 100);
     onNavigate(deltaX < 0 ? 1 : -1);
+  };
+
+  const toggleLeadExpanded = () => {
+    if (suppressLeadToggleRef.current) {
+      suppressLeadToggleRef.current = false;
+      return;
+    }
+
+    setLeadExpanded((expanded) => !expanded);
   };
 
   return (
@@ -605,6 +621,8 @@ function PanoramicCabinExperience({
               onTravel={onTravel}
               onReset={onReset}
               visibleView={activeView}
+              leadExpanded={leadExpanded}
+              onToggleLead={toggleLeadExpanded}
             />
           </div>
         ))}
@@ -629,7 +647,9 @@ function CabinOverlay({
   onMapFocusHandled,
   onTravel,
   onReset,
-  visibleView
+  visibleView,
+  leadExpanded,
+  onToggleLead
 }: {
   activeView: PrimaryViewId;
   currentSystem: StarSystem;
@@ -647,6 +667,8 @@ function CabinOverlay({
   onTravel: (system: StarSystem) => void;
   onReset: () => void;
   visibleView: PrimaryViewId;
+  leadExpanded: boolean;
+  onToggleLead: () => void;
 }) {
   const activeDestination = activeTravel ? getSystem(activeTravel.toSystemId) : undefined;
   const arrivingDestination = arrivalApproach ? getSystem(arrivalApproach.systemId) : undefined;
@@ -685,42 +707,51 @@ function CabinOverlay({
         <div className="overlay-layer cockpit-overlay">
           <div className="overlay-band cockpit-top-band">
             <div className="holo-panel holo-compact">
-              <p className="eyebrow">
-                {arrivalApproach && arrivingDestination
-                  ? 'Final approach'
-                  : activeTravel && activeDestination
-                    ? 'In transit'
-                    : 'Orbit status'}
-              </p>
-              <h2>
-                {arrivalApproach && arrivingDestination
-                  ? arrivingDestination.name
-                  : activeTravel && activeDestination
-                    ? `To ${activeDestination.name}`
-                    : currentSystem.name}
-              </h2>
-              <p>
-                {arrivalApproach && arrivingDestination
-                  ? 'Completing approach. Stand by.'
-                  : activeTravel && activeDestination
-                    ? `Arriving in ${formatDuration(travelRemainingMs)}`
-                    : 'Stable orbit. Survey windows open.'}
-              </p>
+              <div className="cockpit-status-copy">
+                <p className="eyebrow">
+                  {arrivalApproach && arrivingDestination
+                    ? 'Final approach'
+                    : activeTravel && activeDestination
+                      ? 'In transit'
+                      : 'Orbit status'}
+                </p>
+                <h2>
+                  {arrivalApproach && arrivingDestination
+                    ? arrivingDestination.name
+                    : activeTravel && activeDestination
+                      ? `To ${activeDestination.name}`
+                      : currentSystem.name}
+                </h2>
+                <p>
+                  {arrivalApproach && arrivingDestination
+                    ? 'Completing approach. Stand by.'
+                    : activeTravel && activeDestination
+                      ? `Arriving in ${formatDuration(travelRemainingMs)}`
+                      : 'Stable orbit. Survey windows open.'}
+                </p>
+              </div>
+              <ResourceStrip state={state} compact />
             </div>
           </div>
           <div className="cockpit-holo-fields">
-            <div className="holo-panel current-lead-panel">
-              <p className="eyebrow">Current lead</p>
-              <h3>{currentLead.title}</h3>
-              <p>{currentLead.description}</p>
-              <div className="lead-footer">
-                <span>{getLeadDestinationName(currentLead)}</span>
-              </div>
-            </div>
-            <div className="holo-panel resource-holo-panel">
-              <p className="eyebrow">{activeTravel ? 'Travel systems' : 'Ship status'}</p>
-              <ResourceStrip state={state} compact />
-            </div>
+            <button
+              className={`holo-panel current-lead-panel ${leadExpanded ? 'expanded' : ''}`}
+              type="button"
+              aria-expanded={leadExpanded}
+              onClick={onToggleLead}
+            >
+              <span className="current-lead-heading">
+                <span className="eyebrow">Current lead</span>
+                <span className="current-lead-title">{currentLead.title}</span>
+              </span>
+              <span className="current-lead-details" aria-hidden={!leadExpanded}>
+                <span className="current-lead-description">{currentLead.description}</span>
+                <span className="lead-footer">
+                  <span>{getLeadDestinationName(currentLead)}</span>
+                </span>
+              </span>
+              <span className="lead-toggle-indicator" aria-hidden="true" />
+            </button>
           </div>
           <div className="cockpit-control-deck">
             <button className="plot-course-control" type="button" onClick={onLeadAction}>
