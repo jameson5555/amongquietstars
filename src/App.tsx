@@ -80,7 +80,6 @@ const createCockpitFlyby = (id: number): CockpitFlyby => {
       '--flyby-size': `${size}px`,
       '--flyby-facing': leftToRight ? 1 : -1,
       '--flyby-tilt': `${randomInRange(-6, 6)}deg`,
-      '--flyby-blur': `${(1 - depth) * 1.15}px`,
       '--flyby-brightness': 0.55 + depth * 0.4,
       '--flyby-saturation': 0.55 + depth * 0.4,
       '--flyby-shadow-opacity': 0.08 + depth * 0.24,

@@ -2093,7 +2093,6 @@ body {
   max-width: none;
   opacity: 0;
   filter:
-    blur(var(--flyby-blur))
     drop-shadow(0 0 5px rgba(135, 220, 255, var(--flyby-shadow-opacity)))
     saturate(var(--flyby-saturation))
     brightness(var(--flyby-brightness));
