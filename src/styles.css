@@ -2074,8 +2074,15 @@ body {
 
 .cockpit-flyby-layer {
   inset: 0;
-  z-index: 1;
   overflow: hidden;
+}
+
+.cockpit-flyby-layer-far {
+  z-index: 1;
+}
+
+.cockpit-flyby-layer-near {
+  z-index: 3;
 }
 
 .cockpit-flyby-ship {
@@ -2185,7 +2192,7 @@ body {
 }
 
 .cockpit-hyperdrive-art {
-  z-index: 3;
+  z-index: 4;
   left: 50%;
   top: 37%;
   width: min(96%, 720px);
@@ -2833,11 +2840,11 @@ body {
   }
 
   12% {
-    opacity: var(--flyby-opacity);
+    opacity: 1;
   }
 
   84% {
-    opacity: var(--flyby-opacity);
+    opacity: 1;
   }
 
   100% {

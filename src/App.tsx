@@ -29,6 +29,7 @@ type CockpitFlyby = {
   id: number;
   src: string;
   durationMs: number;
+  foreground: boolean;
   style: CSSProperties;
 };
 
@@ -64,12 +65,12 @@ const createCockpitFlyby = (id: number): CockpitFlyby => {
   const endY = clamp(startY + randomInRange(-18, 18) * (0.65 + depth * 0.35), -8, 88);
   const duration = randomInRange(24000, 36000) - depth * randomInRange(11000, 19000);
   const size = 34 + depth * 104;
-  const opacity = 0.3 + depth * 0.65;
 
   return {
     id,
     src: flybyShipAssets[Math.floor(Math.random() * flybyShipAssets.length)]!,
     durationMs: duration,
+    foreground: depth >= 0.6,
     style: {
       '--flyby-start-x': `${leftToRight ? -30 : 130}%`,
       '--flyby-end-x': `${leftToRight ? 130 : -30}%`,
@@ -79,7 +80,6 @@ const createCockpitFlyby = (id: number): CockpitFlyby => {
       '--flyby-size': `${size}px`,
       '--flyby-facing': leftToRight ? 1 : -1,
       '--flyby-tilt': `${randomInRange(-6, 6)}deg`,
-      '--flyby-opacity': opacity,
       '--flyby-blur': `${(1 - depth) * 1.15}px`,
       '--flyby-brightness': 0.55 + depth * 0.4,
       '--flyby-saturation': 0.55 + depth * 0.4,
@@ -555,8 +555,8 @@ function PanoramicCabinExperience({
           <div className="scene-cockpit-window-hotspot" aria-hidden={activeView !== 'cockpit'}>
             <div className="cockpit-window-view">
               <div className="cockpit-starfield" />
-              <div className="cockpit-flyby-layer" aria-hidden="true">
-                {cockpitFlybys.map((flyby) => (
+              <div className="cockpit-flyby-layer cockpit-flyby-layer-far" aria-hidden="true">
+                {cockpitFlybys.filter((flyby) => !flyby.foreground).map((flyby) => (
                   <img className="cockpit-flyby-ship" key={flyby.id} src={flyby.src} alt="" style={flyby.style} />
                 ))}
               </div>
@@ -566,6 +566,11 @@ function PanoramicCabinExperience({
                 className={`cockpit-destination-art destination-${windowDestinationArt.kind}`}
                 style={destinationStyle}
               />
+              <div className="cockpit-flyby-layer cockpit-flyby-layer-near" aria-hidden="true">
+                {cockpitFlybys.filter((flyby) => flyby.foreground).map((flyby) => (
+                  <img className="cockpit-flyby-ship" key={flyby.id} src={flyby.src} alt="" style={flyby.style} />
+                ))}
+              </div>
               <img src={imageAssets.hyperdriveTunnel} alt="" className="cockpit-hyperdrive-art" />
             </div>
           </div>
