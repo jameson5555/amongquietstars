@@ -2079,8 +2079,8 @@ body {
 }
 
 .cockpit-flyby-ship {
-  left: 0;
-  top: 0;
+  left: var(--flyby-start-x);
+  top: var(--flyby-start-y);
   width: var(--flyby-size);
   height: auto;
   max-width: none;
@@ -2090,12 +2090,11 @@ body {
     saturate(0.9)
     brightness(0.82);
   transform:
-    translate3d(var(--flyby-start-x), var(--flyby-start-y), 0)
-    translate(-50%, -50%)
+    translate3d(-50%, -50%, 0)
     scaleX(var(--flyby-facing))
     rotate(var(--flyby-tilt));
   animation: cockpit-ship-flyby var(--flyby-duration) linear forwards;
-  will-change: transform, opacity;
+  will-change: left, top, transform, opacity;
 }
 
 .cockpit-starfield::before {
@@ -2822,10 +2821,11 @@ body {
 
 @keyframes cockpit-ship-flyby {
   0% {
+    left: var(--flyby-start-x);
+    top: var(--flyby-start-y);
     opacity: 0;
     transform:
-      translate3d(var(--flyby-start-x), var(--flyby-start-y), 0)
-      translate(-50%, -50%)
+      translate3d(-50%, -50%, 0)
       scaleX(var(--flyby-facing))
       rotate(var(--flyby-tilt))
       scale(0.86);
@@ -2840,10 +2840,11 @@ body {
   }
 
   100% {
+    left: var(--flyby-end-x);
+    top: var(--flyby-end-y);
     opacity: 0;
     transform:
-      translate3d(var(--flyby-end-x), var(--flyby-end-y), 0)
-      translate(-50%, -50%)
+      translate3d(-50%, -50%, 0)
       scaleX(var(--flyby-facing))
       rotate(var(--flyby-tilt))
       scale(1.06);
