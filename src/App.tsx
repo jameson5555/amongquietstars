@@ -706,7 +706,8 @@ function CabinOverlay({
       return (
         <div className="overlay-layer cockpit-overlay">
           <div className="overlay-band cockpit-top-band">
-            <div className="holo-panel holo-compact">
+            <ResourceStrip state={state} compact />
+            <div className="holo-panel cockpit-status-hologram">
               <div className="cockpit-status-copy">
                 <p className="eyebrow">
                   {arrivalApproach && arrivingDestination
@@ -722,15 +723,16 @@ function CabinOverlay({
                       ? `To ${activeDestination.name}`
                       : currentSystem.name}
                 </h2>
-                <p>
-                  {arrivalApproach && arrivingDestination
-                    ? 'Completing approach. Stand by.'
-                    : activeTravel && activeDestination
-                      ? `Arriving in ${formatDuration(travelRemainingMs)}`
-                      : 'Stable orbit. Survey windows open.'}
-                </p>
+                {(arrivalApproach || activeTravel) && (
+                  <p>
+                    {arrivalApproach && arrivingDestination
+                      ? 'Completing approach. Stand by.'
+                      : activeTravel && activeDestination
+                        ? `Arriving in ${formatDuration(travelRemainingMs)}`
+                        : ''}
+                  </p>
+                )}
               </div>
-              <ResourceStrip state={state} compact />
             </div>
           </div>
           <div className="cockpit-holo-fields">
@@ -750,7 +752,6 @@ function CabinOverlay({
                   <span>{getLeadDestinationName(currentLead)}</span>
                 </span>
               </span>
-              <span className="lead-toggle-indicator" aria-hidden="true" />
             </button>
           </div>
           <div className="cockpit-control-deck">
