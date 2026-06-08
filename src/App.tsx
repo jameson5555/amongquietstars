@@ -724,7 +724,7 @@ function CabinOverlay({
                       : currentSystem.name}
                 </h2>
                 {(arrivalApproach || activeTravel) && (
-                  <p>
+                  <p className="mb-0">
                     {arrivalApproach && arrivingDestination
                       ? 'Completing approach. Stand by.'
                       : activeTravel && activeDestination

@@ -2194,7 +2194,7 @@ body {
   z-index: 4;
   left: 50%;
   top: 37%;
-  width: min(96%, 720px);
+  width: 132%;
   height: auto;
   max-width: none;
   aspect-ratio: 1;
