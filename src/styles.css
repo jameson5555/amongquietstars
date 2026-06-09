@@ -2057,8 +2057,7 @@ body {
 }
 
 .view-radio .art-radio {
-  transform: scale(1) translate3d(0%, 0, 0);
-  background-position: 50% center;
+  opacity: 0;
 }
 
 .view-ship .art-map {
@@ -4086,23 +4085,42 @@ body {
 }
 
 /* Radio console: dedicated geometry prevents generic overlay rules from leaking in. */
+.cabin-experience.view-radio .radio-artwork-coordinate-space {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 100%;
+  aspect-ratio: 941 / 1672;
+  transform: translateY(-50%);
+  pointer-events: auto;
+}
+
+.cabin-experience.view-radio .radio-console-art {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+  pointer-events: none;
+  user-select: none;
+}
+
 .cabin-experience.view-radio .radio-screen-viewport {
   position: absolute;
-  z-index: 2;
-  left: 8%;
-  top: 5%;
-  width: 90%;
-  height: 67%;
+  z-index: 1;
+  left: 21.1%;
+  top: 18.1%;
+  width: 70.7%;
+  height: 30.3%;
   min-width: 0;
   min-height: 0;
   overflow: hidden;
-  pointer-events: auto;
-  clip-path: polygon(3% 0, 95% 0, 100% 7%, 99% 91%, 95% 99%, 4% 99%, 0 92%, 1% 8%);
+  clip-path: polygon(4% 0, 94% 0, 100% 8%, 99% 91%, 94% 99%, 5% 99%, 0 91%, 1% 8%);
 }
 
 .cabin-experience.view-radio .transmission-feed {
   position: absolute;
-  inset: 4% 4.5% 5% 3%;
+  inset: 4% 4.5% 5% 4%;
   min-width: 0;
   min-height: 0;
   display: grid;

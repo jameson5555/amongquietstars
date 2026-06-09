@@ -1453,46 +1453,49 @@ function CabinOverlay({
     case 'radio':
       return (
         <div className="overlay-layer radio-overlay">
-          <div className="radio-screen-viewport">
-            <div className="transmission-feed">
-              {radioFeedItems.map((item) => {
-                if (item.kind === 'message') {
+          <div className="radio-artwork-coordinate-space">
+            <img src={imageAssets.viewRadioConsole} alt="" className="radio-console-art" />
+            <div className="radio-screen-viewport">
+              <div className="transmission-feed">
+                {radioFeedItems.map((item) => {
+                  if (item.kind === 'message') {
+                    return (
+                      <article className={`radio-message ${item.message.tone}`} key={`message:${item.message.id}`}>
+                        <strong>{item.message.source}</strong>
+                        <p>{item.message.text}</p>
+                      </article>
+                    );
+                  }
+
+                  const destination = getSystem(item.job.destinationId);
                   return (
-                    <article className={`radio-message ${item.message.tone}`} key={`message:${item.message.id}`}>
-                      <strong>{item.message.source}</strong>
-                      <p>{item.message.text}</p>
+                    <article className="radio-message job job-offer" key={`job:${item.job.id}`}>
+                      <div className="entry-topline">
+                        <span>{item.job.source}</span>
+                        <strong>{destination.name}</strong>
+                      </div>
+                      <h3>{item.job.title}</h3>
+                      <p>{item.job.transmission}</p>
+                      <div className="job-offer-footer">
+                        <span>{formatResourceDelta(item.job.reward)}</span>
+                        <button
+                          className="small-action"
+                          type="button"
+                          disabled={state.acceptedJobIds.length >= 3}
+                          onClick={() => onAcceptJob(item.job.id)}
+                        >
+                          {state.acceptedJobIds.length >= 3 ? 'Job list full' : 'Accept Job'}
+                        </button>
+                      </div>
                     </article>
                   );
-                }
-
-                const destination = getSystem(item.job.destinationId);
-                return (
-                  <article className="radio-message job job-offer" key={`job:${item.job.id}`}>
-                    <div className="entry-topline">
-                      <span>{item.job.source}</span>
-                      <strong>{destination.name}</strong>
-                    </div>
-                    <h3>{item.job.title}</h3>
-                    <p>{item.job.transmission}</p>
-                    <div className="job-offer-footer">
-                      <span>{formatResourceDelta(item.job.reward)}</span>
-                      <button
-                        className="small-action"
-                        type="button"
-                        disabled={state.acceptedJobIds.length >= 3}
-                        onClick={() => onAcceptJob(item.job.id)}
-                      >
-                        {state.acceptedJobIds.length >= 3 ? 'Job list full' : 'Accept Job'}
-                      </button>
-                    </div>
-                  </article>
-                );
-              })}
-              {radioFeedItems.length === 0 && (
-                <div className="empty-state radio-empty">
-                  No saved messages yet. Encounters and leads will start feeding the receiver soon.
-                </div>
-              )}
+                })}
+                {radioFeedItems.length === 0 && (
+                  <div className="empty-state radio-empty">
+                    No saved messages yet. Encounters and leads will start feeding the receiver soon.
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>
