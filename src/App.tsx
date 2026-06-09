@@ -228,6 +228,7 @@ function App() {
 
   const completePulseComparison = () => {
     setState((current) => comparePulseLogs(current));
+    closeJournal();
   };
 
   const goTo = (nextView: ViewId) => {
