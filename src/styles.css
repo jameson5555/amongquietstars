@@ -3369,8 +3369,12 @@ body {
   bottom: 38%;
   left: 25%;
   right: 25%;
-  display: block;
+  display: grid;
   pointer-events: none;
+}
+
+.cockpit-holo-fields > .holo-panel {
+  grid-area: 1 / 1;
 }
 
 .lead-console-trigger {
@@ -3431,6 +3435,56 @@ body {
 
 .lead-console-trigger:focus-visible {
   outline: 0;
+}
+
+.music-console-trigger {
+  position: absolute;
+  z-index: 3;
+  top: 74.7%;
+  left: 64.2%;
+  width: 19%;
+  height: 9.2%;
+  min-height: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  color: transparent;
+  cursor: pointer;
+  pointer-events: auto;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.music-console-trigger::after {
+  content: "";
+  position: absolute;
+  inset: 4%;
+  border: 1px solid rgba(96, 224, 255, 0);
+  border-radius: inherit;
+  background: radial-gradient(ellipse at center, rgba(79, 218, 255, 0.14), transparent 72%);
+  box-shadow: inset 0 0 12px rgba(79, 218, 255, 0.12);
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    border-color 160ms ease,
+    opacity 160ms ease;
+}
+
+.music-console-trigger:hover::after {
+  opacity: 0.42;
+}
+
+.music-console-trigger:active::after {
+  opacity: 0.72;
+}
+
+.music-console-trigger:focus-visible {
+  outline: 0;
+}
+
+.music-console-trigger:focus-visible::after {
+  border-color: rgba(183, 242, 255, 0.9);
+  opacity: 0.78;
 }
 
 .lead-console-trigger.unread::before {
@@ -3643,6 +3697,73 @@ body {
   visibility: visible;
 }
 
+.view-cockpit .music-player-details {
+  display: grid;
+  gap: 10px;
+  justify-items: center;
+}
+
+.view-cockpit .music-track-title {
+  display: block;
+  width: 100%;
+  overflow: hidden;
+  color: #f4fbff;
+  font-family: var(--font-heading);
+  font-size: 0.86rem;
+  font-weight: 800;
+  line-height: 1.2;
+  text-overflow: ellipsis;
+  text-shadow: 0 0 10px rgba(111, 224, 255, 0.74);
+  white-space: nowrap;
+}
+
+.view-cockpit .music-track-title.idle {
+  color: rgba(222, 250, 255, 0.86);
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  font-weight: 600;
+  white-space: normal;
+}
+
+.music-player-controls {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+.music-control-button {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 38px;
+  min-height: 38px;
+  padding: 7px;
+  border: 1px solid rgba(142, 233, 255, 0.48);
+  border-radius: 6px;
+  background:
+    linear-gradient(180deg, rgba(113, 224, 255, 0.2), rgba(54, 133, 168, 0.12)),
+    rgba(6, 31, 43, 0.64);
+  color: #dff9ff;
+  cursor: pointer;
+  filter: drop-shadow(0 0 5px rgba(82, 207, 255, 0.24));
+}
+
+.music-control-button:hover {
+  border-color: rgba(183, 242, 255, 0.8);
+  box-shadow: 0 0 14px rgba(82, 207, 255, 0.18);
+}
+
+.music-control-button:focus-visible {
+  outline: 2px solid #b7f2ff;
+  outline-offset: 2px;
+}
+
+.music-control-button svg {
+  width: 100%;
+  height: 100%;
+  fill: currentColor;
+}
+
 .view-cockpit .current-lead-description {
   color: rgba(222, 250, 255, 0.86);
   font-size: 0.72rem;
@@ -3736,7 +3857,8 @@ body {
   }
 
   .view-cockpit .current-lead-panel,
-  .view-cockpit .current-lead-details {
+  .view-cockpit .current-lead-details,
+  .music-console-trigger::after {
     transition: none;
   }
 

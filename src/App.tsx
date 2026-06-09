@@ -1,9 +1,10 @@
 import type { CSSProperties, PointerEvent } from 'react';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { flybyShipAssets, getDestinationArt, getSystemThumbnail, getTravelVista, imageAssets } from './assets/imageAssets';
 import { getEncounter } from './data/encounters';
 import { getJournalEntry } from './data/journal';
 import { getRadioMessage } from './data/radio';
+import { songs } from './data/songs';
 import { getSystem } from './data/systems';
 import { shipUpgrades } from './data/upgrades';
 import {
@@ -41,6 +42,7 @@ type CockpitFlyby = {
   style: CSSProperties;
 };
 type SteeringOffset = { x: number; y: number };
+type CockpitPanel = 'lead' | 'music' | null;
 type SteeringDrag = {
   pointerId: number;
   startX: number;
@@ -119,6 +121,11 @@ function App() {
   const [arrivalApproach, setArrivalApproach] = useState<ArrivalApproach | null>(null);
   const [pendingMapFocusSystemId, setPendingMapFocusSystemId] = useState<string | null>(null);
   const [now, setNow] = useState(() => Date.now());
+  const [currentSongIndex, setCurrentSongIndex] = useState<number | null>(null);
+  const [isMusicPlaying, setIsMusicPlaying] = useState(false);
+  const [musicError, setMusicError] = useState(false);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const currentSongIndexRef = useRef<number | null>(null);
 
   const currentSystem = getSystem(state.currentSystemId);
   const visibleSystems = useMemo(() => getVisibleSystems(state), [state]);
@@ -134,6 +141,90 @@ function App() {
     savePlayerState(state);
   }, [state]);
 
+  const playSongAtIndex = useCallback((index: number) => {
+    const audio = audioRef.current;
+    const song = songs[index];
+    if (!audio || !song) {
+      return;
+    }
+
+    currentSongIndexRef.current = index;
+    setCurrentSongIndex(index);
+    setMusicError(false);
+    audio.src = song.src;
+    audio.load();
+    void audio.play().catch(() => {
+      setIsMusicPlaying(false);
+      setMusicError(true);
+    });
+  }, []);
+
+  useEffect(() => {
+    const audio = new Audio();
+    audio.preload = 'metadata';
+    audioRef.current = audio;
+
+    const handlePlay = () => {
+      setIsMusicPlaying(true);
+      setMusicError(false);
+    };
+    const handlePause = () => setIsMusicPlaying(false);
+    const handleError = () => {
+      setIsMusicPlaying(false);
+      setMusicError(true);
+    };
+    const handleEnded = () => {
+      const currentIndex = currentSongIndexRef.current ?? -1;
+      playSongAtIndex((currentIndex + 1) % songs.length);
+    };
+
+    audio.addEventListener('play', handlePlay);
+    audio.addEventListener('pause', handlePause);
+    audio.addEventListener('error', handleError);
+    audio.addEventListener('ended', handleEnded);
+
+    return () => {
+      audio.pause();
+      audio.removeAttribute('src');
+      audio.load();
+      audio.removeEventListener('play', handlePlay);
+      audio.removeEventListener('pause', handlePause);
+      audio.removeEventListener('error', handleError);
+      audio.removeEventListener('ended', handleEnded);
+      audioRef.current = null;
+    };
+  }, [playSongAtIndex]);
+
+  const toggleMusicPlayback = () => {
+    const audio = audioRef.current;
+    if (!audio) {
+      return;
+    }
+
+    if (isMusicPlaying) {
+      audio.pause();
+      return;
+    }
+
+    if (currentSongIndexRef.current === null) {
+      playSongAtIndex(Math.floor(Math.random() * songs.length));
+      return;
+    }
+
+    setMusicError(false);
+    void audio.play().catch(() => {
+      setIsMusicPlaying(false);
+      setMusicError(true);
+    });
+  };
+
+  const playNextSong = () => {
+    const currentIndex = currentSongIndexRef.current;
+    const nextIndex = currentIndex === null
+      ? Math.floor(Math.random() * songs.length)
+      : (currentIndex + 1) % songs.length;
+    playSongAtIndex(nextIndex);
+  };
 
   useEffect(() => {
     if (!activeTravel) {
@@ -378,6 +469,11 @@ function App() {
               recommendedSystemId={currentLead.destinationId}
               pendingMapFocusSystemId={pendingMapFocusSystemId}
               radioHistory={radioHistory}
+              currentSongTitle={currentSongIndex === null ? null : songs[currentSongIndex]?.title ?? null}
+              isMusicPlaying={isMusicPlaying}
+              musicError={musicError}
+              onToggleMusicPlayback={toggleMusicPlayback}
+              onNextSong={playNextSong}
               onLeadAction={followLead}
               onLeadViewed={markLeadViewed}
               onMapFocusHandled={() => setPendingMapFocusSystemId(null)}
@@ -467,6 +563,11 @@ function PanoramicCabinExperience({
   recommendedSystemId,
   pendingMapFocusSystemId,
   radioHistory,
+  currentSongTitle,
+  isMusicPlaying,
+  musicError,
+  onToggleMusicPlayback,
+  onNextSong,
   onLeadAction,
   onLeadViewed,
   onMapFocusHandled,
@@ -485,6 +586,11 @@ function PanoramicCabinExperience({
   recommendedSystemId?: string;
   pendingMapFocusSystemId: string | null;
   radioHistory: RadioMessage[];
+  currentSongTitle: string | null;
+  isMusicPlaying: boolean;
+  musicError: boolean;
+  onToggleMusicPlayback: () => void;
+  onNextSong: () => void;
   onLeadAction: () => void;
   onLeadViewed: (leadId: string) => void;
   onMapFocusHandled: () => void;
@@ -493,7 +599,7 @@ function PanoramicCabinExperience({
   onNavigate: (direction: 1 | -1) => void;
 }) {
   const swipeStartRef = useRef<{ x: number; y: number; pointerId: number } | null>(null);
-  const suppressLeadToggleRef = useRef(false);
+  const suppressPanelToggleRef = useRef(false);
   const flybyIdRef = useRef(0);
   const steeringDragRef = useRef<SteeringDrag | null>(null);
   const steeringTargetRef = useRef<SteeringOffset>({ x: 0, y: 0 });
@@ -501,9 +607,10 @@ function PanoramicCabinExperience({
   const steeringFrameRef = useRef<number | null>(null);
   const steeringFrameTimeRef = useRef<number | null>(null);
   const [cockpitFlybys, setCockpitFlybys] = useState<CockpitFlyby[]>([]);
-  const [expandedLeadId, setExpandedLeadId] = useState<string | null>(null);
+  const [openCockpitPanel, setOpenCockpitPanel] = useState<CockpitPanel>(null);
   const [steeringOffset, setSteeringOffset] = useState<SteeringOffset>({ x: 0, y: 0 });
-  const leadExpanded = expandedLeadId === currentLead.id;
+  const leadExpanded = openCockpitPanel === 'lead';
+  const musicExpanded = openCockpitPanel === 'music';
 
   const windowSystem = arrivalApproach ? getSystem(arrivalApproach.systemId) : currentSystem;
   const windowDestinationArt = getDestinationArt(windowSystem.id);
@@ -672,7 +779,7 @@ function PanoramicCabinExperience({
   };
 
   const handlePointerDown = (event: PointerEvent<HTMLDivElement>) => {
-    suppressLeadToggleRef.current = false;
+    suppressPanelToggleRef.current = false;
     swipeStartRef.current = {
       x: event.clientX,
       y: event.clientY,
@@ -695,30 +802,39 @@ function PanoramicCabinExperience({
       return;
     }
 
-    suppressLeadToggleRef.current = true;
+    suppressPanelToggleRef.current = true;
     window.setTimeout(() => {
-      suppressLeadToggleRef.current = false;
+      suppressPanelToggleRef.current = false;
     }, 100);
     onNavigate(deltaX < 0 ? 1 : -1);
   };
 
   const toggleLeadExpanded = () => {
-    if (suppressLeadToggleRef.current) {
-      suppressLeadToggleRef.current = false;
+    if (suppressPanelToggleRef.current) {
+      suppressPanelToggleRef.current = false;
       return;
     }
 
-    setExpandedLeadId((expandedId) => {
-      if (expandedId !== currentLead.id) {
+    setOpenCockpitPanel((openPanel) => {
+      if (openPanel !== 'lead') {
         onLeadViewed(currentLead.id);
-        return currentLead.id;
+        return 'lead';
       }
       return null;
     });
   };
 
+  const toggleMusicExpanded = () => {
+    if (suppressPanelToggleRef.current) {
+      suppressPanelToggleRef.current = false;
+      return;
+    }
+
+    setOpenCockpitPanel((openPanel) => openPanel === 'music' ? null : 'music');
+  };
+
   const handleLeadAction = () => {
-    setExpandedLeadId(null);
+    setOpenCockpitPanel(null);
     onLeadAction();
   };
 
@@ -788,6 +904,11 @@ function PanoramicCabinExperience({
               recommendedSystemId={recommendedSystemId}
               pendingMapFocusSystemId={pendingMapFocusSystemId}
               radioHistory={radioHistory}
+              currentSongTitle={currentSongTitle}
+              isMusicPlaying={isMusicPlaying}
+              musicError={musicError}
+              onToggleMusicPlayback={onToggleMusicPlayback}
+              onNextSong={onNextSong}
               onLeadAction={handleLeadAction}
               onSteeringPointerDown={handleSteeringPointerDown}
               onSteeringPointerMove={handleSteeringPointerMove}
@@ -797,7 +918,9 @@ function PanoramicCabinExperience({
               onReset={onReset}
               visibleView={activeView}
               leadExpanded={leadExpanded}
+              musicExpanded={musicExpanded}
               onToggleLead={toggleLeadExpanded}
+              onToggleMusic={toggleMusicExpanded}
             />
           </div>
         ))}
@@ -818,6 +941,11 @@ function CabinOverlay({
   recommendedSystemId,
   pendingMapFocusSystemId,
   radioHistory,
+  currentSongTitle,
+  isMusicPlaying,
+  musicError,
+  onToggleMusicPlayback,
+  onNextSong,
   onLeadAction,
   onSteeringPointerDown,
   onSteeringPointerMove,
@@ -827,7 +955,9 @@ function CabinOverlay({
   onReset,
   visibleView,
   leadExpanded,
-  onToggleLead
+  musicExpanded,
+  onToggleLead,
+  onToggleMusic
 }: {
   activeView: PrimaryViewId;
   currentSystem: StarSystem;
@@ -840,6 +970,11 @@ function CabinOverlay({
   recommendedSystemId?: string;
   pendingMapFocusSystemId: string | null;
   radioHistory: RadioMessage[];
+  currentSongTitle: string | null;
+  isMusicPlaying: boolean;
+  musicError: boolean;
+  onToggleMusicPlayback: () => void;
+  onNextSong: () => void;
   onLeadAction: () => void;
   onSteeringPointerDown: (event: PointerEvent<HTMLButtonElement>) => void;
   onSteeringPointerMove: (event: PointerEvent<HTMLButtonElement>) => void;
@@ -849,7 +984,9 @@ function CabinOverlay({
   onReset: () => void;
   visibleView: PrimaryViewId;
   leadExpanded: boolean;
+  musicExpanded: boolean;
   onToggleLead: () => void;
+  onToggleMusic: () => void;
 }) {
   const activeDestination = activeTravel ? getSystem(activeTravel.toSystemId) : undefined;
   const arrivingDestination = arrivalApproach ? getSystem(arrivalApproach.systemId) : undefined;
@@ -928,6 +1065,16 @@ function CabinOverlay({
             <span className="visually-hidden">Current lead</span>
           </button>
           <button
+            className="music-console-trigger"
+            type="button"
+            aria-label={`${musicExpanded ? 'Hide' : 'Show'} cockpit music controls`}
+            aria-controls="music-player-hologram"
+            aria-expanded={musicExpanded}
+            onClick={onToggleMusic}
+          >
+            <span className="visually-hidden">Cockpit music controls</span>
+          </button>
+          <button
             className="radar-steering-control"
             type="button"
             aria-label="Steer exterior view"
@@ -959,6 +1106,52 @@ function CabinOverlay({
                 <button className="lead-action-button" type="button" onClick={onLeadAction}>
                   {currentLead.ctaLabel}
                 </button>
+              </span>
+            </section>
+            <section
+              id="music-player-hologram"
+              className={`holo-panel current-lead-panel music-player-panel ${musicExpanded ? 'expanded' : ''}`}
+              aria-hidden={!musicExpanded}
+              inert={!musicExpanded}
+            >
+              <span className="current-lead-heading">
+                <span className="eyebrow">Cabin audio</span>
+              </span>
+              <span className="current-lead-details music-player-details" aria-hidden={!musicExpanded}>
+                <span className={`music-track-title ${currentSongTitle ? '' : 'idle'}`}>
+                  {musicError
+                    ? 'Unable to play this track'
+                    : currentSongTitle ?? 'Choose some traveling music'}
+                </span>
+                <span className="music-player-controls">
+                  <button
+                    className="music-control-button"
+                    type="button"
+                    onClick={onToggleMusicPlayback}
+                    aria-label={isMusicPlaying ? 'Pause music' : 'Play music'}
+                    aria-pressed={isMusicPlaying}
+                  >
+                    {isMusicPlaying ? (
+                      <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M7 5h4v14H7zM13 5h4v14h-4z" />
+                      </svg>
+                    ) : (
+                      <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="m8 5 11 7-11 7z" />
+                      </svg>
+                    )}
+                  </button>
+                  <button
+                    className="music-control-button"
+                    type="button"
+                    onClick={onNextSong}
+                    aria-label="Play next song"
+                  >
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                      <path d="m6 5 9 7-9 7zM16 5h3v14h-3z" />
+                    </svg>
+                  </button>
+                </span>
               </span>
             </section>
           </div>
