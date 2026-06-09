@@ -88,6 +88,7 @@ export interface PlayerState {
   completedEncounterIds: string[];
   journalEntryIds: string[];
   readJournalEntryIds: string[];
+  viewedLeadIds: string[];
   radioHistoryIds: string[];
   mysteryProgress: number;
   emergencyTowUsed: boolean;

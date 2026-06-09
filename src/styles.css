@@ -3358,16 +3358,54 @@ body {
   pointer-events: none;
 }
 
+.lead-console-trigger {
+  position: absolute;
+  z-index: 3;
+  left: 38%;
+  right: 38%;
+  bottom: 29.1%;
+  min-height: 0;
+  height: 5.3%;
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background: transparent;
+  color: transparent;
+  cursor: pointer;
+  pointer-events: auto;
+  transition:
+    border-color 180ms ease,
+    background-color 180ms ease,
+    box-shadow 180ms ease;
+}
+
+.lead-console-trigger:hover,
+.lead-console-trigger[aria-expanded="true"] {
+  border-color: rgba(126, 231, 255, 0.34);
+  background: rgba(80, 206, 255, 0.07);
+  box-shadow:
+    inset 0 0 12px rgba(111, 224, 255, 0.18),
+    0 0 16px rgba(82, 207, 255, 0.2);
+}
+
+.lead-console-trigger:focus-visible {
+  outline: 2px solid #b7f2ff;
+  outline-offset: 3px;
+}
+
+.lead-console-trigger.unread {
+  animation: lead-console-unread 2.4s ease-in-out infinite;
+}
+
 .view-cockpit .current-lead-panel {
   --screen-transform: perspective(620px) rotateX(2deg);
   position: relative;
-  display: grid;
+  display: block;
   width: 100%;
-  max-height: 60px;
+  max-height: 240px;
   min-height: 0;
-  padding: 7px 9px;
+  padding: 11px 12px;
   overflow: hidden;
-  appearance: none;
   border: 1px solid rgba(109, 226, 255, 0.4);
   border-radius: 7px;
   background:
@@ -3383,14 +3421,17 @@ body {
   text-shadow:
     0 0 8px rgba(130, 230, 255, 0.52),
     0 0 18px rgba(80, 190, 255, 0.2);
-  cursor: pointer;
-  pointer-events: auto;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(10px) scale(0.96);
+  visibility: hidden;
   transition:
-    max-height 420ms cubic-bezier(0.22, 1, 0.36, 1),
     border-color 260ms ease,
     background-color 260ms ease,
     box-shadow 260ms ease,
-    transform 420ms cubic-bezier(0.22, 1, 0.36, 1);
+    opacity 220ms ease,
+    transform 360ms cubic-bezier(0.22, 1, 0.36, 1),
+    visibility 0s linear 360ms;
 }
 
 .view-cockpit .current-lead-panel::before,
@@ -3421,20 +3462,7 @@ body {
   transform: translateY(-65%);
 }
 
-.view-cockpit .current-lead-panel:hover {
-  border-color: rgba(130, 235, 255, 0.62);
-  box-shadow:
-    inset 0 0 30px rgba(95, 218, 255, 0.2),
-    0 0 22px rgba(82, 207, 255, 0.28);
-}
-
-.view-cockpit .current-lead-panel:focus-visible {
-  outline: 2px solid #b7f2ff;
-  outline-offset: 3px;
-}
-
 .view-cockpit .current-lead-panel.expanded {
-  max-height: 240px;
   border-color: rgba(130, 235, 255, 0.68);
   background:
     linear-gradient(90deg, rgba(115, 226, 255, 0.2), transparent 12% 88%, rgba(115, 226, 255, 0.14)),
@@ -3443,6 +3471,17 @@ body {
   box-shadow:
     inset 0 0 34px rgba(95, 218, 255, 0.22),
     0 0 28px rgba(82, 207, 255, 0.3);
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0) scale(1);
+  visibility: visible;
+  transition:
+    border-color 260ms ease,
+    background-color 260ms ease,
+    box-shadow 260ms ease,
+    opacity 240ms ease,
+    transform 420ms cubic-bezier(0.22, 1, 0.36, 1),
+    visibility 0s linear;
 }
 
 .view-cockpit .current-lead-panel.expanded::after {
@@ -3485,32 +3524,20 @@ body {
 
 .view-cockpit .current-lead-details {
   text-align: center;
-  max-height: 0;
-  margin-top: 0;
-  overflow: hidden;
-  opacity: 0;
-  transform: translateY(8px);
-  visibility: hidden;
-  transition:
-    max-height 380ms cubic-bezier(0.22, 1, 0.36, 1),
-    margin-top 300ms ease,
-    opacity 220ms ease,
-    transform 380ms cubic-bezier(0.22, 1, 0.36, 1),
-    visibility 0s linear 380ms;
+  max-height: 180px;
+  margin-top: 9px;
+  overflow: visible;
+  opacity: 1;
+  transform: none;
+  visibility: visible;
 }
 
 .view-cockpit .current-lead-panel.expanded .current-lead-details {
-  max-height: 150px;
+  max-height: 180px;
   margin-top: 9px;
   opacity: 1;
-  transform: translateY(0);
+  transform: none;
   visibility: visible;
-  transition:
-    max-height 420ms cubic-bezier(0.22, 1, 0.36, 1),
-    margin-top 300ms ease,
-    opacity 280ms ease 90ms,
-    transform 420ms cubic-bezier(0.22, 1, 0.36, 1),
-    visibility 0s linear;
 }
 
 .view-cockpit .current-lead-description {
@@ -3532,6 +3559,52 @@ body {
   text-shadow: 0 0 10px rgba(111, 224, 255, 0.74);
 }
 
+.lead-action-button {
+  width: 100%;
+  min-height: 34px;
+  margin-top: 9px;
+  padding: 7px 10px;
+  border: 1px solid rgba(255, 224, 144, 0.48);
+  border-radius: 6px;
+  background:
+    linear-gradient(180deg, rgba(255, 224, 144, 0.22), rgba(78, 189, 224, 0.14)),
+    rgba(6, 31, 43, 0.64);
+  color: #fff0b7;
+  font-family: var(--font-heading);
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  text-shadow: 0 0 9px rgba(255, 224, 144, 0.44);
+  cursor: pointer;
+}
+
+.lead-action-button:hover {
+  border-color: rgba(255, 235, 177, 0.76);
+  box-shadow: 0 0 14px rgba(255, 224, 144, 0.16);
+}
+
+.lead-action-button:focus-visible {
+  outline: 2px solid #fff0b7;
+  outline-offset: 2px;
+}
+
+@keyframes lead-console-unread {
+  0%,
+  100% {
+    border-color: rgba(111, 224, 255, 0.12);
+    box-shadow:
+      inset 0 0 8px rgba(111, 224, 255, 0.08),
+      0 0 8px rgba(82, 207, 255, 0.12);
+  }
+  50% {
+    border-color: rgba(139, 237, 255, 0.7);
+    box-shadow:
+      inset 0 0 18px rgba(111, 224, 255, 0.28),
+      0 0 24px rgba(82, 207, 255, 0.54);
+  }
+}
+
 @keyframes lead-hologram-scan {
   0% {
     opacity: 0;
@@ -3546,39 +3619,6 @@ body {
   }
 }
 
-.cockpit-control-deck {
-  position: absolute;
-  left: 17.8%;
-  right: 68.8%;
-  bottom: 29.2%;
-  display: flex;
-  justify-content: center;
-  pointer-events: auto;
-}
-
-.plot-course-control {
-  width: 100%;
-  min-width: 0;
-  min-height: 7.2vh;
-  padding: 0;
-  border: 0;
-  border-radius: 16px;
-  background: transparent;
-  color: transparent;
-  box-shadow: none;
-  font-size: 0;
-  text-shadow: none;
-}
-
-.plot-course-control:hover {
-  background: rgba(255, 205, 111, 0.06);
-  box-shadow: 0 0 18px rgba(255, 202, 104, 0.18);
-}
-
-.plot-course-control:active {
-  background: rgba(255, 173, 72, 0.12);
-}
-
 @media (prefers-reduced-motion: reduce) {
   .view-cockpit .current-lead-panel,
   .view-cockpit .current-lead-details {
@@ -3587,5 +3627,13 @@ body {
 
   .view-cockpit .current-lead-panel.expanded::after {
     animation: none;
+  }
+
+  .lead-console-trigger.unread {
+    animation: none;
+    border-color: rgba(139, 237, 255, 0.58);
+    box-shadow:
+      inset 0 0 14px rgba(111, 224, 255, 0.22),
+      0 0 18px rgba(82, 207, 255, 0.38);
   }
 }

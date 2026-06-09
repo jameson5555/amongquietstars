@@ -231,6 +231,17 @@ function App() {
     closeJournal();
   };
 
+  const markLeadViewed = (leadId: string) => {
+    setState((current) =>
+      current.viewedLeadIds.includes(leadId)
+        ? current
+        : {
+            ...current,
+            viewedLeadIds: [...current.viewedLeadIds, leadId]
+          }
+    );
+  };
+
   const goTo = (nextView: ViewId) => {
     setChoiceResult(null);
     if (nextView === 'journal') {
@@ -360,6 +371,7 @@ function App() {
               pendingMapFocusSystemId={pendingMapFocusSystemId}
               radioHistory={radioHistory}
               onLeadAction={followLead}
+              onLeadViewed={markLeadViewed}
               onMapFocusHandled={() => setPendingMapFocusSystemId(null)}
               onTravel={startTravel}
               onReset={resetSave}
@@ -448,6 +460,7 @@ function PanoramicCabinExperience({
   pendingMapFocusSystemId,
   radioHistory,
   onLeadAction,
+  onLeadViewed,
   onMapFocusHandled,
   onTravel,
   onReset,
@@ -465,6 +478,7 @@ function PanoramicCabinExperience({
   pendingMapFocusSystemId: string | null;
   radioHistory: RadioMessage[];
   onLeadAction: () => void;
+  onLeadViewed: (leadId: string) => void;
   onMapFocusHandled: () => void;
   onTravel: (system: StarSystem) => void;
   onReset: () => void;
@@ -474,7 +488,8 @@ function PanoramicCabinExperience({
   const suppressLeadToggleRef = useRef(false);
   const flybyIdRef = useRef(0);
   const [cockpitFlybys, setCockpitFlybys] = useState<CockpitFlyby[]>([]);
-  const [leadExpanded, setLeadExpanded] = useState(false);
+  const [expandedLeadId, setExpandedLeadId] = useState<string | null>(null);
+  const leadExpanded = expandedLeadId === currentLead.id;
 
   const windowSystem = arrivalApproach ? getSystem(arrivalApproach.systemId) : currentSystem;
   const windowDestinationArt = getDestinationArt(windowSystem.id);
@@ -564,7 +579,18 @@ function PanoramicCabinExperience({
       return;
     }
 
-    setLeadExpanded((expanded) => !expanded);
+    setExpandedLeadId((expandedId) => {
+      if (expandedId !== currentLead.id) {
+        onLeadViewed(currentLead.id);
+        return currentLead.id;
+      }
+      return null;
+    });
+  };
+
+  const handleLeadAction = () => {
+    setExpandedLeadId(null);
+    onLeadAction();
   };
 
   return (
@@ -631,7 +657,7 @@ function PanoramicCabinExperience({
               recommendedSystemId={recommendedSystemId}
               pendingMapFocusSystemId={pendingMapFocusSystemId}
               radioHistory={radioHistory}
-              onLeadAction={onLeadAction}
+              onLeadAction={handleLeadAction}
               onMapFocusHandled={onMapFocusHandled}
               onTravel={onTravel}
               onReset={onReset}
@@ -690,6 +716,7 @@ function CabinOverlay({
   const travelRemainingMs = activeTravel ? activeTravel.arrivesAt - now : 0;
   const [selectedMapSystemId, setSelectedMapSystemId] = useState<string>();
   const selectedSystemId = pendingMapFocusSystemId ?? selectedMapSystemId ?? recommendedSystemId ?? currentSystem.id;
+  const leadUnread = !state.viewedLeadIds.includes(currentLead.id);
   const systemCardRefs = useRef<Record<string, HTMLElement | null>>({});
 
   const selectMapSystem = (systemId: string) => {
@@ -750,12 +777,22 @@ function CabinOverlay({
               </div>
             </div>
           </div>
+          <button
+            className={`lead-console-trigger ${leadUnread ? 'unread' : ''}`}
+            type="button"
+            aria-label={`${leadExpanded ? 'Hide' : 'Show'} current lead: ${currentLead.title}`}
+            aria-controls="current-lead-hologram"
+            aria-expanded={leadExpanded}
+            onClick={onToggleLead}
+          >
+            <span className="visually-hidden">Current lead</span>
+          </button>
           <div className="cockpit-holo-fields">
-            <button
+            <section
+              id="current-lead-hologram"
               className={`holo-panel current-lead-panel ${leadExpanded ? 'expanded' : ''}`}
-              type="button"
-              aria-expanded={leadExpanded}
-              onClick={onToggleLead}
+              aria-hidden={!leadExpanded}
+              inert={!leadExpanded}
             >
               <span className="current-lead-heading">
                 <span className="eyebrow">Current lead</span>
@@ -766,13 +803,11 @@ function CabinOverlay({
                 <span className="lead-footer">
                   <span>{getLeadDestinationName(currentLead)}</span>
                 </span>
+                <button className="lead-action-button" type="button" onClick={onLeadAction}>
+                  {currentLead.ctaLabel}
+                </button>
               </span>
-            </button>
-          </div>
-          <div className="cockpit-control-deck">
-            <button className="plot-course-control" type="button" onClick={onLeadAction}>
-              {currentLead.ctaLabel}
-            </button>
+            </section>
           </div>
         </div>
       );
