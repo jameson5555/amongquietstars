@@ -147,8 +147,7 @@ button {
   .tablet-surface,
   .tablet-journal-list,
   .overlay-upgrade-list,
-  .radio-display,
-  .overlay-radio-list,
+  .transmission-feed,
   .cockpit-bottom-band
 ) {
   -ms-overflow-style: none;
@@ -162,8 +161,7 @@ button {
   .tablet-surface,
   .tablet-journal-list,
   .overlay-upgrade-list,
-  .radio-display,
-  .overlay-radio-list,
+  .transmission-feed,
   .cockpit-bottom-band
 )::-webkit-scrollbar {
   display: none;
@@ -1795,8 +1793,7 @@ body {
 }
 
 .ship-screen-panel,
-.ship-upgrades-panel,
-.radio-display {
+.ship-upgrades-panel {
   padding: 18px;
   background:
     linear-gradient(180deg, rgba(13, 17, 28, 0.8), rgba(7, 11, 19, 0.92)),
@@ -1832,23 +1829,6 @@ body {
 .overlay-upgrade-list {
   max-height: 40vh;
   overflow: auto;
-}
-
-.radio-overlay {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  padding: 24px;
-}
-
-.radio-display {
-  width: min(480px, calc(100% - 48px));
-  max-height: calc(100% - 72px);
-  overflow: auto;
-}
-
-.overlay-radio-list {
-  margin-top: 8px;
 }
 
 .radio-empty {
@@ -1888,8 +1868,7 @@ body {
   }
 
   .map-shell,
-  .tablet-surface,
-  .radio-display {
+  .tablet-surface {
     width: calc(100% - 12px);
   }
 }
@@ -1931,7 +1910,6 @@ body {
 
   .map-shell,
   .tablet-surface,
-  .radio-display,
   .ship-screen-panel,
   .ship-upgrades-panel {
     padding: 14px;
@@ -1942,11 +1920,6 @@ body {
   }
 
   .ship-overlay {
-    padding: 76px 12px 12px;
-  }
-
-  .radio-overlay {
-    align-items: flex-end;
     padding: 76px 12px 12px;
   }
 
@@ -2608,22 +2581,6 @@ body {
   padding: 0;
 }
 
-.radio-display {
-  position: absolute;
-  left: 10px;
-  right: 10px;
-  top: auto;
-  bottom: 10px;
-  width: auto;
-  max-height: calc(100% - 82px);
-  padding: 12px;
-}
-
-.overlay-radio-list {
-  max-height: min(48vh, 400px);
-  overflow: auto;
-}
-
 @media (max-width: 900px) {
   .map-shell {
     width: calc(100% - 40px);
@@ -2639,11 +2596,6 @@ body {
   .ship-upgrades-panel {
     right: 10%;
     width: 32%;
-  }
-
-  .radio-display {
-    right: 10%;
-    width: 34%;
   }
 }
 
@@ -2682,8 +2634,7 @@ body {
   }
 
   .ship-screen-panel,
-  .ship-upgrades-panel,
-  .radio-display {
+  .ship-upgrades-panel {
     left: 12px;
     right: 12px;
     width: auto;
@@ -2698,11 +2649,6 @@ body {
     max-height: 42%;
   }
 
-  .radio-display {
-    top: auto;
-    bottom: 12px;
-    max-height: calc(100% - 138px);
-  }
 }
 
 /* Portrait mobile screen alignment, applied at every viewport width. */
@@ -2836,73 +2782,6 @@ body {
   line-height: 1.25;
 }
 
-.cabin-experience.view-radio .radio-display {
-  left: 13.2%;
-  top: 14.2%;
-  right: auto;
-  bottom: auto;
-  width: 78.8%;
-  height: 49.5%;
-  min-height: 0;
-  max-height: 49.5%;
-  padding: 0;
-  overflow: hidden;
-  clip-path: polygon(3% 0, 95% 0, 100% 7%, 99% 91%, 95% 99%, 4% 99%, 0 92%, 1% 8%);
-  transform: none;
-}
-
-.cabin-experience.view-radio .overlay-radio-list {
-  position: absolute;
-  inset: 4.5% 4.5% 5.5% 3.5%;
-  width: auto;
-  height: auto;
-  min-height: 0;
-  max-height: none;
-  margin: 0;
-  padding: 0 5px 8px 2px;
-  gap: 7px;
-  overflow-y: auto;
-  overflow-x: hidden;
-  overscroll-behavior: contain;
-  scrollbar-width: thin;
-  scrollbar-color: rgba(130, 225, 255, 0.42) transparent;
-  transform: perspective(900px) rotateZ(-0.15deg) skewY(0.15deg);
-  transform-origin: center;
-}
-
-.view-radio .radio-message {
-  padding-block: 6px;
-}
-
-.view-radio .radio-message p,
-.journal-modal .journal-entry p {
-  font-size: 0.72rem;
-  line-height: 1.28;
-}
-
-.view-radio .radio-message h3 {
-  margin: 3px 0;
-  font-size: 0.8rem;
-}
-
-.view-radio .job-offer-footer {
-  margin-top: 5px;
-}
-
-.view-radio .job-offer-footer .small-action {
-  min-height: 28px;
-  padding: 4px 8px;
-}
-
-.view-radio .overlay-radio-list::-webkit-scrollbar {
-  width: 4px;
-}
-
-.view-radio .overlay-radio-list::-webkit-scrollbar-thumb {
-  border-radius: 999px;
-  background: rgba(130, 225, 255, 0.42);
-}
-
 .journal-modal .journal-entry {
   padding-block: 9px;
 }
@@ -2923,8 +2802,7 @@ body {
 .cabin-experience .tablet-surface,
 .cabin-experience .holo-panel,
 .cabin-experience .ship-screen-panel,
-.cabin-experience .ship-upgrades-panel,
-.cabin-experience .radio-display {
+.cabin-experience .ship-upgrades-panel {
   border: 0;
   background: transparent;
   box-shadow: none;
@@ -2939,8 +2817,7 @@ body {
 .cabin-experience .overlay-shell,
 .cabin-experience .tablet-surface,
 .cabin-experience .ship-screen-panel,
-.cabin-experience .ship-upgrades-panel,
-.cabin-experience .radio-display {
+.cabin-experience .ship-upgrades-panel {
   transform: var(--screen-transform);
   transform-origin: center;
 }
@@ -3031,10 +2908,6 @@ body {
 
 .view-ship .ship-upgrades-panel {
   --screen-transform: perspective(720px) rotateY(-3deg) skewY(-0.6deg);
-}
-
-.view-radio .radio-display {
-  --screen-transform: none;
 }
 
 /* Cabin controls remain powered and travel with their corresponding view. */
@@ -3204,7 +3077,6 @@ body {
   .tablet-surface,
   .ship-screen-panel,
   .ship-upgrades-panel,
-  .radio-display,
   .cockpit-starfield,
   .cockpit-starfield::before,
   .cockpit-starfield::after {
@@ -4211,4 +4083,62 @@ body {
     animation: none;
     opacity: 0.4;
   }
+}
+
+/* Radio console: dedicated geometry prevents generic overlay rules from leaking in. */
+.cabin-experience.view-radio .radio-screen-viewport {
+  position: absolute;
+  z-index: 2;
+  left: 8%;
+  top: 5%;
+  width: 90%;
+  height: 67%;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  pointer-events: auto;
+  clip-path: polygon(3% 0, 95% 0, 100% 7%, 99% 91%, 95% 99%, 4% 99%, 0 92%, 1% 8%);
+}
+
+.cabin-experience.view-radio .transmission-feed {
+  position: absolute;
+  inset: 4% 4.5% 5% 3%;
+  min-width: 0;
+  min-height: 0;
+  display: grid;
+  grid-auto-rows: max-content;
+  align-content: start;
+  gap: 8px;
+  margin: 0;
+  padding: 0 4px 10px 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  touch-action: pan-y;
+}
+
+.cabin-experience.view-radio .transmission-feed .radio-message {
+  min-width: 0;
+  margin: 0;
+  padding: 8px 10px;
+  border-radius: 14px;
+}
+
+.cabin-experience.view-radio .transmission-feed .radio-message p {
+  font-size: 0.72rem;
+  line-height: 1.3;
+}
+
+.cabin-experience.view-radio .transmission-feed .radio-message h3 {
+  margin: 3px 0;
+  font-size: 0.8rem;
+}
+
+.cabin-experience.view-radio .transmission-feed .job-offer-footer {
+  margin-top: 6px;
+}
+
+.cabin-experience.view-radio .transmission-feed .job-offer-footer .small-action {
+  min-height: 28px;
+  padding: 4px 8px;
 }

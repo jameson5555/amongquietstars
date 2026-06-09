@@ -1453,8 +1453,8 @@ function CabinOverlay({
     case 'radio':
       return (
         <div className="overlay-layer radio-overlay">
-          <div className="radio-display overlay-shell">
-            <div className="radio-list overlay-radio-list">
+          <div className="radio-screen-viewport">
+            <div className="transmission-feed">
               {radioFeedItems.map((item) => {
                 if (item.kind === 'message') {
                   return (
