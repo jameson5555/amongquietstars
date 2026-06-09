@@ -3361,40 +3361,80 @@ body {
 .lead-console-trigger {
   position: absolute;
   z-index: 3;
-  left: 38%;
-  right: 38%;
-  bottom: 29.1%;
+  left: 37.6%;
+  right: 37.6%;
+  bottom: 29%;
   min-height: 0;
-  height: 5.3%;
+  height: 5.55%;
   padding: 0;
-  border: 1px solid transparent;
-  border-radius: 8px;
+  border: 0;
+  border-radius: 0;
   background: transparent;
   color: transparent;
   cursor: pointer;
   pointer-events: auto;
-  transition:
-    border-color 180ms ease,
-    background-color 180ms ease,
-    box-shadow 180ms ease;
+  isolation: isolate;
 }
 
-.lead-console-trigger:hover,
-.lead-console-trigger[aria-expanded="true"] {
-  border-color: rgba(126, 231, 255, 0.34);
-  background: rgba(80, 206, 255, 0.07);
+.lead-console-trigger::before,
+.lead-console-trigger::after {
+  content: "";
+  position: absolute;
+  pointer-events: none;
+  clip-path: polygon(7% 0, 93% 0, 100% 22%, 96% 100%, 4% 100%, 0 22%);
+  transition:
+    filter 180ms ease,
+    opacity 180ms ease;
+}
+
+.lead-console-trigger::before {
+  inset: 5% 3% 7%;
+  background:
+    radial-gradient(ellipse at 50% 52%, rgba(80, 220, 255, 0.28) 0 28%, transparent 64%),
+    linear-gradient(
+      90deg,
+      rgba(71, 210, 255, 0.24) 0 14%,
+      transparent 20% 80%,
+      rgba(71, 210, 255, 0.24) 86% 100%
+    );
   box-shadow:
-    inset 0 0 12px rgba(111, 224, 255, 0.18),
-    0 0 16px rgba(82, 207, 255, 0.2);
+    inset 0 0 8px rgba(108, 231, 255, 0.24),
+    inset 0 -5px 8px rgba(0, 78, 116, 0.22);
+  mix-blend-mode: screen;
+  opacity: 0;
+}
+
+.lead-console-trigger::after {
+  inset: 12% 18% 18%;
+  background:
+    repeating-linear-gradient(180deg, rgba(135, 239, 255, 0.12) 0 1px, transparent 1px 5px),
+    radial-gradient(ellipse at center, rgba(92, 224, 255, 0.42), rgba(25, 139, 188, 0.08) 58%, transparent 76%);
+  filter: blur(0.4px);
+  mix-blend-mode: screen;
+  opacity: 0;
+}
+
+.lead-console-trigger:hover::before,
+.lead-console-trigger[aria-expanded="true"]::before {
+  opacity: 0.58;
+}
+
+.lead-console-trigger:hover::after,
+.lead-console-trigger[aria-expanded="true"]::after {
+  opacity: 0.42;
 }
 
 .lead-console-trigger:focus-visible {
-  outline: 2px solid #b7f2ff;
-  outline-offset: 3px;
+  outline: 0;
+  filter: drop-shadow(0 0 4px rgba(183, 242, 255, 0.94));
 }
 
-.lead-console-trigger.unread {
+.lead-console-trigger.unread::before {
   animation: lead-console-unread 2.4s ease-in-out infinite;
+}
+
+.lead-console-trigger.unread::after {
+  animation: lead-console-screen-unread 2.4s ease-in-out infinite;
 }
 
 .view-cockpit .current-lead-panel {
@@ -3592,16 +3632,24 @@ body {
 @keyframes lead-console-unread {
   0%,
   100% {
-    border-color: rgba(111, 224, 255, 0.12);
-    box-shadow:
-      inset 0 0 8px rgba(111, 224, 255, 0.08),
-      0 0 8px rgba(82, 207, 255, 0.12);
+    filter: brightness(0.88) drop-shadow(0 0 2px rgba(82, 207, 255, 0.14));
+    opacity: 0.16;
   }
   50% {
-    border-color: rgba(139, 237, 255, 0.7);
-    box-shadow:
-      inset 0 0 18px rgba(111, 224, 255, 0.28),
-      0 0 24px rgba(82, 207, 255, 0.54);
+    filter: brightness(1.32) drop-shadow(0 0 7px rgba(82, 207, 255, 0.58));
+    opacity: 0.78;
+  }
+}
+
+@keyframes lead-console-screen-unread {
+  0%,
+  100% {
+    filter: brightness(0.9) blur(0.4px);
+    opacity: 0.12;
+  }
+  50% {
+    filter: brightness(1.4) blur(0.2px);
+    opacity: 0.58;
   }
 }
 
@@ -3629,11 +3677,14 @@ body {
     animation: none;
   }
 
-  .lead-console-trigger.unread {
+  .lead-console-trigger.unread::before {
     animation: none;
-    border-color: rgba(139, 237, 255, 0.58);
-    box-shadow:
-      inset 0 0 14px rgba(111, 224, 255, 0.22),
-      0 0 18px rgba(82, 207, 255, 0.38);
+    filter: brightness(1.12) drop-shadow(0 0 5px rgba(82, 207, 255, 0.44));
+    opacity: 0.58;
+  }
+
+  .lead-console-trigger.unread::after {
+    animation: none;
+    opacity: 0.38;
   }
 }
