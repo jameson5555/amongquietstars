@@ -1,4 +1,5 @@
 import type { Encounter } from '../types/game';
+import { jobEncounters } from './jobs';
 
 export const encounters: Encounter[] = [
   {
@@ -58,8 +59,8 @@ export const encounters: Encounter[] = [
       {
         id: 'repair-buoy',
         label: 'Patch the antenna',
-        resultText: 'The buoy steadies, thanks you with a cheerful ping, and sends a cleaner copy.',
-        resourceDelta: { supplies: -3, credits: 28 },
+        resultText: 'The buoy steadies and sends a cleaner copy, though a loose panel scores the hull before you pull away.',
+        resourceDelta: { supplies: -3, hull: -4, credits: 28 },
         journalEntryIds: ['buoy-repeat'],
         radioMessageIds: ['packet-three']
       },
@@ -244,5 +245,7 @@ export const encounters: Encounter[] = [
   }
 ];
 
+export const allEncounters = [...encounters, ...jobEncounters];
+
 export const getEncounter = (encounterId: string): Encounter | undefined =>
-  encounters.find((encounter) => encounter.id === encounterId);
+  allEncounters.find((encounter) => encounter.id === encounterId);

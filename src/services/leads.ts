@@ -8,6 +8,7 @@ export interface CurrentLead {
   destinationId?: string;
   actionView: ViewId;
   ctaLabel: string;
+  encounterId?: string;
 }
 
 export const getCurrentLead = (state: PlayerState): CurrentLead => {
@@ -18,7 +19,8 @@ export const getCurrentLead = (state: PlayerState): CurrentLead => {
       description: 'Unusual readings have been reported near a quiet amber star at the sector edge.',
       destinationId: 'tallow-star',
       actionView: 'map',
-      ctaLabel: 'Plot Course'
+      ctaLabel: 'Plot Course',
+      encounterId: 'quiet-moon'
     };
   }
 
@@ -29,7 +31,8 @@ export const getCurrentLead = (state: PlayerState): CurrentLead => {
       description: 'Survey crews keep comparing notes about one clean flash in otherwise calm instruments.',
       destinationId: 'vela-rest',
       actionView: 'map',
-      ctaLabel: 'Plot Course'
+      ctaLabel: 'Plot Course',
+      encounterId: 'brief-pulse'
     };
   }
 
@@ -40,7 +43,8 @@ export const getCurrentLead = (state: PlayerState): CurrentLead => {
       description: 'A survey cook heard two labs argue about synchronized readings from distant stars.',
       destinationId: 'kites-end',
       actionView: 'map',
-      ctaLabel: 'Follow Rumor'
+      ctaLabel: 'Follow Rumor',
+      encounterId: 'travelers-rumor'
     };
   }
 
@@ -51,7 +55,8 @@ export const getCurrentLead = (state: PlayerState): CurrentLead => {
       description: 'Glass Harbor wants confirmation that a second pulse matches the first impossible timestamp.',
       destinationId: 'bluewake',
       actionView: 'map',
-      ctaLabel: 'Plot Course'
+      ctaLabel: 'Plot Course',
+      encounterId: 'second-pulse'
     };
   }
 
@@ -72,7 +77,8 @@ export const getCurrentLead = (state: PlayerState): CurrentLead => {
       description: 'The matched timestamps point toward an old listening post whose windows keep a different map.',
       destinationId: 'glass-harbor',
       actionView: 'map',
-      ctaLabel: 'Plot Course'
+      ctaLabel: 'Plot Course',
+      encounterId: 'out-of-place-star'
     };
   }
 

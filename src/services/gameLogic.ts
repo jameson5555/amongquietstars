@@ -1,6 +1,16 @@
 import { encounters } from '../data/encounters';
+import { getJobForEncounter, jobs } from '../data/jobs';
 import { getSystem, STARTING_SYSTEM_ID, systems } from '../data/systems';
-import type { Encounter, EncounterChoice, PlayerState, Resources, StarSystem } from '../types/game';
+import type {
+  Activity,
+  Encounter,
+  EncounterChoice,
+  PlayerState,
+  Resources,
+  ServiceId,
+  StarSystem
+} from '../types/game';
+import type { CurrentLead } from './leads';
 
 const RESOURCE_LIMITS: Resources = {
   fuel: 100,
@@ -19,6 +29,34 @@ export const applyResourceDelta = (resources: Resources, delta: EncounterChoice[
 });
 
 const unique = <T>(items: T[]) => Array.from(new Set(items));
+export const MAX_ACTIVE_JOBS = 3;
+
+export const serviceDefinitions: Record<
+  ServiceId,
+  { title: string; description: string; cost: number; resource: keyof Resources; amount: number }
+> = {
+  refuel: {
+    title: 'Refuel',
+    description: 'Transfer up to 20 fuel from the station reserve.',
+    cost: 15,
+    resource: 'fuel',
+    amount: 20
+  },
+  resupply: {
+    title: 'Resupply',
+    description: 'Load up to 8 units of food, filters, and field materials.',
+    cost: 12,
+    resource: 'supplies',
+    amount: 8
+  },
+  repair: {
+    title: 'Repair Hull',
+    description: 'Patch up to 15 points of hull damage.',
+    cost: 18,
+    resource: 'hull',
+    amount: 15
+  }
+};
 
 const PULSE_COMPARISON_ENTRY_ID = 'pulse-comparison';
 const PULSE_COMPARISON_PREREQUISITES = ['pulse-at-vela', 'second-bluewake-pulse'];
@@ -53,6 +91,110 @@ export const pickEncounterForSystem = (systemId: string, state: PlayerState): En
   return encounters.find((encounter) => encounter.systemId === systemId) ?? encounters[0]!;
 };
 
+export const getAvailableJobs = (state: PlayerState) =>
+  jobs.filter(
+    (job) =>
+      job.revealAfterCompletedJobs <= state.completedJobIds.length &&
+      !state.completedJobIds.includes(job.id)
+  );
+
+export const acceptJob = (state: PlayerState, jobId: string): PlayerState => {
+  if (
+    state.acceptedJobIds.includes(jobId) ||
+    state.completedJobIds.includes(jobId) ||
+    state.acceptedJobIds.length >= MAX_ACTIVE_JOBS ||
+    !getAvailableJobs(state).some((job) => job.id === jobId)
+  ) {
+    return state;
+  }
+
+  return {
+    ...state,
+    acceptedJobIds: [...state.acceptedJobIds, jobId]
+  };
+};
+
+export const getActivitiesForSystem = (
+  systemId: string,
+  state: PlayerState,
+  currentLead: CurrentLead
+): Activity[] => {
+  const system = getSystem(systemId);
+  const activities: Activity[] = [];
+  const usedEncounterIds = new Set<string>();
+
+  if (currentLead.destinationId === systemId && currentLead.encounterId) {
+    activities.push({
+      id: `lead:${currentLead.id}`,
+      kind: 'lead',
+      title: currentLead.title,
+      description: currentLead.description,
+      encounterId: currentLead.encounterId
+    });
+    usedEncounterIds.add(currentLead.encounterId);
+  }
+
+  state.acceptedJobIds.forEach((jobId) => {
+    const job = jobs.find((candidate) => candidate.id === jobId);
+    if (!job || job.destinationId !== systemId || state.completedJobIds.includes(job.id)) {
+      return;
+    }
+    activities.push({
+      id: `job:${job.id}`,
+      kind: 'job',
+      title: job.title,
+      description: `Requested by ${job.source}.`,
+      encounterId: job.encounterId
+    });
+    usedEncounterIds.add(job.encounterId);
+  });
+
+  system.encounterIds.forEach((encounterId) => {
+    const encounter = encounters.find((candidate) => candidate.id === encounterId);
+    if (
+      !encounter ||
+      usedEncounterIds.has(encounter.id) ||
+      state.completedEncounterIds.includes(encounter.id)
+    ) {
+      return;
+    }
+    activities.push({
+      id: `encounter:${encounter.id}`,
+      kind: 'encounter',
+      title: encounter.title,
+      description: encounter.description,
+      encounterId: encounter.id
+    });
+  });
+
+  if (system.tags.includes('Station')) {
+    (Object.keys(serviceDefinitions) as ServiceId[]).forEach((serviceId) => {
+      const service = serviceDefinitions[serviceId];
+      activities.push({
+        id: `service:${serviceId}`,
+        kind: 'service',
+        title: service.title,
+        description: `${service.description} Costs ${service.cost} credits.`,
+        serviceId
+      });
+    });
+  }
+
+  return activities;
+};
+
+export const meetsResourceRequirements = (resources: Resources, choice: EncounterChoice) =>
+  Object.entries(choice.resourceRequirements ?? {}).every(
+    ([key, required]) => resources[key as keyof Resources] >= (required ?? 0)
+  );
+
+export const getMissingResourceRequirement = (resources: Resources, choice: EncounterChoice) => {
+  const missing = Object.entries(choice.resourceRequirements ?? {}).find(
+    ([key, required]) => resources[key as keyof Resources] < (required ?? 0)
+  );
+  return missing ? `Requires ${missing[1]} ${missing[0]}` : undefined;
+};
+
 export const beginTravel = (state: PlayerState, destination: StarSystem): PlayerState => {
   const fuelAfterTravel = state.resources.fuel - destination.travelCost;
 
@@ -82,15 +224,56 @@ export const beginTravel = (state: PlayerState, destination: StarSystem): Player
   };
 };
 
-export const resolveChoice = (state: PlayerState, encounter: Encounter, choice: EncounterChoice): PlayerState => ({
-  ...state,
-  resources: applyResourceDelta(state.resources, choice.resourceDelta),
-  completedEncounterIds: unique([...state.completedEncounterIds, encounter.id]),
-  journalEntryIds: unique([...state.journalEntryIds, ...(choice.journalEntryIds ?? [])]),
-  radioHistoryIds: unique([...state.radioHistoryIds, ...(choice.radioMessageIds ?? [])]),
-  discoveredSystemIds: unique([...state.discoveredSystemIds, ...(choice.unlockSystemIds ?? [])]),
-  mysteryProgress: Math.min(6, state.mysteryProgress + (choice.mysteryDelta ?? 0))
-});
+export const resolveChoice = (state: PlayerState, encounter: Encounter, choice: EncounterChoice): PlayerState => {
+  if (!meetsResourceRequirements(state.resources, choice)) {
+    return state;
+  }
+
+  const job = getJobForEncounter(encounter.id);
+  return {
+    ...state,
+    resources: applyResourceDelta(state.resources, choice.resourceDelta),
+    completedEncounterIds: unique([...state.completedEncounterIds, encounter.id]),
+    completedJobIds: job ? unique([...state.completedJobIds, job.id]) : state.completedJobIds,
+    acceptedJobIds: job ? state.acceptedJobIds.filter((jobId) => jobId !== job.id) : state.acceptedJobIds,
+    journalEntryIds: unique([...state.journalEntryIds, ...(choice.journalEntryIds ?? [])]),
+    radioHistoryIds: unique([...state.radioHistoryIds, ...(choice.radioMessageIds ?? [])]),
+    discoveredSystemIds: unique([...state.discoveredSystemIds, ...(choice.unlockSystemIds ?? [])]),
+    mysteryProgress: Math.min(6, state.mysteryProgress + (choice.mysteryDelta ?? 0))
+  };
+};
+
+export const canUseService = (state: PlayerState, serviceId: ServiceId) => {
+  const service = serviceDefinitions[serviceId];
+  return state.resources.credits >= service.cost && state.resources[service.resource] < RESOURCE_LIMITS[service.resource];
+};
+
+export const applyService = (state: PlayerState, serviceId: ServiceId): PlayerState => {
+  if (!canUseService(state, serviceId)) {
+    return state;
+  }
+
+  const service = serviceDefinitions[serviceId];
+  return {
+    ...state,
+    resources: applyResourceDelta(state.resources, {
+      credits: -service.cost,
+      [service.resource]: service.amount
+    })
+  };
+};
+
+export const getAppliedResourceDelta = (before: Resources, after: Resources) =>
+  (Object.keys(before) as Array<keyof Resources>).reduce<Partial<Record<keyof Resources, number>>>(
+    (delta, key) => {
+      const change = after[key] - before[key];
+      if (change !== 0) {
+        delta[key] = change;
+      }
+      return delta;
+    },
+    {}
+  );
 
 export const canComparePulseLogs = (state: PlayerState) =>
   !state.journalEntryIds.includes(PULSE_COMPARISON_ENTRY_ID) &&

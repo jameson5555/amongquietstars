@@ -1,4 +1,4 @@
-export type ViewId = 'cockpit' | 'map' | 'travel' | 'encounter' | 'journal' | 'ship' | 'radio';
+export type ViewId = 'cockpit' | 'map' | 'travel' | 'activities' | 'encounter' | 'journal' | 'ship' | 'radio';
 
 export type ResourceKey = 'fuel' | 'supplies' | 'hull' | 'credits';
 
@@ -38,6 +38,7 @@ export interface EncounterChoice {
   unlockSystemIds?: string[];
   radioMessageIds?: string[];
   mysteryDelta?: number;
+  resourceRequirements?: Partial<Record<ResourceKey, number>>;
 }
 
 export interface Encounter {
@@ -65,6 +66,30 @@ export interface RadioMessage {
   tone: 'ambient' | 'job' | 'mystery' | 'safety';
 }
 
+export interface Job {
+  id: string;
+  title: string;
+  source: string;
+  transmission: string;
+  destinationId: string;
+  encounterId: string;
+  reward: Partial<Record<ResourceKey, number>>;
+  revealAfterCompletedJobs: number;
+}
+
+export type ActivityKind = 'lead' | 'job' | 'encounter' | 'service';
+
+export interface Activity {
+  id: string;
+  kind: ActivityKind;
+  title: string;
+  description: string;
+  encounterId?: string;
+  serviceId?: ServiceId;
+}
+
+export type ServiceId = 'refuel' | 'resupply' | 'repair';
+
 export interface ShipUpgrade {
   id: string;
   name: string;
@@ -90,6 +115,8 @@ export interface PlayerState {
   readJournalEntryIds: string[];
   viewedLeadIds: string[];
   radioHistoryIds: string[];
+  acceptedJobIds: string[];
+  completedJobIds: string[];
   mysteryProgress: number;
   emergencyTowUsed: boolean;
 }
@@ -97,7 +124,7 @@ export interface PlayerState {
 export interface TravelState {
   fromSystemId: string;
   toSystemId: string;
-  encounterId: string;
+  encounterId?: string;
 }
 
 export interface ActiveTravelState extends TravelState {

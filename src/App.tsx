@@ -9,12 +9,19 @@ import { getSystem } from './data/systems';
 import { shipUpgrades } from './data/upgrades';
 import {
   beginTravel,
+  acceptJob,
+  applyService,
+  canUseService,
   canComparePulseLogs,
   comparePulseLogs,
+  getActivitiesForSystem,
+  getAppliedResourceDelta,
+  getAvailableJobs,
+  getMissingResourceRequirement,
   getTravelDurationMs,
   getVisibleSystems,
-  pickEncounterForSystem,
-  resolveChoice
+  resolveChoice,
+  serviceDefinitions,
 } from './services/gameLogic';
 import { getCurrentLead, getLeadDestinationName, type CurrentLead } from './services/leads';
 import { createInitialState, loadPlayerState, resetPlayerState, savePlayerState } from './services/storage';
@@ -22,9 +29,12 @@ import type {
   Encounter,
   EncounterChoice,
   ActiveTravelState,
+  Activity,
   JournalEntry,
+  Job,
   PlayerState,
   RadioMessage,
+  Resources,
   StarSystem,
   TravelState,
   ViewId
@@ -33,7 +43,9 @@ import type {
 const primaryViewIds = ['map', 'cockpit', 'radio', 'ship'] as const;
 type PrimaryViewId = (typeof primaryViewIds)[number];
 type ScreenViewId = Exclude<ViewId, 'journal'>;
-type ArrivalApproach = { systemId: string; encounterId: string };
+type ArrivalApproach = { systemId: string };
+type ResourceDelta = Partial<Record<keyof Resources, number>>;
+type ChoiceResult = { text: string; resourceDelta: ResourceDelta };
 type CockpitFlyby = {
   id: number;
   src: string;
@@ -59,6 +71,18 @@ const navItems: Array<{ id: PrimaryViewId; label: string }> = [
 ];
 
 const resourceLabels: Array<keyof PlayerState['resources']> = ['fuel', 'supplies', 'hull', 'credits'];
+const resourceDescriptions: Record<keyof Resources, string> = {
+  fuel: 'Spent whenever you travel. Refill at stations or through jobs.',
+  supplies: 'Used for repairs, samples, and practical work in the field.',
+  hull: 'The ship’s physical condition. Station tenders and some jobs can repair it.',
+  credits: 'Paid by jobs and trade. Spend them on station services.'
+};
+
+const formatResourceDelta = (delta: ResourceDelta) =>
+  resourceLabels
+    .filter((resource) => delta[resource])
+    .map((resource) => `${(delta[resource] ?? 0) > 0 ? '+' : ''}${delta[resource]} ${resource}`)
+    .join(' · ');
 
 const formatDuration = (ms: number) => {
   const totalSeconds = Math.max(0, Math.ceil(ms / 1000));
@@ -117,7 +141,9 @@ function App() {
   const [journalClosing, setJournalClosing] = useState(false);
   const [travel, setTravel] = useState<TravelState | null>(null);
   const [activeEncounterId, setActiveEncounterId] = useState<string | null>(null);
-  const [choiceResult, setChoiceResult] = useState<string | null>(null);
+  const [choiceResult, setChoiceResult] = useState<ChoiceResult | null>(null);
+  const [activitySystemId, setActivitySystemId] = useState<string | null>(null);
+  const [activityNotice, setActivityNotice] = useState<ChoiceResult | null>(null);
   const [arrivalApproach, setArrivalApproach] = useState<ArrivalApproach | null>(null);
   const [pendingMapFocusSystemId, setPendingMapFocusSystemId] = useState<string | null>(null);
   const [now, setNow] = useState(() => Date.now());
@@ -130,8 +156,9 @@ function App() {
   const currentSystem = getSystem(state.currentSystemId);
   const visibleSystems = useMemo(() => getVisibleSystems(state), [state]);
   const currentLead = useMemo(() => getCurrentLead(state), [state]);
-  const journal = state.journalEntryIds.map(getJournalEntry).filter(isDefined);
+  const journal = [...state.journalEntryIds].reverse().map(getJournalEntry).filter(isDefined);
   const radioHistory = state.radioHistoryIds.map(getRadioMessage).filter(isDefined);
+  const availableJobs = useMemo(() => getAvailableJobs(state), [state]);
   const activeEncounter = activeEncounterId ? getEncounter(activeEncounterId) : undefined;
   const activeTravel = state.activeTravel;
   const journalVisible = journalOpen || journalClosing;
@@ -256,8 +283,7 @@ function App() {
       if (arrived) {
         setActiveEncounterId(null);
         setArrivalApproach({
-          systemId: destination.id,
-          encounterId: activeTravel.encounterId
+          systemId: destination.id
         });
         setView('cockpit');
         setJournalOpen(false);
@@ -279,10 +305,11 @@ function App() {
     }
 
     const timeoutId = window.setTimeout(() => {
-      setActiveEncounterId(arrivalApproach.encounterId);
+      setActivitySystemId(arrivalApproach.systemId);
       setArrivalApproach(null);
       setChoiceResult(null);
-      setView('encounter');
+      setActivityNotice(null);
+      setView('activities');
     }, 1500);
 
     return () => {
@@ -368,13 +395,11 @@ function App() {
       return;
     }
 
-    const encounter = pickEncounterForSystem(destination.id, state);
     const departedAt = Date.now();
     const durationMs = getTravelDurationMs(destination, state);
     const nextTravel: ActiveTravelState = {
       fromSystemId: state.currentSystemId,
       toSystemId: destination.id,
-      encounterId: encounter.id,
       departedAt,
       arrivesAt: departedAt + durationMs,
       durationMs
@@ -427,8 +452,7 @@ function App() {
 
     setActiveEncounterId(null);
     setArrivalApproach({
-      systemId: destination.id,
-      encounterId: travel.encounterId
+      systemId: destination.id
     });
     setView('cockpit');
     setJournalOpen(false);
@@ -436,8 +460,48 @@ function App() {
   };
 
   const chooseEncounterOption = (encounter: Encounter, choice: EncounterChoice) => {
-    setState((current) => resolveChoice(current, encounter, choice));
-    setChoiceResult(choice.resultText);
+    setState((current) => {
+      const next = resolveChoice(current, encounter, choice);
+      setChoiceResult({
+        text: choice.resultText,
+        resourceDelta: getAppliedResourceDelta(current.resources, next.resources)
+      });
+      return next;
+    });
+  };
+
+  const openActivities = (systemId = state.currentSystemId) => {
+    setActivitySystemId(systemId);
+    setActivityNotice(null);
+    setChoiceResult(null);
+    setView('activities');
+  };
+
+  const selectActivity = (activity: Activity) => {
+    if (activity.encounterId) {
+      setActiveEncounterId(activity.encounterId);
+      setChoiceResult(null);
+      setView('encounter');
+      return;
+    }
+
+    if (activity.serviceId) {
+      setState((current) => {
+        const next = applyService(current, activity.serviceId!);
+        const service = serviceDefinitions[activity.serviceId!];
+        setActivityNotice({
+          text: next === current
+            ? `Unable to use ${service.title.toLowerCase()} right now.`
+            : `${service.title} complete. The ship feels a little more ready for the next stretch.`,
+          resourceDelta: getAppliedResourceDelta(current.resources, next.resources)
+        });
+        return next;
+      });
+    }
+  };
+
+  const handleAcceptJob = (jobId: string) => {
+    setState((current) => acceptJob(current, jobId));
   };
 
   const resetSave = () => {
@@ -445,6 +509,8 @@ function App() {
     setState(createInitialState());
     setTravel(null);
     setActiveEncounterId(null);
+    setActivitySystemId(null);
+    setActivityNotice(null);
     setArrivalApproach(null);
     setChoiceResult(null);
     setView('cockpit');
@@ -469,6 +535,7 @@ function App() {
               recommendedSystemId={currentLead.destinationId}
               pendingMapFocusSystemId={pendingMapFocusSystemId}
               radioHistory={radioHistory}
+              availableJobs={availableJobs}
               currentSongTitle={currentSongIndex === null ? null : songs[currentSongIndex]?.title ?? null}
               isMusicPlaying={isMusicPlaying}
               musicError={musicError}
@@ -478,17 +545,30 @@ function App() {
               onLeadViewed={markLeadViewed}
               onMapFocusHandled={() => setPendingMapFocusSystemId(null)}
               onTravel={startTravel}
+              onOpenActivities={openActivities}
+              onAcceptJob={handleAcceptJob}
               onReset={resetSave}
               onNavigate={navigateCabin}
             />
           )}
           {view === 'travel' && travel && <TravelScreen travel={travel} onFinish={finishTravel} />}
+          {view === 'activities' && activitySystemId && (
+            <ActivityScreen
+              system={getSystem(activitySystemId)}
+              activities={getActivitiesForSystem(activitySystemId, state, currentLead)}
+              state={state}
+              notice={activityNotice}
+              onSelect={selectActivity}
+              onLeave={() => goTo('cockpit')}
+            />
+          )}
           {view === 'encounter' && activeEncounter && (
             <EncounterScreen
               encounter={activeEncounter}
               choiceResult={choiceResult}
+              state={state}
               onChoose={chooseEncounterOption}
-              onDone={openJournal}
+              onDone={() => openActivities(activeEncounter.systemId)}
             />
           )}
           {isPrimaryView(view) && journalVisible && (
@@ -563,6 +643,7 @@ function PanoramicCabinExperience({
   recommendedSystemId,
   pendingMapFocusSystemId,
   radioHistory,
+  availableJobs,
   currentSongTitle,
   isMusicPlaying,
   musicError,
@@ -572,6 +653,8 @@ function PanoramicCabinExperience({
   onLeadViewed,
   onMapFocusHandled,
   onTravel,
+  onOpenActivities,
+  onAcceptJob,
   onReset,
   onNavigate
 }: {
@@ -586,6 +669,7 @@ function PanoramicCabinExperience({
   recommendedSystemId?: string;
   pendingMapFocusSystemId: string | null;
   radioHistory: RadioMessage[];
+  availableJobs: Job[];
   currentSongTitle: string | null;
   isMusicPlaying: boolean;
   musicError: boolean;
@@ -595,6 +679,8 @@ function PanoramicCabinExperience({
   onLeadViewed: (leadId: string) => void;
   onMapFocusHandled: () => void;
   onTravel: (system: StarSystem) => void;
+  onOpenActivities: (systemId?: string) => void;
+  onAcceptJob: (jobId: string) => void;
   onReset: () => void;
   onNavigate: (direction: 1 | -1) => void;
 }) {
@@ -920,6 +1006,7 @@ function PanoramicCabinExperience({
               recommendedSystemId={recommendedSystemId}
               pendingMapFocusSystemId={pendingMapFocusSystemId}
               radioHistory={radioHistory}
+              availableJobs={availableJobs}
               currentSongTitle={currentSongTitle}
               isMusicPlaying={isMusicPlaying}
               musicError={musicError}
@@ -931,6 +1018,8 @@ function PanoramicCabinExperience({
               onSteeringPointerEnd={handleSteeringPointerEnd}
               onMapFocusHandled={onMapFocusHandled}
               onTravel={onTravel}
+              onOpenActivities={onOpenActivities}
+              onAcceptJob={onAcceptJob}
               onReset={onReset}
               visibleView={activeView}
               statusHologramVisible={statusHologramVisible}
@@ -959,6 +1048,7 @@ function CabinOverlay({
   recommendedSystemId,
   pendingMapFocusSystemId,
   radioHistory,
+  availableJobs,
   currentSongTitle,
   isMusicPlaying,
   musicError,
@@ -970,6 +1060,8 @@ function CabinOverlay({
   onSteeringPointerEnd,
   onMapFocusHandled,
   onTravel,
+  onOpenActivities,
+  onAcceptJob,
   onReset,
   visibleView,
   statusHologramVisible,
@@ -990,6 +1082,7 @@ function CabinOverlay({
   recommendedSystemId?: string;
   pendingMapFocusSystemId: string | null;
   radioHistory: RadioMessage[];
+  availableJobs: Job[];
   currentSongTitle: string | null;
   isMusicPlaying: boolean;
   musicError: boolean;
@@ -1001,6 +1094,8 @@ function CabinOverlay({
   onSteeringPointerEnd: (event: PointerEvent<HTMLButtonElement>) => void;
   onMapFocusHandled: () => void;
   onTravel: (system: StarSystem) => void;
+  onOpenActivities: (systemId?: string) => void;
+  onAcceptJob: (jobId: string) => void;
   onReset: () => void;
   visibleView: PrimaryViewId;
   statusHologramVisible: boolean;
@@ -1212,14 +1307,24 @@ function CabinOverlay({
                       Current lead
                     </span>
                   )}
+                  {state.acceptedJobIds.length > 0 && (
+                    <span>
+                      <i className="map-legend-marker job" aria-hidden="true" />
+                      Active job
+                    </span>
+                  )}
                 </div>
               </div>
               <div className="sector-map ceiling-map" aria-label="Star systems map">
-                {systems.map((system) => (
+                {systems.map((system) => {
+                  const hasActiveJob = availableJobs.some(
+                    (job) => state.acceptedJobIds.includes(job.id) && job.destinationId === system.id
+                  );
+                  return (
                   <button
                     className={`map-node ${system.known ? 'known' : 'unknown'} ${system.id === currentSystem.id ? 'current' : ''} ${
                       system.id === recommendedSystemId ? 'recommended' : ''
-                    } ${system.id === selectedSystemId ? 'selected' : ''}`}
+                    } ${hasActiveJob ? 'job' : ''} ${system.id === selectedSystemId ? 'selected' : ''}`}
                     key={system.id}
                     type="button"
                     style={{ left: `${system.position.x}%`, top: `${system.position.y}%` }}
@@ -1231,13 +1336,17 @@ function CabinOverlay({
                   >
                     <span />
                   </button>
-                ))}
+                  );
+                })}
               </div>
             </div>
 
             <div className="system-list overlay-system-list route-list-panel">
               {systems.map((system) => {
                 const isRecommended = system.id === recommendedSystemId;
+                const hasActiveJob = availableJobs.some(
+                  (job) => state.acceptedJobIds.includes(job.id) && job.destinationId === system.id
+                );
 
                 return (
                   <article
@@ -1253,7 +1362,7 @@ function CabinOverlay({
                     <div className="system-main">
                       <div className="entry-topline">
                         <span>{system.known ? 'Known route' : 'Unconfirmed'}</span>
-                        {isRecommended && <strong>Current lead</strong>}
+                        {isRecommended ? <strong>Current lead</strong> : hasActiveJob ? <strong>Active job</strong> : null}
                       </div>
                       <h3>{system.known ? system.name : 'Uncharted light'}</h3>
                       <p>{system.known ? system.description : 'A discovery may reveal this destination later.'}</p>
@@ -1264,13 +1373,13 @@ function CabinOverlay({
                       <button
                         className="small-action"
                         type="button"
-                        disabled={!system.known || system.id === currentSystem.id || Boolean(activeTravel)}
-                        onClick={() => onTravel(system)}
+                        disabled={!system.known || Boolean(activeTravel)}
+                        onClick={() => system.id === currentSystem.id ? onOpenActivities(system.id) : onTravel(system)}
                       >
                         {activeTravel
                           ? 'In transit'
                           : system.id === currentSystem.id
-                            ? 'Here'
+                            ? 'Activities'
                             : system.known
                               ? 'Travel'
                               : 'Unknown'}
@@ -1296,6 +1405,7 @@ function CabinOverlay({
                 <div className="ship-resource" key={resource}>
                   <span>{resource}</span>
                   <strong>{state.resources[resource]}</strong>
+                  <p>{resourceDescriptions[resource]}</p>
                 </div>
               ))}
             </div>
@@ -1329,9 +1439,36 @@ function CabinOverlay({
         <div className="overlay-layer radio-overlay">
           <div className="radio-display overlay-shell">
             <div className="screen-heading overlay-heading compact-heading">
-              <p className="eyebrow">Saved transmissions</p>
+              <p className="eyebrow">Job frequencies</p>
+              <p>{state.acceptedJobIds.length}/3 active jobs</p>
             </div>
             <div className="radio-list overlay-radio-list">
+              {availableJobs.map((job) => {
+                const accepted = state.acceptedJobIds.includes(job.id);
+                const destination = getSystem(job.destinationId);
+                return (
+                  <article className="radio-message job job-offer" key={job.id}>
+                    <div className="entry-topline">
+                      <span>{job.source}</span>
+                      <strong>{accepted ? 'Accepted' : destination.name}</strong>
+                    </div>
+                    <h3>{job.title}</h3>
+                    <p>{job.transmission}</p>
+                    <div className="job-offer-footer">
+                      <span>{formatResourceDelta(job.reward)}</span>
+                      <button
+                        className="small-action"
+                        type="button"
+                        disabled={accepted || state.acceptedJobIds.length >= 3}
+                        onClick={() => onAcceptJob(job.id)}
+                      >
+                        {accepted ? 'Accepted' : state.acceptedJobIds.length >= 3 ? 'Job list full' : 'Accept Job'}
+                      </button>
+                    </div>
+                  </article>
+                );
+              })}
+              <p className="eyebrow radio-history-label">Saved transmissions</p>
               {radioHistory.map((message) => (
                 <article className={`radio-message ${message.tone}`} key={message.id}>
                   <strong>{message.source}</strong>
@@ -1437,7 +1574,6 @@ function ResourceStrip({ state, compact = false }: { state: PlayerState; compact
 function TravelScreen({ travel, onFinish }: { travel: TravelState; onFinish: () => void }) {
   const origin = getSystem(travel.fromSystemId);
   const destination = getSystem(travel.toSystemId);
-  const encounter = getEncounter(travel.encounterId);
 
   return (
     <div className="travel-screen">
@@ -1454,7 +1590,7 @@ function TravelScreen({ travel, onFinish }: { travel: TravelState; onFinish: () 
             <div className="progress-bar" />
           </div>
           <div className="radio-slip">
-            Incoming fragment: {encounter ? encounter.title.toLowerCase() : 'soft static'} near destination.
+            Incoming fragments suggest more than one possible errand near the destination.
           </div>
           <button className="primary-action w-100" type="button" onClick={onFinish}>
             Complete Approach
@@ -1465,14 +1601,96 @@ function TravelScreen({ travel, onFinish }: { travel: TravelState; onFinish: () 
   );
 }
 
+function ResourceChangeSummary({ delta, state }: { delta: ResourceDelta; state: PlayerState }) {
+  const changes = resourceLabels.filter((resource) => delta[resource]);
+  if (changes.length === 0) {
+    return null;
+  }
+
+  return (
+    <div className="resource-change-summary" aria-label="Resource changes">
+      {changes.map((resource) => {
+        const change = delta[resource] ?? 0;
+        return (
+          <div className={`resource-change ${change > 0 ? 'gain' : 'loss'}`} key={resource}>
+            <span>{change > 0 ? '+' : ''}{change} {resource}</span>
+            <strong>{state.resources[resource]} total</strong>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+function ActivityScreen({
+  system,
+  activities,
+  state,
+  notice,
+  onSelect,
+  onLeave
+}: {
+  system: StarSystem;
+  activities: Activity[];
+  state: PlayerState;
+  notice: ChoiceResult | null;
+  onSelect: (activity: Activity) => void;
+  onLeave: () => void;
+}) {
+  return (
+    <div className="activity-screen">
+      <img src={getSystemThumbnail(system.id)} alt="" className="encounter-art" />
+      <div className="activity-card">
+        <p className="eyebrow">Local activities</p>
+        <h2>{system.name}</h2>
+        <p>Choose what to give your attention to while you are here.</p>
+        {notice && (
+          <div className="activity-notice">
+            <p>{notice.text}</p>
+            <ResourceChangeSummary delta={notice.resourceDelta} state={state} />
+          </div>
+        )}
+        <div className="activity-list">
+          {activities.map((activity) => {
+            const service = activity.serviceId ? serviceDefinitions[activity.serviceId] : undefined;
+            const disabled = activity.serviceId ? !canUseService(state, activity.serviceId) : false;
+            return (
+              <button
+                className={`activity-option ${activity.kind}`}
+                type="button"
+                key={activity.id}
+                disabled={disabled}
+                onClick={() => onSelect(activity)}
+              >
+                <span>
+                  <small>{activity.kind}</small>
+                  <strong>{activity.title}</strong>
+                  <em>{activity.description}</em>
+                </span>
+                {service && <b>{service.cost} cr</b>}
+              </button>
+            );
+          })}
+          {activities.length === 0 && <p className="empty-state">There is no unfinished work here right now.</p>}
+        </div>
+        <button className="primary-action w-100" type="button" onClick={onLeave}>
+          Return to Cockpit
+        </button>
+      </div>
+    </div>
+  );
+}
+
 function EncounterScreen({
   encounter,
   choiceResult,
+  state,
   onChoose,
   onDone
 }: {
   encounter: Encounter;
-  choiceResult: string | null;
+  choiceResult: ChoiceResult | null;
+  state: PlayerState;
   onChoose: (encounter: Encounter, choice: EncounterChoice) => void;
   onDone: () => void;
 }) {
@@ -1482,19 +1700,32 @@ function EncounterScreen({
       <div className="encounter-card">
         <p className="eyebrow">Encounter</p>
         <h2>{encounter.title}</h2>
-        <p className="encounter-copy">{choiceResult ?? encounter.description}</p>
+        <p className="encounter-copy">{choiceResult?.text ?? encounter.description}</p>
         {!choiceResult ? (
           <div className="choice-stack">
-            {encounter.choices.map((choice) => (
-              <button className="choice-button" key={choice.id} type="button" onClick={() => onChoose(encounter, choice)}>
-                {choice.label}
-              </button>
-            ))}
+            {encounter.choices.map((choice) => {
+              const missingRequirement = getMissingResourceRequirement(state.resources, choice);
+              return (
+                <button
+                  className="choice-button"
+                  key={choice.id}
+                  type="button"
+                  disabled={Boolean(missingRequirement)}
+                  onClick={() => onChoose(encounter, choice)}
+                >
+                  <span>{choice.label}</span>
+                  {missingRequirement && <small>{missingRequirement}</small>}
+                </button>
+              );
+            })}
           </div>
         ) : (
-          <button className="primary-action w-100" type="button" onClick={onDone}>
-            Review Journal
-          </button>
+          <>
+            <ResourceChangeSummary delta={choiceResult.resourceDelta} state={state} />
+            <button className="primary-action w-100" type="button" onClick={onDone}>
+              Back to Local Activities
+            </button>
+          </>
         )}
       </div>
     </div>

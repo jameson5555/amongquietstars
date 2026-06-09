@@ -22,6 +22,8 @@ export const createInitialState = (): PlayerState => ({
   readJournalEntryIds: [],
   viewedLeadIds: [],
   radioHistoryIds: [...defaultRadioIds],
+  acceptedJobIds: [],
+  completedJobIds: [],
   mysteryProgress: 0,
   emergencyTowUsed: false
 });
@@ -52,6 +54,8 @@ export const loadPlayerState = (): PlayerState => {
       readJournalEntryIds: parsed.readJournalEntryIds ?? initial.readJournalEntryIds,
       viewedLeadIds: parsed.viewedLeadIds ?? initial.viewedLeadIds,
       radioHistoryIds: parsed.radioHistoryIds ?? initial.radioHistoryIds,
+      acceptedJobIds: parsed.acceptedJobIds ?? initial.acceptedJobIds,
+      completedJobIds: parsed.completedJobIds ?? initial.completedJobIds,
       mysteryProgress: parsed.mysteryProgress ?? initial.mysteryProgress,
       emergencyTowUsed: parsed.emergencyTowUsed ?? initial.emergencyTowUsed
     };
