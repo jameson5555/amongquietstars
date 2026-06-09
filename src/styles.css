@@ -4108,10 +4108,10 @@ body {
 .cabin-experience.view-radio .radio-screen-viewport {
   position: absolute;
   z-index: 1;
-  left: 22.7%;
-  top: 18.8%;
-  width: 68.7%;
-  height: 29.1%;
+  left: 16%;
+  top: 17.5%;
+  width: 78%;
+  height: 31.1%;
   min-width: 0;
   min-height: 0;
   overflow: hidden;
@@ -4133,7 +4133,7 @@ body {
   overflow-y: auto;
   overscroll-behavior: contain;
   touch-action: pan-y;
-  transform: perspective(900px) rotateY(-2deg) rotateX(0.7deg) rotateZ(-0.65deg) skewY(0.25deg);
+  transform: perspective(900px) rotateY(-23deg) rotateX(5.7deg) rotate(1deg) skewY(0.75deg);
   transform-origin: center;
 }
 
