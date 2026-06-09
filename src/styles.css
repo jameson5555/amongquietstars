@@ -3426,15 +3426,14 @@ body {
 
 .lead-console-trigger:focus-visible {
   outline: 0;
-  filter: drop-shadow(0 0 4px rgba(183, 242, 255, 0.94));
 }
 
 .lead-console-trigger.unread::before {
-  animation: lead-console-unread 2.4s ease-in-out infinite;
+  animation: lead-console-unread 4s ease-in-out infinite;
 }
 
 .lead-console-trigger.unread::after {
-  animation: lead-console-screen-unread 2.4s ease-in-out infinite;
+  animation: lead-console-screen-unread 4s ease-in-out infinite;
 }
 
 .view-cockpit .current-lead-panel {
@@ -3633,11 +3632,11 @@ body {
   0%,
   100% {
     filter: brightness(0.88) drop-shadow(0 0 2px rgba(82, 207, 255, 0.14));
-    opacity: 0.16;
+    opacity: 0;
   }
   50% {
     filter: brightness(1.32) drop-shadow(0 0 7px rgba(82, 207, 255, 0.58));
-    opacity: 0.78;
+    opacity: 0.2;
   }
 }
 
