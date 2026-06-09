@@ -496,12 +496,13 @@ function PanoramicCabinExperience({
   const suppressLeadToggleRef = useRef(false);
   const flybyIdRef = useRef(0);
   const steeringDragRef = useRef<SteeringDrag | null>(null);
-  const pendingSteeringOffsetRef = useRef<SteeringOffset>({ x: 0, y: 0 });
+  const steeringTargetRef = useRef<SteeringOffset>({ x: 0, y: 0 });
+  const steeringCurrentRef = useRef<SteeringOffset>({ x: 0, y: 0 });
   const steeringFrameRef = useRef<number | null>(null);
+  const steeringFrameTimeRef = useRef<number | null>(null);
   const [cockpitFlybys, setCockpitFlybys] = useState<CockpitFlyby[]>([]);
   const [expandedLeadId, setExpandedLeadId] = useState<string | null>(null);
   const [steeringOffset, setSteeringOffset] = useState<SteeringOffset>({ x: 0, y: 0 });
-  const [steeringActive, setSteeringActive] = useState(false);
   const leadExpanded = expandedLeadId === currentLead.id;
 
   const windowSystem = arrivalApproach ? getSystem(arrivalApproach.systemId) : currentSystem;
@@ -566,22 +567,58 @@ function PanoramicCabinExperience({
     []
   );
 
-  const commitSteeringOffset = () => {
+  const animateSteeringOffset = () => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      if (steeringFrameRef.current !== null) {
+        window.cancelAnimationFrame(steeringFrameRef.current);
+        steeringFrameRef.current = null;
+      }
+      steeringCurrentRef.current = steeringTargetRef.current;
+      steeringFrameTimeRef.current = null;
+      setSteeringOffset(steeringTargetRef.current);
+      return;
+    }
+
     if (steeringFrameRef.current !== null) {
       return;
     }
 
-    steeringFrameRef.current = window.requestAnimationFrame(() => {
+    const updateSteeringOffset = (currentTime: number) => {
+      const previousTime = steeringFrameTimeRef.current ?? currentTime;
+      const elapsedMs = Math.min(34, currentTime - previousTime);
+      const responseMs = steeringDragRef.current ? 150 : 280;
+      const blend = 1 - Math.exp(-elapsedMs / responseMs);
+      const target = steeringTargetRef.current;
+      const current = steeringCurrentRef.current;
+      const next = {
+        x: current.x + (target.x - current.x) * blend,
+        y: current.y + (target.y - current.y) * blend
+      };
+      const remainingX = Math.abs(target.x - next.x);
+      const remainingY = Math.abs(target.y - next.y);
+
+      steeringCurrentRef.current = next;
+      steeringFrameTimeRef.current = currentTime;
+      setSteeringOffset(next);
+
+      if (steeringDragRef.current || remainingX > 0.05 || remainingY > 0.05) {
+        steeringFrameRef.current = window.requestAnimationFrame(updateSteeringOffset);
+        return;
+      }
+
+      steeringCurrentRef.current = target;
+      steeringFrameTimeRef.current = null;
       steeringFrameRef.current = null;
-      setSteeringOffset(pendingSteeringOffsetRef.current);
-    });
+      setSteeringOffset(target);
+    };
+
+    steeringFrameRef.current = window.requestAnimationFrame(updateSteeringOffset);
   };
 
   const resetSteering = () => {
     steeringDragRef.current = null;
-    pendingSteeringOffsetRef.current = { x: 0, y: 0 };
-    setSteeringActive(false);
-    setSteeringOffset({ x: 0, y: 0 });
+    steeringTargetRef.current = { x: 0, y: 0 };
+    animateSteeringOffset();
   };
 
   const handleSteeringPointerDown = (event: PointerEvent<HTMLButtonElement>) => {
@@ -603,8 +640,8 @@ function PanoramicCabinExperience({
       maxX: cockpitBounds.width * 0.045,
       maxY: cockpitBounds.height * 0.045
     };
-    pendingSteeringOffsetRef.current = { x: 0, y: 0 };
-    setSteeringActive(true);
+    steeringTargetRef.current = steeringCurrentRef.current;
+    animateSteeringOffset();
   };
 
   const handleSteeringPointerMove = (event: PointerEvent<HTMLButtonElement>) => {
@@ -614,11 +651,11 @@ function PanoramicCabinExperience({
     }
 
     event.stopPropagation();
-    pendingSteeringOffsetRef.current = {
+    steeringTargetRef.current = {
       x: clamp(-(event.clientX - drag.startX), -drag.maxX, drag.maxX),
       y: clamp(-(event.clientY - drag.startY), -drag.maxY, drag.maxY)
     };
-    commitSteeringOffset();
+    animateSteeringOffset();
   };
 
   const handleSteeringPointerEnd = (event: PointerEvent<HTMLButtonElement>) => {
@@ -705,7 +742,7 @@ function PanoramicCabinExperience({
           <div className="scene-art-plate art-radio" />
           <div className="scene-cockpit-window-hotspot" aria-hidden={activeView !== 'cockpit'}>
             <div className="cockpit-window-view">
-              <div className={`cockpit-space-scene ${steeringActive ? 'steering-active' : ''}`}>
+              <div className="cockpit-space-scene">
                 <div className="cockpit-starfield" />
                 <div className="cockpit-flyby-layer cockpit-flyby-layer-far" aria-hidden="true">
                   {cockpitFlybys.filter((flyby) => !flyby.foreground).map((flyby) => (

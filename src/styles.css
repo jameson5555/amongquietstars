@@ -2030,12 +2030,8 @@ body {
   inset: -7%;
   overflow: hidden;
   transform: translate3d(var(--steering-x, 0), var(--steering-y, 0), 0);
-  transition: transform 500ms cubic-bezier(0.22, 1, 0.36, 1);
-  will-change: transform;
-}
-
-.cockpit-space-scene.steering-active {
   transition: none;
+  will-change: transform;
 }
 
 .cockpit-starfield,
