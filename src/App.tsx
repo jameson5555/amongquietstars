@@ -1119,6 +1119,7 @@ function CabinOverlay({
   const activeDestination = activeTravel ? getSystem(activeTravel.toSystemId) : undefined;
   const arrivingDestination = arrivalApproach ? getSystem(arrivalApproach.systemId) : undefined;
   const travelRemainingMs = activeTravel ? activeTravel.arrivesAt - now : 0;
+  const transmissionFeedRef = useRef<HTMLDivElement | null>(null);
   const [selectedMapSystemId, setSelectedMapSystemId] = useState<string>();
   const selectedSystemId = pendingMapFocusSystemId ?? selectedMapSystemId ?? recommendedSystemId ?? currentSystem.id;
   const leadUnread = !state.viewedLeadIds.includes(currentLead.id);
@@ -1132,6 +1133,12 @@ function CabinOverlay({
     const placementSeed = [...currentJobOffer.id].reduce((total, character) => total + character.charCodeAt(0), 0);
     radioFeedItems.splice(placementSeed % placementRange, 0, { kind: 'job', job: currentJobOffer });
   }
+
+  useEffect(() => {
+    if (activeView === 'radio' && visibleView === 'radio') {
+      transmissionFeedRef.current?.scrollTo({ top: 0 });
+    }
+  }, [activeView, visibleView]);
 
   const selectMapSystem = (systemId: string) => {
     setSelectedMapSystemId(systemId);
@@ -1456,7 +1463,7 @@ function CabinOverlay({
           <div className="radio-artwork-coordinate-space">
             <img src={imageAssets.viewRadioConsole} alt="" className="radio-console-art" />
             <div className="radio-screen-viewport">
-              <div className="transmission-feed">
+              <div className="transmission-feed" ref={transmissionFeedRef}>
                 {radioFeedItems.map((item) => {
                   if (item.kind === 'message') {
                     return (
