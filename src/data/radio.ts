@@ -60,10 +60,41 @@ export const radioMessages: RadioMessage[] = [
     source: 'Kite\'s End Canteen',
     text: 'Two readings, same shape, same breath. That is what the cook says, anyway.',
     tone: 'mystery'
+  },
+  {
+    id: 'lantern-shift',
+    source: 'Marrowlight Cargo Skiff',
+    text: 'Lantern dust is bright tonight. Keep your intake filters closed and enjoy the view.',
+    tone: 'ambient'
+  },
+  {
+    id: 'late-tea',
+    source: 'Lumen Rest Night Galley',
+    text: 'Last kettle is on until the morning shift. Dock quietly and there may still be a cup.',
+    tone: 'ambient'
+  },
+  {
+    id: 'current-weather',
+    source: 'Pale Current Lane Keeper',
+    text: 'Lane weather is gentle, with a little silver wake along the western markers.',
+    tone: 'ambient'
+  },
+  {
+    id: 'kite-post',
+    source: 'Kite\'s End Shuttle',
+    text: 'Cargo is light, letters are heavy, and we are somehow late in both directions.',
+    tone: 'ambient'
+  },
+  {
+    id: 'orison-ice',
+    source: 'Orison Survey Tender',
+    text: 'Ice is singing near marker six. Probably thermal stress. Probably.',
+    tone: 'ambient'
   }
 ];
 
 export const defaultRadioIds = ['good-stars', 'outer-lanes', 'soft-lanes'];
+export const ambientRadioIds = ['lantern-shift', 'late-tea', 'current-weather', 'kite-post', 'orison-ice'];
 
 export const getRadioMessage = (messageId: string): RadioMessage | undefined =>
   radioMessages.find((message) => message.id === messageId);

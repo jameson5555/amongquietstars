@@ -1,5 +1,6 @@
 import { encounters } from '../data/encounters';
 import { getJobForEncounter, jobs } from '../data/jobs';
+import { ambientRadioIds } from '../data/radio';
 import { getSystem, STARTING_SYSTEM_ID, systems } from '../data/systems';
 import type {
   Activity,
@@ -29,6 +30,7 @@ export const applyResourceDelta = (resources: Resources, delta: EncounterChoice[
 });
 
 const unique = <T>(items: T[]) => Array.from(new Set(items));
+const pickRandom = <T>(items: T[]) => items[Math.floor(Math.random() * items.length)];
 export const MAX_ACTIVE_JOBS = 3;
 
 export const serviceDefinitions: Record<
@@ -92,25 +94,60 @@ export const pickEncounterForSystem = (systemId: string, state: PlayerState): En
 };
 
 export const getAvailableJobs = (state: PlayerState) =>
-  jobs.filter(
-    (job) =>
-      job.revealAfterCompletedJobs <= state.completedJobIds.length &&
-      !state.completedJobIds.includes(job.id)
-  );
+  jobs.filter((job) => job.id === state.currentJobOfferId);
+
+export const getAcceptedJobs = (state: PlayerState) =>
+  jobs.filter((job) => state.acceptedJobIds.includes(job.id));
+
+const maybeReceiveRadioTraffic = (state: PlayerState): PlayerState => {
+  let nextState = state;
+  const unseenAmbientIds = ambientRadioIds.filter((messageId) => !state.radioHistoryIds.includes(messageId));
+
+  if (unseenAmbientIds.length > 0 && Math.random() < 0.42) {
+    const ambientId = pickRandom(unseenAmbientIds);
+    if (ambientId) {
+      nextState = {
+        ...nextState,
+        radioHistoryIds: unique([...nextState.radioHistoryIds, ambientId])
+      };
+    }
+  }
+
+  if (!nextState.currentJobOfferId && nextState.acceptedJobIds.length < MAX_ACTIVE_JOBS && Math.random() < 0.62) {
+    const eligibleJobs = jobs.filter(
+      (job) =>
+        job.revealAfterCompletedJobs <= nextState.completedJobIds.length &&
+        !nextState.acceptedJobIds.includes(job.id) &&
+        !nextState.completedJobIds.includes(job.id) &&
+        !nextState.seenJobOfferIds.includes(job.id)
+    );
+    const job = pickRandom(eligibleJobs);
+    if (job) {
+      nextState = {
+        ...nextState,
+        currentJobOfferId: job.id,
+        seenJobOfferIds: unique([...nextState.seenJobOfferIds, job.id])
+      };
+    }
+  }
+
+  return nextState;
+};
 
 export const acceptJob = (state: PlayerState, jobId: string): PlayerState => {
   if (
     state.acceptedJobIds.includes(jobId) ||
     state.completedJobIds.includes(jobId) ||
     state.acceptedJobIds.length >= MAX_ACTIVE_JOBS ||
-    !getAvailableJobs(state).some((job) => job.id === jobId)
+    state.currentJobOfferId !== jobId
   ) {
     return state;
   }
 
   return {
     ...state,
-    acceptedJobIds: [...state.acceptedJobIds, jobId]
+    acceptedJobIds: [...state.acceptedJobIds, jobId],
+    currentJobOfferId: undefined
   };
 };
 
@@ -213,7 +250,7 @@ export const beginTravel = (state: PlayerState, destination: StarSystem): Player
     };
   }
 
-  return {
+  return maybeReceiveRadioTraffic({
     ...state,
     resources: {
       ...state.resources,
@@ -221,7 +258,7 @@ export const beginTravel = (state: PlayerState, destination: StarSystem): Player
     },
     currentSystemId: destination.id,
     discoveredSystemIds: unique([...state.discoveredSystemIds, destination.id])
-  };
+  });
 };
 
 export const resolveChoice = (state: PlayerState, encounter: Encounter, choice: EncounterChoice): PlayerState => {
@@ -230,7 +267,7 @@ export const resolveChoice = (state: PlayerState, encounter: Encounter, choice: 
   }
 
   const job = getJobForEncounter(encounter.id);
-  return {
+  return maybeReceiveRadioTraffic({
     ...state,
     resources: applyResourceDelta(state.resources, choice.resourceDelta),
     completedEncounterIds: unique([...state.completedEncounterIds, encounter.id]),
@@ -240,7 +277,7 @@ export const resolveChoice = (state: PlayerState, encounter: Encounter, choice: 
     radioHistoryIds: unique([...state.radioHistoryIds, ...(choice.radioMessageIds ?? [])]),
     discoveredSystemIds: unique([...state.discoveredSystemIds, ...(choice.unlockSystemIds ?? [])]),
     mysteryProgress: Math.min(6, state.mysteryProgress + (choice.mysteryDelta ?? 0))
-  };
+  });
 };
 
 export const canUseService = (state: PlayerState, serviceId: ServiceId) => {

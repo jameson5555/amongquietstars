@@ -15,6 +15,7 @@ import {
   canComparePulseLogs,
   comparePulseLogs,
   getActivitiesForSystem,
+  getAcceptedJobs,
   getAppliedResourceDelta,
   getAvailableJobs,
   getMissingResourceRequirement,
@@ -46,6 +47,9 @@ type ScreenViewId = Exclude<ViewId, 'journal'>;
 type ArrivalApproach = { systemId: string };
 type ResourceDelta = Partial<Record<keyof Resources, number>>;
 type ChoiceResult = { text: string; resourceDelta: ResourceDelta };
+type RadioFeedItem =
+  | { kind: 'message'; message: RadioMessage }
+  | { kind: 'job'; job: Job };
 type CockpitFlyby = {
   id: number;
   src: string;
@@ -159,6 +163,7 @@ function App() {
   const journal = [...state.journalEntryIds].reverse().map(getJournalEntry).filter(isDefined);
   const radioHistory = state.radioHistoryIds.map(getRadioMessage).filter(isDefined);
   const availableJobs = useMemo(() => getAvailableJobs(state), [state]);
+  const acceptedJobs = useMemo(() => getAcceptedJobs(state), [state]);
   const activeEncounter = activeEncounterId ? getEncounter(activeEncounterId) : undefined;
   const activeTravel = state.activeTravel;
   const journalVisible = journalOpen || journalClosing;
@@ -536,6 +541,7 @@ function App() {
               pendingMapFocusSystemId={pendingMapFocusSystemId}
               radioHistory={radioHistory}
               availableJobs={availableJobs}
+              acceptedJobs={acceptedJobs}
               currentSongTitle={currentSongIndex === null ? null : songs[currentSongIndex]?.title ?? null}
               isMusicPlaying={isMusicPlaying}
               musicError={musicError}
@@ -644,6 +650,7 @@ function PanoramicCabinExperience({
   pendingMapFocusSystemId,
   radioHistory,
   availableJobs,
+  acceptedJobs,
   currentSongTitle,
   isMusicPlaying,
   musicError,
@@ -670,6 +677,7 @@ function PanoramicCabinExperience({
   pendingMapFocusSystemId: string | null;
   radioHistory: RadioMessage[];
   availableJobs: Job[];
+  acceptedJobs: Job[];
   currentSongTitle: string | null;
   isMusicPlaying: boolean;
   musicError: boolean;
@@ -1007,6 +1015,7 @@ function PanoramicCabinExperience({
               pendingMapFocusSystemId={pendingMapFocusSystemId}
               radioHistory={radioHistory}
               availableJobs={availableJobs}
+              acceptedJobs={acceptedJobs}
               currentSongTitle={currentSongTitle}
               isMusicPlaying={isMusicPlaying}
               musicError={musicError}
@@ -1049,6 +1058,7 @@ function CabinOverlay({
   pendingMapFocusSystemId,
   radioHistory,
   availableJobs,
+  acceptedJobs,
   currentSongTitle,
   isMusicPlaying,
   musicError,
@@ -1083,6 +1093,7 @@ function CabinOverlay({
   pendingMapFocusSystemId: string | null;
   radioHistory: RadioMessage[];
   availableJobs: Job[];
+  acceptedJobs: Job[];
   currentSongTitle: string | null;
   isMusicPlaying: boolean;
   musicError: boolean;
@@ -1112,6 +1123,15 @@ function CabinOverlay({
   const selectedSystemId = pendingMapFocusSystemId ?? selectedMapSystemId ?? recommendedSystemId ?? currentSystem.id;
   const leadUnread = !state.viewedLeadIds.includes(currentLead.id);
   const systemCardRefs = useRef<Record<string, HTMLElement | null>>({});
+  const radioFeedItems: RadioFeedItem[] = [...radioHistory]
+    .reverse()
+    .map((message) => ({ kind: 'message', message }));
+  const currentJobOffer = availableJobs[0];
+  if (currentJobOffer) {
+    const placementRange = Math.min(3, radioFeedItems.length + 1);
+    const placementSeed = [...currentJobOffer.id].reduce((total, character) => total + character.charCodeAt(0), 0);
+    radioFeedItems.splice(placementSeed % placementRange, 0, { kind: 'job', job: currentJobOffer });
+  }
 
   const selectMapSystem = (systemId: string) => {
     setSelectedMapSystemId(systemId);
@@ -1317,9 +1337,7 @@ function CabinOverlay({
               </div>
               <div className="sector-map ceiling-map" aria-label="Star systems map">
                 {systems.map((system) => {
-                  const hasActiveJob = availableJobs.some(
-                    (job) => state.acceptedJobIds.includes(job.id) && job.destinationId === system.id
-                  );
+                  const hasActiveJob = acceptedJobs.some((job) => job.destinationId === system.id);
                   return (
                   <button
                     className={`map-node ${system.known ? 'known' : 'unknown'} ${system.id === currentSystem.id ? 'current' : ''} ${
@@ -1344,9 +1362,7 @@ function CabinOverlay({
             <div className="system-list overlay-system-list route-list-panel">
               {systems.map((system) => {
                 const isRecommended = system.id === recommendedSystemId;
-                const hasActiveJob = availableJobs.some(
-                  (job) => state.acceptedJobIds.includes(job.id) && job.destinationId === system.id
-                );
+                const hasActiveJob = acceptedJobs.some((job) => job.destinationId === system.id);
 
                 return (
                   <article
@@ -1438,44 +1454,41 @@ function CabinOverlay({
       return (
         <div className="overlay-layer radio-overlay">
           <div className="radio-display overlay-shell">
-            <div className="screen-heading overlay-heading compact-heading">
-              <p className="eyebrow">Job frequencies</p>
-              <p>{state.acceptedJobIds.length}/3 active jobs</p>
-            </div>
             <div className="radio-list overlay-radio-list">
-              {availableJobs.map((job) => {
-                const accepted = state.acceptedJobIds.includes(job.id);
-                const destination = getSystem(job.destinationId);
+              {radioFeedItems.map((item) => {
+                if (item.kind === 'message') {
+                  return (
+                    <article className={`radio-message ${item.message.tone}`} key={`message:${item.message.id}`}>
+                      <strong>{item.message.source}</strong>
+                      <p>{item.message.text}</p>
+                    </article>
+                  );
+                }
+
+                const destination = getSystem(item.job.destinationId);
                 return (
-                  <article className="radio-message job job-offer" key={job.id}>
+                  <article className="radio-message job job-offer" key={`job:${item.job.id}`}>
                     <div className="entry-topline">
-                      <span>{job.source}</span>
-                      <strong>{accepted ? 'Accepted' : destination.name}</strong>
+                      <span>{item.job.source}</span>
+                      <strong>{destination.name}</strong>
                     </div>
-                    <h3>{job.title}</h3>
-                    <p>{job.transmission}</p>
+                    <h3>{item.job.title}</h3>
+                    <p>{item.job.transmission}</p>
                     <div className="job-offer-footer">
-                      <span>{formatResourceDelta(job.reward)}</span>
+                      <span>{formatResourceDelta(item.job.reward)}</span>
                       <button
                         className="small-action"
                         type="button"
-                        disabled={accepted || state.acceptedJobIds.length >= 3}
-                        onClick={() => onAcceptJob(job.id)}
+                        disabled={state.acceptedJobIds.length >= 3}
+                        onClick={() => onAcceptJob(item.job.id)}
                       >
-                        {accepted ? 'Accepted' : state.acceptedJobIds.length >= 3 ? 'Job list full' : 'Accept Job'}
+                        {state.acceptedJobIds.length >= 3 ? 'Job list full' : 'Accept Job'}
                       </button>
                     </div>
                   </article>
                 );
               })}
-              <p className="eyebrow radio-history-label">Saved transmissions</p>
-              {radioHistory.map((message) => (
-                <article className={`radio-message ${message.tone}`} key={message.id}>
-                  <strong>{message.source}</strong>
-                  <p>{message.text}</p>
-                </article>
-              ))}
-              {radioHistory.length === 0 && (
+              {radioFeedItems.length === 0 && (
                 <div className="empty-state radio-empty">
                   No saved messages yet. Encounters and leads will start feeding the receiver soon.
                 </div>

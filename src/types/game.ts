@@ -117,6 +117,8 @@ export interface PlayerState {
   radioHistoryIds: string[];
   acceptedJobIds: string[];
   completedJobIds: string[];
+  currentJobOfferId?: string;
+  seenJobOfferIds: string[];
   mysteryProgress: number;
   emergencyTowUsed: boolean;
 }
