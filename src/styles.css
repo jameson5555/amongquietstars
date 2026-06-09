@@ -2836,28 +2836,38 @@ body {
   line-height: 1.25;
 }
 
-.view-radio .radio-display {
-  left: 13.8%;
-  right: 8.8%;
-  top: 16.8%;
-  bottom: 39.8%;
-  width: auto;
-  max-height: none;
-  padding: 1.5% 2.4% 2.4% 1.8%;
+.cabin-experience.view-radio .radio-display {
+  left: 13.2%;
+  top: 14.2%;
+  right: auto;
+  bottom: auto;
+  width: 78.8%;
+  height: 49.5%;
+  min-height: 0;
+  max-height: 49.5%;
+  padding: 0;
   overflow: hidden;
-  clip-path: polygon(2% 0, 96% 0, 100% 8%, 98.5% 93%, 94% 100%, 4% 99%, 0 91%, 0.5% 8%);
+  clip-path: polygon(3% 0, 95% 0, 100% 7%, 99% 91%, 95% 99%, 4% 99%, 0 92%, 1% 8%);
+  transform: none;
 }
 
-.view-radio .overlay-radio-list {
-  height: 100%;
+.cabin-experience.view-radio .overlay-radio-list {
+  position: absolute;
+  inset: 4.5% 4.5% 5.5% 3.5%;
+  width: auto;
+  height: auto;
+  min-height: 0;
   max-height: none;
   margin: 0;
   padding: 0 5px 8px 2px;
   gap: 7px;
   overflow-y: auto;
+  overflow-x: hidden;
   overscroll-behavior: contain;
   scrollbar-width: thin;
   scrollbar-color: rgba(130, 225, 255, 0.42) transparent;
+  transform: perspective(900px) rotateZ(-0.15deg) skewY(0.15deg);
+  transform-origin: center;
 }
 
 .view-radio .radio-message {
@@ -3024,8 +3034,7 @@ body {
 }
 
 .view-radio .radio-display {
-  --screen-transform: perspective(760px) rotateY(-3deg) rotateZ(-0.45deg) skewY(0.45deg);
-  transform-origin: 48% 50%;
+  --screen-transform: none;
 }
 
 /* Cabin controls remain powered and travel with their corresponding view. */
