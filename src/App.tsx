@@ -6,7 +6,15 @@ import { getJournalEntry } from './data/journal';
 import { getRadioMessage } from './data/radio';
 import { getSystem } from './data/systems';
 import { shipUpgrades } from './data/upgrades';
-import { beginTravel, getTravelDurationMs, getVisibleSystems, pickEncounterForSystem, resolveChoice } from './services/gameLogic';
+import {
+  beginTravel,
+  canComparePulseLogs,
+  comparePulseLogs,
+  getTravelDurationMs,
+  getVisibleSystems,
+  pickEncounterForSystem,
+  resolveChoice
+} from './services/gameLogic';
 import { getCurrentLead, getLeadDestinationName, type CurrentLead } from './services/leads';
 import { createInitialState, loadPlayerState, resetPlayerState, savePlayerState } from './services/storage';
 import type {
@@ -218,6 +226,10 @@ function App() {
     setJournalClosing(true);
   };
 
+  const completePulseComparison = () => {
+    setState((current) => comparePulseLogs(current));
+  };
+
   const goTo = (nextView: ViewId) => {
     setChoiceResult(null);
     if (nextView === 'journal') {
@@ -365,7 +377,9 @@ function App() {
           {isPrimaryView(view) && journalVisible && (
             <JournalOverlay
               journal={journal}
+              pulseComparisonAvailable={canComparePulseLogs(state)}
               closing={journalClosing}
+              onComparePulseLogs={completePulseComparison}
               onClose={closeJournal}
               onClosed={() => setJournalClosing(false)}
             />
@@ -919,12 +933,16 @@ function CabinOverlay({
 
 function JournalOverlay({
   journal,
+  pulseComparisonAvailable,
   closing,
+  onComparePulseLogs,
   onClose,
   onClosed
 }: {
   journal: JournalEntry[];
+  pulseComparisonAvailable: boolean;
   closing: boolean;
+  onComparePulseLogs: () => void;
   onClose: () => void;
   onClosed: () => void;
 }) {
@@ -947,6 +965,21 @@ function JournalOverlay({
             </div>
           ) : (
             <div className="journal-list tablet-journal-list">
+              {pulseComparisonAvailable && (
+                <section className="journal-task" aria-labelledby="pulse-comparison-title">
+                  <div className="entry-topline">
+                    <span>Current task</span>
+                    <strong>Ready</strong>
+                  </div>
+                  <h3 id="pulse-comparison-title">Compare Pulse Logs</h3>
+                  <p>
+                    Lay the Vela Rest and Bluewake instrument traces over one another and follow the shared timestamp.
+                  </p>
+                  <button className="primary-action" type="button" onClick={onComparePulseLogs}>
+                    Connect the Readings
+                  </button>
+                </section>
+              )}
               {journal.map((entry) => (
                 <article className="journal-entry" key={entry.id}>
                   <div className="entry-topline">

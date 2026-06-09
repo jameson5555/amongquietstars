@@ -102,6 +102,16 @@ export const journalEntries: JournalEntry[] = [
     status: 'Connected'
   },
   {
+    id: 'pulse-comparison',
+    title: 'Synchronized Pulse Comparison',
+    category: 'Unresolved Patterns',
+    observation:
+      'The Vela Rest and Bluewake traces share the same shape and timestamp despite the distance between them. An old Glass Harbor catalog uses the same timing mark.',
+    location: 'Ship Journal',
+    relatedDiscoveries: ['pulse-at-vela', 'second-bluewake-pulse', 'misplaced-star'],
+    status: 'Connected'
+  },
+  {
     id: 'tow-note',
     title: 'Emergency Tow Receipt',
     category: 'Traveler Reports',

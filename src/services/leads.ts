@@ -50,9 +50,28 @@ export const getCurrentLead = (state: PlayerState): CurrentLead => {
     };
   }
 
+  if (!state.journalEntryIds.includes('pulse-comparison')) {
+    return {
+      title: 'Two Notes Want a Thread',
+      description: 'Your journal has enough clues to compare the pulse events without forcing an answer.',
+      actionView: 'journal',
+      ctaLabel: 'Review Journal'
+    };
+  }
+
+  if (!state.journalEntryIds.includes('misplaced-star')) {
+    return {
+      title: 'Glass Harbor Remembers',
+      description: 'The matched timestamps point toward an old listening post whose windows keep a different map.',
+      destinationId: 'glass-harbor',
+      actionView: 'map',
+      ctaLabel: 'Plot Course'
+    };
+  }
+
   return {
-    title: 'Two Notes Want a Thread',
-    description: 'Your journal has enough clues to compare the pulse events without forcing an answer.',
+    title: 'A Pattern, Not an Answer',
+    description: 'The pulse logs and Glass Harbor observation now share a thread. The quiet mystery will continue beyond this prototype.',
     actionView: 'journal',
     ctaLabel: 'Review Journal'
   };

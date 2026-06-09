@@ -20,6 +20,9 @@ export const applyResourceDelta = (resources: Resources, delta: EncounterChoice[
 
 const unique = <T>(items: T[]) => Array.from(new Set(items));
 
+const PULSE_COMPARISON_ENTRY_ID = 'pulse-comparison';
+const PULSE_COMPARISON_PREREQUISITES = ['pulse-at-vela', 'second-bluewake-pulse'];
+
 export const getVisibleSystems = (state: PlayerState): StarSystem[] =>
   systems.map((system) => ({
     ...system,
@@ -88,3 +91,21 @@ export const resolveChoice = (state: PlayerState, encounter: Encounter, choice: 
   discoveredSystemIds: unique([...state.discoveredSystemIds, ...(choice.unlockSystemIds ?? [])]),
   mysteryProgress: Math.min(6, state.mysteryProgress + (choice.mysteryDelta ?? 0))
 });
+
+export const canComparePulseLogs = (state: PlayerState) =>
+  !state.journalEntryIds.includes(PULSE_COMPARISON_ENTRY_ID) &&
+  PULSE_COMPARISON_PREREQUISITES.every((entryId) => state.journalEntryIds.includes(entryId));
+
+export const comparePulseLogs = (state: PlayerState): PlayerState => {
+  if (!canComparePulseLogs(state)) {
+    return state;
+  }
+
+  return {
+    ...state,
+    journalEntryIds: unique([...state.journalEntryIds, PULSE_COMPARISON_ENTRY_ID]),
+    readJournalEntryIds: unique([...state.readJournalEntryIds, PULSE_COMPARISON_ENTRY_ID]),
+    discoveredSystemIds: unique([...state.discoveredSystemIds, 'glass-harbor']),
+    mysteryProgress: Math.min(6, state.mysteryProgress + 1)
+  };
+};
