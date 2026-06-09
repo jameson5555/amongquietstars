@@ -4110,7 +4110,7 @@ body {
   z-index: 1;
   left: 16%;
   top: 17.5%;
-  width: 78%;
+  width: 78.4%;
   height: 31.1%;
   min-width: 0;
   min-height: 0;
@@ -4133,7 +4133,7 @@ body {
   overflow-y: auto;
   overscroll-behavior: contain;
   touch-action: pan-y;
-  transform: perspective(900px) rotateY(-23deg) rotateX(5.7deg) rotate(1deg) skewY(0.75deg);
+  transform: perspective(900px) rotateY(-23deg) rotateX(5.7deg) rotate(1.5deg) skewY(-1.25deg);
   transform-origin: center;
 }
 
