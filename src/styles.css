@@ -3669,11 +3669,11 @@ body {
   .lead-console-trigger.unread::before {
     animation: none;
     filter: brightness(1.12) drop-shadow(0 0 5px rgba(82, 207, 255, 0.44));
-    opacity: 0.58;
+    opacity: 0.4;
   }
 
   .lead-console-trigger.unread::after {
     animation: none;
-    opacity: 0.38;
+    opacity: 0.4;
   }
 }
