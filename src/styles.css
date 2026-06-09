@@ -3375,6 +3375,8 @@ body {
 
 .cockpit-holo-fields > .holo-panel {
   grid-area: 1 / 1;
+  align-self: start;
+  height: fit-content;
 }
 
 .lead-console-trigger {
