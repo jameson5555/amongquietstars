@@ -40,6 +40,14 @@ type CockpitFlyby = {
   foreground: boolean;
   style: CSSProperties;
 };
+type SteeringOffset = { x: number; y: number };
+type SteeringDrag = {
+  pointerId: number;
+  startX: number;
+  startY: number;
+  maxX: number;
+  maxY: number;
+};
 
 const navItems: Array<{ id: PrimaryViewId; label: string }> = [
   { id: 'map', label: 'Map' },
@@ -487,8 +495,13 @@ function PanoramicCabinExperience({
   const swipeStartRef = useRef<{ x: number; y: number; pointerId: number } | null>(null);
   const suppressLeadToggleRef = useRef(false);
   const flybyIdRef = useRef(0);
+  const steeringDragRef = useRef<SteeringDrag | null>(null);
+  const pendingSteeringOffsetRef = useRef<SteeringOffset>({ x: 0, y: 0 });
+  const steeringFrameRef = useRef<number | null>(null);
   const [cockpitFlybys, setCockpitFlybys] = useState<CockpitFlyby[]>([]);
   const [expandedLeadId, setExpandedLeadId] = useState<string | null>(null);
+  const [steeringOffset, setSteeringOffset] = useState<SteeringOffset>({ x: 0, y: 0 });
+  const [steeringActive, setSteeringActive] = useState(false);
   const leadExpanded = expandedLeadId === currentLead.id;
 
   const windowSystem = arrivalApproach ? getSystem(arrivalApproach.systemId) : currentSystem;
@@ -503,7 +516,9 @@ function PanoramicCabinExperience({
     '--art-cockpit': `url(${imageAssets.viewCockpitForward})`,
     '--art-map': `url(${imageAssets.viewMapCeiling})`,
     '--art-ship': `url(${imageAssets.viewShipAft})`,
-    '--art-radio': `url(${imageAssets.viewRadioConsole})`
+    '--art-radio': `url(${imageAssets.viewRadioConsole})`,
+    '--steering-x': `${activeView === 'cockpit' && !activeTravel ? steeringOffset.x : 0}px`,
+    '--steering-y': `${activeView === 'cockpit' && !activeTravel ? steeringOffset.y : 0}px`
   } as CSSProperties;
 
   useEffect(() => {
@@ -541,6 +556,83 @@ function PanoramicCabinExperience({
       timeoutIds.forEach((timeoutId) => window.clearTimeout(timeoutId));
     };
   }, [activeTravel, activeView]);
+
+  useEffect(
+    () => () => {
+      if (steeringFrameRef.current !== null) {
+        window.cancelAnimationFrame(steeringFrameRef.current);
+      }
+    },
+    []
+  );
+
+  const commitSteeringOffset = () => {
+    if (steeringFrameRef.current !== null) {
+      return;
+    }
+
+    steeringFrameRef.current = window.requestAnimationFrame(() => {
+      steeringFrameRef.current = null;
+      setSteeringOffset(pendingSteeringOffsetRef.current);
+    });
+  };
+
+  const resetSteering = () => {
+    steeringDragRef.current = null;
+    pendingSteeringOffsetRef.current = { x: 0, y: 0 };
+    setSteeringActive(false);
+    setSteeringOffset({ x: 0, y: 0 });
+  };
+
+  const handleSteeringPointerDown = (event: PointerEvent<HTMLButtonElement>) => {
+    if (activeView !== 'cockpit' || activeTravel) {
+      return;
+    }
+
+    event.stopPropagation();
+    const cockpitBounds = event.currentTarget.closest('.cabin-experience')?.getBoundingClientRect();
+    if (!cockpitBounds) {
+      return;
+    }
+
+    event.currentTarget.setPointerCapture(event.pointerId);
+    steeringDragRef.current = {
+      pointerId: event.pointerId,
+      startX: event.clientX,
+      startY: event.clientY,
+      maxX: cockpitBounds.width * 0.045,
+      maxY: cockpitBounds.height * 0.045
+    };
+    pendingSteeringOffsetRef.current = { x: 0, y: 0 };
+    setSteeringActive(true);
+  };
+
+  const handleSteeringPointerMove = (event: PointerEvent<HTMLButtonElement>) => {
+    const drag = steeringDragRef.current;
+    if (!drag || drag.pointerId !== event.pointerId) {
+      return;
+    }
+
+    event.stopPropagation();
+    pendingSteeringOffsetRef.current = {
+      x: clamp(-(event.clientX - drag.startX), -drag.maxX, drag.maxX),
+      y: clamp(-(event.clientY - drag.startY), -drag.maxY, drag.maxY)
+    };
+    commitSteeringOffset();
+  };
+
+  const handleSteeringPointerEnd = (event: PointerEvent<HTMLButtonElement>) => {
+    const drag = steeringDragRef.current;
+    if (!drag || drag.pointerId !== event.pointerId) {
+      return;
+    }
+
+    event.stopPropagation();
+    if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+      event.currentTarget.releasePointerCapture(event.pointerId);
+    }
+    resetSteering();
+  };
 
   const handlePointerDown = (event: PointerEvent<HTMLDivElement>) => {
     suppressLeadToggleRef.current = false;
@@ -613,24 +705,26 @@ function PanoramicCabinExperience({
           <div className="scene-art-plate art-radio" />
           <div className="scene-cockpit-window-hotspot" aria-hidden={activeView !== 'cockpit'}>
             <div className="cockpit-window-view">
-              <div className="cockpit-starfield" />
-              <div className="cockpit-flyby-layer cockpit-flyby-layer-far" aria-hidden="true">
-                {cockpitFlybys.filter((flyby) => !flyby.foreground).map((flyby) => (
-                  <img className="cockpit-flyby-ship" key={flyby.id} src={flyby.src} alt="" style={flyby.style} />
-                ))}
+              <div className={`cockpit-space-scene ${steeringActive ? 'steering-active' : ''}`}>
+                <div className="cockpit-starfield" />
+                <div className="cockpit-flyby-layer cockpit-flyby-layer-far" aria-hidden="true">
+                  {cockpitFlybys.filter((flyby) => !flyby.foreground).map((flyby) => (
+                    <img className="cockpit-flyby-ship" key={flyby.id} src={flyby.src} alt="" style={flyby.style} />
+                  ))}
+                </div>
+                <img
+                  src={windowDestinationArt.src}
+                  alt=""
+                  className={`cockpit-destination-art destination-${windowDestinationArt.kind}`}
+                  style={destinationStyle}
+                />
+                <div className="cockpit-flyby-layer cockpit-flyby-layer-near" aria-hidden="true">
+                  {cockpitFlybys.filter((flyby) => flyby.foreground).map((flyby) => (
+                    <img className="cockpit-flyby-ship" key={flyby.id} src={flyby.src} alt="" style={flyby.style} />
+                  ))}
+                </div>
+                <img src={imageAssets.hyperdriveTunnel} alt="" className="cockpit-hyperdrive-art" />
               </div>
-              <img
-                src={windowDestinationArt.src}
-                alt=""
-                className={`cockpit-destination-art destination-${windowDestinationArt.kind}`}
-                style={destinationStyle}
-              />
-              <div className="cockpit-flyby-layer cockpit-flyby-layer-near" aria-hidden="true">
-                {cockpitFlybys.filter((flyby) => flyby.foreground).map((flyby) => (
-                  <img className="cockpit-flyby-ship" key={flyby.id} src={flyby.src} alt="" style={flyby.style} />
-                ))}
-              </div>
-              <img src={imageAssets.hyperdriveTunnel} alt="" className="cockpit-hyperdrive-art" />
             </div>
           </div>
         </div>
@@ -658,6 +752,9 @@ function PanoramicCabinExperience({
               pendingMapFocusSystemId={pendingMapFocusSystemId}
               radioHistory={radioHistory}
               onLeadAction={handleLeadAction}
+              onSteeringPointerDown={handleSteeringPointerDown}
+              onSteeringPointerMove={handleSteeringPointerMove}
+              onSteeringPointerEnd={handleSteeringPointerEnd}
               onMapFocusHandled={onMapFocusHandled}
               onTravel={onTravel}
               onReset={onReset}
@@ -685,6 +782,9 @@ function CabinOverlay({
   pendingMapFocusSystemId,
   radioHistory,
   onLeadAction,
+  onSteeringPointerDown,
+  onSteeringPointerMove,
+  onSteeringPointerEnd,
   onMapFocusHandled,
   onTravel,
   onReset,
@@ -704,6 +804,9 @@ function CabinOverlay({
   pendingMapFocusSystemId: string | null;
   radioHistory: RadioMessage[];
   onLeadAction: () => void;
+  onSteeringPointerDown: (event: PointerEvent<HTMLButtonElement>) => void;
+  onSteeringPointerMove: (event: PointerEvent<HTMLButtonElement>) => void;
+  onSteeringPointerEnd: (event: PointerEvent<HTMLButtonElement>) => void;
   onMapFocusHandled: () => void;
   onTravel: (system: StarSystem) => void;
   onReset: () => void;
@@ -786,6 +889,19 @@ function CabinOverlay({
             onClick={onToggleLead}
           >
             <span className="visually-hidden">Current lead</span>
+          </button>
+          <button
+            className="radar-steering-control"
+            type="button"
+            aria-label="Steer exterior view"
+            disabled={Boolean(activeTravel)}
+            onPointerDown={onSteeringPointerDown}
+            onPointerMove={onSteeringPointerMove}
+            onPointerUp={onSteeringPointerEnd}
+            onPointerCancel={onSteeringPointerEnd}
+            onLostPointerCapture={onSteeringPointerEnd}
+          >
+            <span className="visually-hidden">Drag to steer the ship view</span>
           </button>
           <div className="cockpit-holo-fields">
             <section
