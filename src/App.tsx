@@ -608,9 +608,16 @@ function PanoramicCabinExperience({
   const steeringFrameTimeRef = useRef<number | null>(null);
   const [cockpitFlybys, setCockpitFlybys] = useState<CockpitFlyby[]>([]);
   const [openCockpitPanel, setOpenCockpitPanel] = useState<CockpitPanel>(null);
+  const [hiddenStatusEventKey, setHiddenStatusEventKey] = useState<string | null>(null);
   const [steeringOffset, setSteeringOffset] = useState<SteeringOffset>({ x: 0, y: 0 });
   const leadExpanded = openCockpitPanel === 'lead';
   const musicExpanded = openCockpitPanel === 'music';
+  const statusEventKey = arrivalApproach
+    ? `arrival:${arrivalApproach.systemId}`
+    : activeTravel
+      ? `travel:${activeTravel.departedAt}`
+      : `orbit:${currentSystem.id}`;
+  const statusHologramVisible = hiddenStatusEventKey !== statusEventKey;
 
   const windowSystem = arrivalApproach ? getSystem(arrivalApproach.systemId) : currentSystem;
   const windowDestinationArt = getDestinationArt(windowSystem.id);
@@ -833,6 +840,15 @@ function PanoramicCabinExperience({
     setOpenCockpitPanel((openPanel) => openPanel === 'music' ? null : 'music');
   };
 
+  const toggleStatusHologram = () => {
+    if (suppressPanelToggleRef.current) {
+      suppressPanelToggleRef.current = false;
+      return;
+    }
+
+    setHiddenStatusEventKey((hiddenKey) => hiddenKey === statusEventKey ? null : statusEventKey);
+  };
+
   const handleLeadAction = () => {
     setOpenCockpitPanel(null);
     onLeadAction();
@@ -917,8 +933,10 @@ function PanoramicCabinExperience({
               onTravel={onTravel}
               onReset={onReset}
               visibleView={activeView}
+              statusHologramVisible={statusHologramVisible}
               leadExpanded={leadExpanded}
               musicExpanded={musicExpanded}
+              onToggleStatusHologram={toggleStatusHologram}
               onToggleLead={toggleLeadExpanded}
               onToggleMusic={toggleMusicExpanded}
             />
@@ -954,8 +972,10 @@ function CabinOverlay({
   onTravel,
   onReset,
   visibleView,
+  statusHologramVisible,
   leadExpanded,
   musicExpanded,
+  onToggleStatusHologram,
   onToggleLead,
   onToggleMusic
 }: {
@@ -983,8 +1003,10 @@ function CabinOverlay({
   onTravel: (system: StarSystem) => void;
   onReset: () => void;
   visibleView: PrimaryViewId;
+  statusHologramVisible: boolean;
   leadExpanded: boolean;
   musicExpanded: boolean;
+  onToggleStatusHologram: () => void;
   onToggleLead: () => void;
   onToggleMusic: () => void;
 }) {
@@ -1026,7 +1048,12 @@ function CabinOverlay({
         <div className="overlay-layer cockpit-overlay">
           <div className="overlay-band cockpit-top-band">
             <ResourceStrip state={state} compact />
-            <div className="holo-panel cockpit-status-hologram">
+            <div
+              id="cockpit-status-hologram"
+              className={`holo-panel cockpit-status-hologram ${statusHologramVisible ? '' : 'hidden'}`}
+              aria-hidden={!statusHologramVisible}
+              inert={!statusHologramVisible}
+            >
               <div className="cockpit-status-copy">
                 <p className="eyebrow">
                   {arrivalApproach && arrivingDestination
@@ -1054,6 +1081,16 @@ function CabinOverlay({
               </div>
             </div>
           </div>
+          <button
+            className="status-console-trigger"
+            type="button"
+            aria-label={`${statusHologramVisible ? 'Hide' : 'Show'} orbit status`}
+            aria-controls="cockpit-status-hologram"
+            aria-expanded={statusHologramVisible}
+            onClick={onToggleStatusHologram}
+          >
+            <span className="visually-hidden">Toggle orbit status</span>
+          </button>
           <button
             className={`lead-console-trigger ${leadUnread ? 'unread' : ''}`}
             type="button"
