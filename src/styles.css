@@ -3414,16 +3414,6 @@ body {
   opacity: 0;
 }
 
-.lead-console-trigger:hover::before,
-.lead-console-trigger[aria-expanded="true"]::before {
-  opacity: 0.58;
-}
-
-.lead-console-trigger:hover::after,
-.lead-console-trigger[aria-expanded="true"]::after {
-  opacity: 0.42;
-}
-
 .lead-console-trigger:focus-visible {
   outline: 0;
 }
