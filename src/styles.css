@@ -3450,9 +3450,10 @@ body {
 .view-cockpit .cockpit-top-band .cockpit-status-hologram {
   position: relative;
   display: block;
-  width: 100%;
+  width: calc(100% - 20%);
   max-width: none;
   padding: 8px 10px;
+  margin: 0 10%;
   overflow: hidden;
   border: 1px solid rgba(109, 226, 255, 0.4);
   border-radius: 7px;
