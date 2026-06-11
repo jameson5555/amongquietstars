@@ -1431,42 +1431,47 @@ function CabinOverlay({
     case 'ship':
       return (
         <div className="overlay-layer ship-overlay">
-          <div className="ship-screen-panel overlay-shell">
-            <div className="screen-heading overlay-heading">
-              <p className="eyebrow">Ship registry</p>
-              <h2>Among Quiet Stars</h2>
-            </div>
-            <div className="ship-resources-grid" aria-label="Ship resources">
-              {resourceLabels.map((resource) => (
-                <div className="ship-resource" key={resource}>
-                  <span>{resource}</span>
-                  <strong>{state.resources[resource]}</strong>
-                  <p>{resourceDescriptions[resource]}</p>
+          <div className="ship-artwork-coordinate-space">
+            <img src={imageAssets.viewShipAft} alt="" className="ship-console-art" />
+            <div className="ship-registry-screen-viewport">
+              <div className="ship-screen-panel overlay-shell">
+                <div className="screen-heading overlay-heading">
+                  <p className="eyebrow">Ship registry</p>
+                  <h2>Among Quiet Stars</h2>
                 </div>
-              ))}
+                <div className="ship-resources-grid" aria-label="Ship resources">
+                  {resourceLabels.map((resource) => (
+                    <div className="ship-resource" key={resource}>
+                      <span>{resource}</span>
+                      <strong>{state.resources[resource]}</strong>
+                      <p>{resourceDescriptions[resource]}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
-          </div>
 
-          <div className="ship-upgrades-panel overlay-shell">
-            <div className="screen-heading overlay-heading compact-heading">
-              <p className="eyebrow">Available upgrades</p>
-              <h2>Workshop queue</h2>
-              <p>Preview modules for future installation.</p>
+            <div className="ship-upgrades-screen-viewport">
+              <div className="ship-upgrades-panel overlay-shell">
+                <div className="screen-heading overlay-heading compact-heading">
+                  <p className="eyebrow">Available upgrades</p>
+                </div>
+                <div className="upgrade-list overlay-upgrade-list">
+                  {shipUpgrades.map((upgrade) => (
+                    <article className="upgrade-card" key={upgrade.id}>
+                      <div>
+                        <h4>{upgrade.name}</h4>
+                        <p>{upgrade.description}</p>
+                      </div>
+                      <strong>{upgrade.cost} cr</strong>
+                    </article>
+                  ))}
+                </div>
+                <button className="reset-button" type="button" onClick={onReset}>
+                  Reset Save
+                </button>
+              </div>
             </div>
-            <div className="upgrade-list overlay-upgrade-list">
-              {shipUpgrades.map((upgrade) => (
-                <article className="upgrade-card" key={upgrade.id}>
-                  <div>
-                    <h4>{upgrade.name}</h4>
-                    <p>{upgrade.description}</p>
-                  </div>
-                  <strong>{upgrade.cost} cr</strong>
-                </article>
-              ))}
-            </div>
-            <button className="reset-button" type="button" onClick={onReset}>
-              Reset Save
-            </button>
           </div>
         </div>
       );

@@ -4372,3 +4372,203 @@ body {
   border-radius: 4px;
   font-size: 0.59rem;
 }
+
+/* Ship console: bind both interface panels to the aft-cabin artwork. */
+.cabin-experience.view-ship .ship-artwork-coordinate-space {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 100%;
+  aspect-ratio: 941 / 1672;
+  transform: translateY(-50%);
+  pointer-events: auto;
+}
+
+.cabin-experience.view-ship .ship-console-art {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+  pointer-events: none;
+  user-select: none;
+}
+
+.cabin-experience.view-ship .ship-registry-screen-viewport,
+.cabin-experience.view-ship .ship-upgrades-screen-viewport {
+  position: absolute;
+  z-index: 1;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.cabin-experience.view-ship .ship-registry-screen-viewport {
+  left: 35.5%;
+  top: 10.7%;
+  width: 51.8%;
+  height: 16.3%;
+  clip-path: polygon(4% 0, 96% 0, 100% 8%, 100% 91%, 96% 100%, 4% 100%, 0 91%, 0 8%);
+}
+
+.cabin-experience.view-ship .ship-upgrades-screen-viewport {
+  left: 34.4%;
+  top: 32%;
+  width: 56.8%;
+  height: 34.6%;
+  clip-path: polygon(4% 0, 96% 0, 100% 4%, 100% 96%, 96% 100%, 4% 100%, 0 96%, 0 4%);
+}
+
+.cabin-experience.view-ship .ship-screen-panel,
+.cabin-experience.view-ship .ship-upgrades-panel {
+  --screen-transform: none;
+  position: absolute;
+  inset: 0;
+  left: auto;
+  right: auto;
+  top: auto;
+  bottom: auto;
+  width: auto;
+  max-height: none;
+  margin: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  transform: none;
+}
+
+.cabin-experience.view-ship .ship-screen-panel {
+  inset: 9% 7% 8% 7%;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  gap: 5px;
+  padding: 0;
+  overflow: hidden;
+}
+
+.cabin-experience.view-ship .ship-screen-panel .overlay-heading {
+  margin: 0;
+}
+
+.cabin-experience.view-ship .ship-screen-panel .overlay-heading .eyebrow {
+  font-size: 0.56rem;
+}
+
+.cabin-experience.view-ship .ship-screen-panel .overlay-heading h2 {
+  margin-top: 2px;
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.cabin-experience.view-ship .ship-resources-grid {
+  min-height: 0;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 4px 8px;
+  overflow: hidden;
+}
+
+.cabin-experience.view-ship .ship-resource {
+  min-width: 0;
+  padding: 3px 4px;
+  border: 1px solid rgba(151, 223, 255, 0.1);
+  border-radius: 4px;
+  background: rgba(5, 21, 31, 0.12);
+}
+
+.cabin-experience.view-ship .ship-resource span {
+  font-size: 0.47rem;
+  line-height: 1;
+}
+
+.cabin-experience.view-ship .ship-resource strong {
+  margin-top: 1px;
+  font-size: 0.72rem;
+  line-height: 1;
+}
+
+.cabin-experience.view-ship .ship-resource p {
+  display: -webkit-box;
+  margin-top: 2px;
+  overflow: hidden;
+  font-size: 0.45rem;
+  line-height: 1.08;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.cabin-experience.view-ship .ship-upgrades-panel {
+  inset: 5.5% 6% 6% 6%;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  gap: 5px;
+  padding: 0;
+  overflow: hidden;
+}
+
+.cabin-experience.view-ship .ship-upgrades-panel .overlay-heading {
+  margin: 0;
+  padding: 0 2px 4px;
+  border-bottom: 1px solid rgba(151, 223, 255, 0.12);
+}
+
+.cabin-experience.view-ship .ship-upgrades-panel .overlay-heading .eyebrow {
+  margin: 0;
+  font-size: 0.58rem;
+}
+
+.cabin-experience.view-ship .overlay-upgrade-list {
+  min-width: 0;
+  min-height: 0;
+  max-height: none;
+  display: grid;
+  grid-auto-rows: max-content;
+  align-content: start;
+  gap: 5px;
+  margin: 0;
+  padding: 0 4px 4px 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  touch-action: pan-y;
+}
+
+.cabin-experience.view-ship .overlay-upgrade-list .upgrade-card {
+  min-width: 0;
+  gap: 7px;
+  margin: 0;
+  padding: 7px 6px;
+  border: 1px solid rgba(151, 223, 255, 0.12);
+  border-radius: 5px;
+  background: rgba(5, 21, 31, 0.14);
+}
+
+.cabin-experience.view-ship .overlay-upgrade-list .upgrade-card div {
+  min-width: 0;
+}
+
+.cabin-experience.view-ship .overlay-upgrade-list .upgrade-card h4 {
+  margin: 0 0 2px;
+  font-size: 0.7rem;
+  line-height: 1.05;
+}
+
+.cabin-experience.view-ship .overlay-upgrade-list .upgrade-card p {
+  display: -webkit-box;
+  overflow: hidden;
+  font-size: 0.52rem;
+  line-height: 1.15;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.cabin-experience.view-ship .overlay-upgrade-list .upgrade-card strong {
+  font-size: 0.64rem;
+}
+
+.cabin-experience.view-ship .ship-upgrades-panel .reset-button {
+  min-height: 25px;
+  margin: 0;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.58rem;
+}
