@@ -4186,6 +4186,7 @@ body {
 }
 
 .cabin-experience.view-map .map-shell {
+  --screen-transform: none;
   position: absolute;
   inset: 0;
   width: auto;
@@ -4206,28 +4207,28 @@ body {
 }
 
 .cabin-experience.view-map .map-screen-viewport {
-  left: 16.2%;
-  top: 13.1%;
-  width: 64.8%;
-  height: 36.6%;
-  clip-path: polygon(7% 1%, 91% 5%, 98.5% 12%, 100% 91%, 96% 98.5%, 6% 96%, 0.5% 89%, 0 8%);
+  left: 13.8%;
+  top: 12.5%;
+  width: 68.8%;
+  height: 37.7%;
+  clip-path: polygon(7.5% 0, 89.5% 5.5%, 98.5% 13%, 100% 91%, 96% 99%, 6% 96%, 0.5% 89%, 0 8%);
 }
 
 .cabin-experience.view-map .map-screen-panel {
   position: absolute;
-  inset: 7.5% 7.5% 8% 6%;
+  inset: 5.5% 6.5% 6.5% 6%;
   min-width: 0;
   min-height: 0;
   display: grid;
   grid-template-rows: auto minmax(0, 1fr);
   gap: 5px;
   overflow: hidden;
-  transform: perspective(760px) rotateY(-14deg) rotateX(5.2deg) rotate(3.6deg) skewY(0.8deg);
-  transform-origin: 48% 50%;
+  transform: perspective(1100px) rotateY(-2.5deg) rotateX(1deg) rotate(0.8deg) skewY(0.15deg);
+  transform-origin: center;
 }
 
 .cabin-experience.view-map .map-heading-row {
-  padding: 0 9% 0 2px;
+  padding: 0 5% 0 2px;
 }
 
 .cabin-experience.view-map .map-heading-row .eyebrow {
@@ -4266,16 +4267,16 @@ body {
 }
 
 .cabin-experience.view-map .map-route-screen-viewport {
-  left: 16.4%;
-  top: 55.6%;
-  width: 69.6%;
-  height: 21.2%;
-  clip-path: polygon(3.5% 3%, 91.5% 0.5%, 98% 7%, 100% 86%, 95% 96%, 7% 100%, 1% 91%, 0 11%);
+  left: 13.8%;
+  top: 55%;
+  width: 74%;
+  height: 22.4%;
+  clip-path: polygon(4% 2%, 91.5% 0, 98.5% 7%, 100% 85%, 95% 96%, 7% 100%, 1% 91%, 0 11%);
 }
 
 .cabin-experience.view-map .overlay-system-list {
   position: absolute;
-  inset: 8.5% 9% 11% 7%;
+  inset: 7% 6.5% 9% 6%;
   min-width: 0;
   min-height: 0;
   display: grid;
@@ -4288,8 +4289,8 @@ body {
   overflow-y: auto;
   overscroll-behavior: contain;
   touch-action: pan-y;
-  transform: perspective(760px) rotateY(-12deg) rotateX(2.4deg) rotate(-0.9deg) skewY(-0.35deg);
-  transform-origin: 46% 48%;
+  transform: perspective(1050px) rotateY(-3deg) rotateX(0.8deg) rotate(-0.35deg) skewY(-0.1deg);
+  transform-origin: center;
 }
 
 .cabin-experience.view-map .overlay-system-list .system-card {
