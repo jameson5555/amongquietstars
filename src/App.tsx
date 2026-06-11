@@ -1468,7 +1468,7 @@ function CabinOverlay({
                   ))}
                 </div>
                 <button className="reset-button" type="button" onClick={onReset}>
-                  Reset Save
+                  Restart Game
                 </button>
               </div>
             </div>
