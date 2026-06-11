@@ -3873,14 +3873,15 @@ body {
 }
 
 .view-cockpit .current-lead-title {
-  overflow: hidden;
+  overflow: visible;
   margin-bottom: 7px;
   color: #f4fbff;
   font-size: 0.86rem;
   font-weight: 800;
   line-height: 1.14;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  overflow-wrap: anywhere;
+  text-overflow: clip;
+  white-space: normal;
 }
 
 .view-cockpit .current-lead-details {
@@ -3899,6 +3900,20 @@ body {
   opacity: 1;
   transform: none;
   visibility: visible;
+}
+
+.view-cockpit .current-lead-panel:not(.music-player-panel) {
+  max-height: none;
+}
+
+.view-cockpit .current-lead-panel:not(.music-player-panel) .current-lead-details,
+.view-cockpit .current-lead-panel:not(.music-player-panel).expanded .current-lead-details {
+  max-height: none;
+}
+
+.view-cockpit .current-lead-description {
+  overflow-wrap: anywhere;
+  white-space: normal;
 }
 
 .view-cockpit .music-player-details {
