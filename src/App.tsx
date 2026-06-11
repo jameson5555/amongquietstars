@@ -1319,98 +1319,111 @@ function CabinOverlay({
     case 'map':
       return (
         <div className="overlay-layer map-overlay">
-          <div className="overlay-shell map-shell">
-            <div className="map-screen-panel">
-              <div className="map-heading-row">
-                <p className="eyebrow">Star map</p>
-                <div className="map-legend" aria-label="Map legend">
-                  <span>
-                    <i className="map-legend-marker current" aria-hidden="true" />
-                    You are here
-                  </span>
-                  {recommendedSystemId && (
-                    <span>
-                      <i className="map-legend-marker recommended" aria-hidden="true" />
-                      Current lead
-                    </span>
-                  )}
-                  {state.acceptedJobIds.length > 0 && (
-                    <span>
-                      <i className="map-legend-marker job" aria-hidden="true" />
-                      Active job
-                    </span>
-                  )}
+          <div className="map-artwork-coordinate-space">
+            <img src={imageAssets.viewMapCeiling} alt="" className="map-console-art" />
+            <div className="overlay-shell map-shell">
+              <div className="map-screen-viewport">
+                <div className="map-screen-panel">
+                  <div className="map-heading-row">
+                    <p className="eyebrow">Star map</p>
+                    <div className="map-legend" aria-label="Map legend">
+                      <span>
+                        <i className="map-legend-marker current" aria-hidden="true" />
+                        You are here
+                      </span>
+                      {recommendedSystemId && (
+                        <span>
+                          <i className="map-legend-marker recommended" aria-hidden="true" />
+                          Current lead
+                        </span>
+                      )}
+                      {state.acceptedJobIds.length > 0 && (
+                        <span>
+                          <i className="map-legend-marker job" aria-hidden="true" />
+                          Active job
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                  <div className="sector-map ceiling-map" aria-label="Star systems map">
+                    {systems.map((system) => {
+                      const hasActiveJob = acceptedJobs.some((job) => job.destinationId === system.id);
+                      return (
+                        <button
+                          className={`map-node ${system.known ? 'known' : 'unknown'} ${
+                            system.id === currentSystem.id ? 'current' : ''
+                          } ${system.id === recommendedSystemId ? 'recommended' : ''} ${
+                            hasActiveJob ? 'job' : ''
+                          } ${system.id === selectedSystemId ? 'selected' : ''}`}
+                          key={system.id}
+                          type="button"
+                          style={{ left: `${system.position.x}%`, top: `${system.position.y}%` }}
+                          onClick={() => selectMapSystem(system.id)}
+                          aria-pressed={system.id === selectedSystemId}
+                          aria-label={`${system.name}, ${system.known ? 'known' : 'unknown'} system${
+                            system.id === currentSystem.id ? ', current location' : ''
+                          }${system.id === recommendedSystemId ? ', current lead' : ''}`}
+                        >
+                          <span />
+                        </button>
+                      );
+                    })}
+                  </div>
                 </div>
               </div>
-              <div className="sector-map ceiling-map" aria-label="Star systems map">
-                {systems.map((system) => {
-                  const hasActiveJob = acceptedJobs.some((job) => job.destinationId === system.id);
-                  return (
-                  <button
-                    className={`map-node ${system.known ? 'known' : 'unknown'} ${system.id === currentSystem.id ? 'current' : ''} ${
-                      system.id === recommendedSystemId ? 'recommended' : ''
-                    } ${hasActiveJob ? 'job' : ''} ${system.id === selectedSystemId ? 'selected' : ''}`}
-                    key={system.id}
-                    type="button"
-                    style={{ left: `${system.position.x}%`, top: `${system.position.y}%` }}
-                    onClick={() => selectMapSystem(system.id)}
-                    aria-pressed={system.id === selectedSystemId}
-                    aria-label={`${system.name}, ${system.known ? 'known' : 'unknown'} system${
-                      system.id === currentSystem.id ? ', current location' : ''
-                    }${system.id === recommendedSystemId ? ', current lead' : ''}`}
-                  >
-                    <span />
-                  </button>
-                  );
-                })}
-              </div>
-            </div>
 
-            <div className="system-list overlay-system-list route-list-panel">
-              {systems.map((system) => {
-                const isRecommended = system.id === recommendedSystemId;
-                const hasActiveJob = acceptedJobs.some((job) => job.destinationId === system.id);
+              <div className="map-route-screen-viewport">
+                <div className="system-list overlay-system-list route-list-panel">
+                  {systems.map((system) => {
+                    const isRecommended = system.id === recommendedSystemId;
+                    const hasActiveJob = acceptedJobs.some((job) => job.destinationId === system.id);
 
-                return (
-                  <article
-                    className={`system-card ${!system.known ? 'muted' : ''} ${isRecommended ? 'recommended' : ''} ${
-                      system.id === selectedSystemId ? 'selected' : ''
-                    }`}
-                    key={system.id}
-                    ref={(element) => {
-                      systemCardRefs.current[system.id] = element;
-                    }}
-                  >
-                    <img src={getSystemThumbnail(system.id)} alt="" className="system-thumb" />
-                    <div className="system-main">
-                      <div className="entry-topline">
-                        <span>{system.known ? 'Known route' : 'Unconfirmed'}</span>
-                        {isRecommended ? <strong>Current lead</strong> : hasActiveJob ? <strong>Active job</strong> : null}
-                      </div>
-                      <h3>{system.known ? system.name : 'Uncharted light'}</h3>
-                      <p>{system.known ? system.description : 'A discovery may reveal this destination later.'}</p>
-                    </div>
-                    <div className="system-meta">
-                      <span>{system.distance} ly</span>
-                      <strong>{system.travelCost} fuel</strong>
-                      <button
-                        className="small-action"
-                        type="button"
-                        disabled={!system.known || Boolean(activeTravel)}
-                        onClick={() => system.id === currentSystem.id ? onOpenActivities(system.id) : onTravel(system)}
+                    return (
+                      <article
+                        className={`system-card ${!system.known ? 'muted' : ''} ${
+                          isRecommended ? 'recommended' : ''
+                        } ${system.id === selectedSystemId ? 'selected' : ''}`}
+                        key={system.id}
+                        ref={(element) => {
+                          systemCardRefs.current[system.id] = element;
+                        }}
                       >
-                        {activeTravel
-                          ? 'In transit'
-                          : system.id === currentSystem.id
-                            ? 'Activities'
-                            : system.known
-                              ? 'Travel'
-                              : 'Unknown'}
-                      </button>
-                    </div>
-                  </article>
-                );
-              })}
+                        <img src={getSystemThumbnail(system.id)} alt="" className="system-thumb" />
+                        <div className="system-main">
+                          <div className="entry-topline">
+                            <span>{system.known ? 'Known route' : 'Unconfirmed'}</span>
+                            {isRecommended ? (
+                              <strong>Current lead</strong>
+                            ) : hasActiveJob ? (
+                              <strong>Active job</strong>
+                            ) : null}
+                          </div>
+                          <h3>{system.known ? system.name : 'Uncharted light'}</h3>
+                          <p>{system.known ? system.description : 'A discovery may reveal this destination later.'}</p>
+                        </div>
+                        <div className="system-meta">
+                          <span>{system.distance} ly</span>
+                          <strong>{system.travelCost} fuel</strong>
+                          <button
+                            className="small-action"
+                            type="button"
+                            disabled={!system.known || Boolean(activeTravel)}
+                            onClick={() => system.id === currentSystem.id ? onOpenActivities(system.id) : onTravel(system)}
+                          >
+                            {activeTravel
+                              ? 'In transit'
+                              : system.id === currentSystem.id
+                                ? 'Activities'
+                                : system.known
+                                  ? 'Travel'
+                                  : 'Unknown'}
+                          </button>
+                        </div>
+                      </article>
+                    );
+                  })}
+                </div>
+              </div>
             </div>
           </div>
         </div>

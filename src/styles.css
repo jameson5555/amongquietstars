@@ -4163,3 +4163,211 @@ body {
   min-height: 28px;
   padding: 4px 8px;
 }
+
+/* Star-map console: align both interactive displays to the generated artwork. */
+.cabin-experience.view-map .map-artwork-coordinate-space {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 100%;
+  aspect-ratio: 941 / 1672;
+  transform: translateY(-50%);
+  pointer-events: auto;
+}
+
+.cabin-experience.view-map .map-console-art {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+  pointer-events: none;
+  user-select: none;
+}
+
+.cabin-experience.view-map .map-shell {
+  position: absolute;
+  inset: 0;
+  width: auto;
+  max-height: none;
+  display: block;
+  padding: 0;
+  overflow: visible;
+  transform: none;
+}
+
+.cabin-experience.view-map .map-screen-viewport,
+.cabin-experience.view-map .map-route-screen-viewport {
+  position: absolute;
+  z-index: 1;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.cabin-experience.view-map .map-screen-viewport {
+  left: 16.2%;
+  top: 13.1%;
+  width: 64.8%;
+  height: 36.6%;
+  clip-path: polygon(7% 1%, 91% 5%, 98.5% 12%, 100% 91%, 96% 98.5%, 6% 96%, 0.5% 89%, 0 8%);
+}
+
+.cabin-experience.view-map .map-screen-panel {
+  position: absolute;
+  inset: 5.5% 5.5% 6.5% 5.5%;
+  min-width: 0;
+  min-height: 0;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  gap: 5px;
+  overflow: hidden;
+  transform: perspective(950px) rotateY(-1.8deg) rotateX(1.4deg) rotate(0.35deg) skewY(0.25deg);
+  transform-origin: center;
+}
+
+.cabin-experience.view-map .map-heading-row {
+  padding-inline: 2px;
+}
+
+.cabin-experience.view-map .map-heading-row .eyebrow {
+  font-size: 0.61rem;
+}
+
+.cabin-experience.view-map .map-legend {
+  gap: 6px;
+  font-size: 0.48rem;
+}
+
+.cabin-experience.view-map .ceiling-map {
+  height: 100%;
+  margin: 0;
+  border: 0;
+  border-radius: 3px;
+  overflow: hidden;
+  background:
+    linear-gradient(rgba(105, 214, 255, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(105, 214, 255, 0.035) 1px, transparent 1px),
+    radial-gradient(circle at 48% 45%, rgba(72, 182, 231, 0.1), transparent 58%);
+  background-size: 30px 30px, 30px 30px, auto;
+  box-shadow: inset 0 0 38px rgba(68, 183, 235, 0.08);
+}
+
+.cabin-experience.view-map .map-node {
+  width: 28px;
+  height: 28px;
+  min-height: 28px;
+}
+
+.cabin-experience.view-map .map-node span {
+  width: 9px;
+  height: 9px;
+  margin: 8px auto;
+}
+
+.cabin-experience.view-map .map-route-screen-viewport {
+  left: 16.2%;
+  top: 55.4%;
+  width: 70.2%;
+  height: 21.8%;
+  clip-path: polygon(3.5% 3%, 91.5% 0.5%, 98% 7%, 100% 86%, 95% 96%, 7% 100%, 1% 91%, 0 11%);
+}
+
+.cabin-experience.view-map .overlay-system-list {
+  position: absolute;
+  inset: 7.5% 6.5% 8% 6%;
+  min-width: 0;
+  min-height: 0;
+  display: grid;
+  grid-auto-rows: max-content;
+  align-content: start;
+  gap: 5px;
+  margin: 0;
+  padding: 0 5px 8px 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  touch-action: pan-y;
+  transform: perspective(900px) rotateY(-2.2deg) rotateX(1.8deg) rotate(-0.4deg) skewY(-0.2deg);
+  transform-origin: center;
+}
+
+.cabin-experience.view-map .overlay-system-list .system-card {
+  min-width: 0;
+  min-height: 62px;
+  grid-template-columns: 48px minmax(0, 1fr) auto;
+  grid-template-rows: 1fr;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  padding: 6px 7px;
+  border: 1px solid rgba(122, 218, 255, 0.12);
+  border-radius: 4px;
+  background:
+    linear-gradient(90deg, rgba(39, 136, 181, 0.09), transparent 68%),
+    rgba(4, 18, 29, 0.18);
+}
+
+.cabin-experience.view-map .overlay-system-list .system-card.recommended {
+  border-color: rgba(255, 198, 109, 0.38);
+  background:
+    linear-gradient(90deg, rgba(255, 180, 74, 0.1), transparent 70%),
+    rgba(4, 18, 29, 0.18);
+}
+
+.cabin-experience.view-map .overlay-system-list .system-card.selected {
+  border-color: rgba(151, 223, 255, 0.42);
+  box-shadow: inset 0 0 16px rgba(151, 223, 255, 0.1);
+}
+
+.cabin-experience.view-map .overlay-system-list .system-thumb {
+  width: 48px;
+  height: 48px;
+  border-radius: 3px;
+  opacity: 0.82;
+  filter: saturate(0.72) contrast(1.08);
+}
+
+.cabin-experience.view-map .overlay-system-list .entry-topline {
+  gap: 5px;
+  font-size: 0.47rem;
+  line-height: 1;
+}
+
+.cabin-experience.view-map .overlay-system-list .system-card h3 {
+  margin: 3px 0 2px;
+  font-size: 0.75rem;
+  line-height: 1;
+}
+
+.cabin-experience.view-map .overlay-system-list .system-card p {
+  display: -webkit-box;
+  overflow: hidden;
+  font-size: 0.59rem;
+  line-height: 1.15;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.cabin-experience.view-map .overlay-system-list .system-meta {
+  grid-column: auto;
+  min-width: 66px;
+  display: grid;
+  grid-template-columns: 1fr;
+  justify-items: stretch;
+  gap: 2px;
+  font-size: 0.55rem;
+  text-align: center;
+}
+
+.cabin-experience.view-map .overlay-system-list .system-meta span,
+.cabin-experience.view-map .overlay-system-list .system-meta strong {
+  line-height: 1.05;
+}
+
+.cabin-experience.view-map .overlay-system-list .small-action {
+  min-height: 24px;
+  padding: 3px 6px;
+  border-radius: 4px;
+  font-size: 0.59rem;
+}
