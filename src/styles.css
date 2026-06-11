@@ -4215,19 +4215,19 @@ body {
 
 .cabin-experience.view-map .map-screen-panel {
   position: absolute;
-  inset: 5.5% 5.5% 6.5% 5.5%;
+  inset: 7.5% 7.5% 8% 6%;
   min-width: 0;
   min-height: 0;
   display: grid;
   grid-template-rows: auto minmax(0, 1fr);
   gap: 5px;
   overflow: hidden;
-  transform: perspective(950px) rotateY(-1.8deg) rotateX(1.4deg) rotate(0.35deg) skewY(0.25deg);
-  transform-origin: center;
+  transform: perspective(760px) rotateY(-14deg) rotateX(5.2deg) rotate(3.6deg) skewY(0.8deg);
+  transform-origin: 48% 50%;
 }
 
 .cabin-experience.view-map .map-heading-row {
-  padding-inline: 2px;
+  padding: 0 9% 0 2px;
 }
 
 .cabin-experience.view-map .map-heading-row .eyebrow {
@@ -4266,16 +4266,16 @@ body {
 }
 
 .cabin-experience.view-map .map-route-screen-viewport {
-  left: 16.2%;
-  top: 55.4%;
-  width: 70.2%;
-  height: 21.8%;
+  left: 16.4%;
+  top: 55.6%;
+  width: 69.6%;
+  height: 21.2%;
   clip-path: polygon(3.5% 3%, 91.5% 0.5%, 98% 7%, 100% 86%, 95% 96%, 7% 100%, 1% 91%, 0 11%);
 }
 
 .cabin-experience.view-map .overlay-system-list {
   position: absolute;
-  inset: 7.5% 6.5% 8% 6%;
+  inset: 8.5% 9% 11% 7%;
   min-width: 0;
   min-height: 0;
   display: grid;
@@ -4288,17 +4288,17 @@ body {
   overflow-y: auto;
   overscroll-behavior: contain;
   touch-action: pan-y;
-  transform: perspective(900px) rotateY(-2.2deg) rotateX(1.8deg) rotate(-0.4deg) skewY(-0.2deg);
-  transform-origin: center;
+  transform: perspective(760px) rotateY(-12deg) rotateX(2.4deg) rotate(-0.9deg) skewY(-0.35deg);
+  transform-origin: 46% 48%;
 }
 
 .cabin-experience.view-map .overlay-system-list .system-card {
   min-width: 0;
-  min-height: 62px;
-  grid-template-columns: 48px minmax(0, 1fr) auto;
+  min-height: 58px;
+  grid-template-columns: 44px minmax(0, 1fr) 62px;
   grid-template-rows: 1fr;
   align-items: center;
-  gap: 8px;
+  gap: 7px;
   margin: 0;
   padding: 6px 7px;
   border: 1px solid rgba(122, 218, 255, 0.12);
@@ -4321,8 +4321,8 @@ body {
 }
 
 .cabin-experience.view-map .overlay-system-list .system-thumb {
-  width: 48px;
-  height: 48px;
+  width: 44px;
+  height: 44px;
   border-radius: 3px;
   opacity: 0.82;
   filter: saturate(0.72) contrast(1.08);
@@ -4351,7 +4351,7 @@ body {
 
 .cabin-experience.view-map .overlay-system-list .system-meta {
   grid-column: auto;
-  min-width: 66px;
+  min-width: 0;
   display: grid;
   grid-template-columns: 1fr;
   justify-items: stretch;
