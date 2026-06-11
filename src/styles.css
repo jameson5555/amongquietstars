@@ -3691,11 +3691,11 @@ body {
   opacity: 0.78;
 }
 
-.lead-console-trigger.unread::before {
+.lead-console-trigger.needs-action::before {
   animation: lead-console-unread 4s ease-in-out infinite;
 }
 
-.lead-console-trigger.unread::after {
+.lead-console-trigger.needs-action::after {
   animation: lead-console-screen-unread 4s ease-in-out infinite;
 }
 
@@ -4088,13 +4088,13 @@ body {
     animation: none;
   }
 
-  .lead-console-trigger.unread::before {
+  .lead-console-trigger.needs-action::before {
     animation: none;
     filter: brightness(1.12) drop-shadow(0 0 5px rgba(82, 207, 255, 0.44));
     opacity: 0.4;
   }
 
-  .lead-console-trigger.unread::after {
+  .lead-console-trigger.needs-action::after {
     animation: none;
     opacity: 0.4;
   }

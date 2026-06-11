@@ -424,6 +424,15 @@ function App() {
   };
 
   const followLead = () => {
+    setState((current) =>
+      current.actedLeadIds.includes(currentLead.id)
+        ? current
+        : {
+            ...current,
+            actedLeadIds: [...current.actedLeadIds, currentLead.id]
+          }
+    );
+
     if (currentLead.destinationId) {
       setPendingMapFocusSystemId(currentLead.destinationId);
       goTo('map');
@@ -1122,7 +1131,7 @@ function CabinOverlay({
   const transmissionFeedRef = useRef<HTMLDivElement | null>(null);
   const [selectedMapSystemId, setSelectedMapSystemId] = useState<string>();
   const selectedSystemId = pendingMapFocusSystemId ?? selectedMapSystemId ?? recommendedSystemId ?? currentSystem.id;
-  const leadUnread = !state.viewedLeadIds.includes(currentLead.id);
+  const leadNeedsAction = !state.actedLeadIds.includes(currentLead.id) && !leadExpanded;
   const systemCardRefs = useRef<Record<string, HTMLElement | null>>({});
   const radioFeedItems: RadioFeedItem[] = [...radioHistory]
     .reverse()
@@ -1214,7 +1223,7 @@ function CabinOverlay({
             <span className="visually-hidden">Toggle orbit status</span>
           </button>
           <button
-            className={`lead-console-trigger ${leadUnread ? 'unread' : ''}`}
+            className={`lead-console-trigger ${leadNeedsAction ? 'needs-action' : ''}`}
             type="button"
             aria-label={`${leadExpanded ? 'Hide' : 'Show'} current lead: ${currentLead.title}`}
             aria-controls="current-lead-hologram"

@@ -114,6 +114,7 @@ export interface PlayerState {
   journalEntryIds: string[];
   readJournalEntryIds: string[];
   viewedLeadIds: string[];
+  actedLeadIds: string[];
   radioHistoryIds: string[];
   acceptedJobIds: string[];
   completedJobIds: string[];
