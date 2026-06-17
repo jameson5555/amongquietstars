@@ -33,6 +33,12 @@ export default defineConfig({
             purpose: 'any'
           },
           {
+            src: 'icons/app-icon-1024.png',
+            sizes: '1024x1024',
+            type: 'image/png',
+            purpose: 'any'
+          },
+          {
             src: 'icons/maskable-512.png',
             sizes: '512x512',
             type: 'image/png',
