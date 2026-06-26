@@ -8,52 +8,8 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['favicon.svg', 'icons/*.png', 'splash/*.png'],
-      manifest: {
-        name: 'Among Quiet Stars',
-        short_name: 'Quiet Stars',
-        description: 'A cozy narrative space exploration prototype.',
-        theme_color: '#22163d',
-        background_color: '#120b25',
-        display: 'standalone',
-        orientation: 'portrait',
-        scope: '/amongquietstars/',
-        start_url: '/amongquietstars/',
-        icons: [
-          {
-            src: 'icons/icon-192.png',
-            sizes: '192x192',
-            type: 'image/png',
-            purpose: 'any'
-          },
-          {
-            src: 'icons/icon-512.png',
-            sizes: '512x512',
-            type: 'image/png',
-            purpose: 'any'
-          },
-          {
-            src: 'icons/app-icon-1024.png',
-            sizes: '1024x1024',
-            type: 'image/png',
-            purpose: 'any'
-          },
-          {
-            src: 'icons/maskable-512.png',
-            sizes: '512x512',
-            type: 'image/png',
-            purpose: 'maskable'
-          }
-        ],
-        screenshots: [
-          {
-            src: 'splash/splash-640x1136.png',
-            sizes: '640x1136',
-            type: 'image/png',
-            form_factor: 'narrow'
-          }
-        ]
-      },
+      includeAssets: ['favicon.svg', 'site.webmanifest', 'favicon-16x16.png', 'favicon-32x32.png', 'apple-touch-icon.png', 'icons/*.png', 'splash/*.png'],
+      manifest: false,
       workbox: {
         globPatterns: ['**/*.{js,css,html,svg,png,webp,webmanifest}'],
         navigateFallback: '/amongquietstars/index.html'

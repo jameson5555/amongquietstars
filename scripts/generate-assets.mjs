@@ -1,9 +1,13 @@
 import { deflateSync } from 'node:zlib';
 import { writeFileSync, mkdirSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
+import sharp from 'sharp';
 
 const iconDir = new URL('../public/icons/', import.meta.url);
 const splashDir = new URL('../public/splash/', import.meta.url);
+const publicDir = new URL('../public/', import.meta.url);
 
+mkdirSync(publicDir, { recursive: true });
 mkdirSync(iconDir, { recursive: true });
 mkdirSync(splashDir, { recursive: true });
 
@@ -80,40 +84,6 @@ const drawPng = (width, height, drawPixel) => {
   ]);
 };
 
-const iconPixel = (x, y, width, height) => {
-  const cx = width / 2;
-  const cy = height / 2;
-  const radius = Math.min(width, height) * 0.42;
-  const distance = Math.hypot(x - cx, y - cy);
-  let [r, g, b, a] = gradientColor(x, y, width, height);
-
-  if (distance > radius) {
-    const fade = Math.max(0, 1 - (distance - radius) / (width * 0.12));
-    a = Math.round(255 * fade);
-  }
-
-  const shipY = height * 0.61;
-  const shipWidth = width * 0.42;
-  const shipHeight = height * 0.12;
-  const inHull =
-    Math.abs(x - cx) < shipWidth &&
-    Math.abs(y - shipY) < shipHeight * (0.75 + 0.25 * Math.cos(((x - cx) / shipWidth) * Math.PI));
-  const inGlow = Math.hypot(x - cx, y - height * 0.47) < width * 0.1;
-
-  if (inHull) {
-    return [31, 22, 50, a];
-  }
-  if (inGlow) {
-    return [255, 238, 177, a];
-  }
-
-  if ((x * 13 + y * 17) % 499 === 0) {
-    return [255, 248, 220, a];
-  }
-
-  return [r, g, b, a];
-};
-
 const splashPixel = (x, y, width, height) => {
   const [r, g, b] = gradientColor(x, y, width, height);
   const star = (x * 7 + y * 11) % 947 === 0;
@@ -127,8 +97,38 @@ const splashPixel = (x, y, width, height) => {
   return [Math.max(8, r * 0.45), Math.max(4, g * 0.42), Math.max(18, b * 0.55), 255];
 };
 
-writeFileSync(new URL('icon-192.png', iconDir), drawPng(192, 192, iconPixel));
-writeFileSync(new URL('icon-512.png', iconDir), drawPng(512, 512, iconPixel));
-writeFileSync(new URL('maskable-512.png', iconDir), drawPng(512, 512, iconPixel));
-writeFileSync(new URL('apple-touch-icon.png', iconDir), drawPng(180, 180, iconPixel));
+const appIconSource = new URL('app-icon-1024.png', iconDir);
+
+const resizeAppIcon = async (relativeUrl, size) => {
+  await sharp(fileURLToPath(appIconSource))
+    .resize(size, size)
+    .png()
+    .toFile(fileURLToPath(relativeUrl));
+};
+
+await Promise.all([
+  72,
+  96,
+  128,
+  144,
+  152,
+  167,
+  180,
+  192,
+  384,
+  512,
+  1024
+].map((size) => resizeAppIcon(new URL(`icon-${size}.png`, iconDir), size)));
+
+await Promise.all([
+  resizeAppIcon(new URL('maskable-192.png', iconDir), 192),
+  resizeAppIcon(new URL('maskable-512.png', iconDir), 512),
+  resizeAppIcon(new URL('apple-touch-icon.png', iconDir), 180),
+  resizeAppIcon(new URL('favicon-16.png', iconDir), 16),
+  resizeAppIcon(new URL('favicon-32.png', iconDir), 32),
+  resizeAppIcon(new URL('favicon-16x16.png', publicDir), 16),
+  resizeAppIcon(new URL('favicon-32x32.png', publicDir), 32),
+  resizeAppIcon(new URL('apple-touch-icon.png', publicDir), 180)
+]);
+
 writeFileSync(new URL('splash-640x1136.png', splashDir), drawPng(640, 1136, splashPixel));
