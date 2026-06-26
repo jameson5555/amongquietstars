@@ -1,6 +1,8 @@
 import type { CSSProperties, PointerEvent } from 'react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { flybyShipAssets, getDestinationArt, getSystemThumbnail, getTravelVista, imageAssets } from './assets/imageAssets';
+import { CabinPanorama } from './components/CabinPanorama';
+import { primaryCabinScene } from './data/cabinScene';
 import { getEncounter } from './data/encounters';
 import { getJournalEntry } from './data/journal';
 import { getRadioMessage } from './data/radio';
@@ -385,16 +387,6 @@ function App() {
     setView(nextView);
   };
 
-  const navigateCabin = (direction: 1 | -1) => {
-    if (!isPrimaryView(view)) {
-      return;
-    }
-
-    const currentIndex = primaryViewIds.indexOf(view);
-    const nextIndex = (currentIndex + direction + primaryViewIds.length) % primaryViewIds.length;
-    goTo(primaryViewIds[nextIndex]!);
-  };
-
   const startTravel = (destination: StarSystem) => {
     if (!destination.known || destination.id === state.currentSystemId || state.activeTravel) {
       return;
@@ -563,7 +555,7 @@ function App() {
               onOpenActivities={openActivities}
               onAcceptJob={handleAcceptJob}
               onReset={resetSave}
-              onNavigate={navigateCabin}
+              onViewChange={goTo}
             />
           )}
           {view === 'travel' && travel && <TravelScreen travel={travel} onFinish={finishTravel} />}
@@ -672,7 +664,7 @@ function PanoramicCabinExperience({
   onOpenActivities,
   onAcceptJob,
   onReset,
-  onNavigate
+  onViewChange
 }: {
   activeView: PrimaryViewId;
   currentSystem: StarSystem;
@@ -699,9 +691,8 @@ function PanoramicCabinExperience({
   onOpenActivities: (systemId?: string) => void;
   onAcceptJob: (jobId: string) => void;
   onReset: () => void;
-  onNavigate: (direction: 1 | -1) => void;
+  onViewChange: (view: PrimaryViewId) => void;
 }) {
-  const swipeStartRef = useRef<{ x: number; y: number; pointerId: number } | null>(null);
   const suppressPanelToggleRef = useRef(false);
   const flybyIdRef = useRef(0);
   const steeringDragRef = useRef<SteeringDrag | null>(null);
@@ -731,10 +722,6 @@ function PanoramicCabinExperience({
   } as CSSProperties;
 
   const sceneStyle = {
-    '--art-cockpit': `url(${imageAssets.viewCockpitForward})`,
-    '--art-map': `url(${imageAssets.viewMapCeiling})`,
-    '--art-ship': `url(${imageAssets.viewShipAft})`,
-    '--art-radio': `url(${imageAssets.viewRadioConsole})`,
     '--steering-x': `${activeView === 'cockpit' && !activeTravel ? steeringOffset.x : 0}px`,
     '--steering-y': `${activeView === 'cockpit' && !activeTravel ? steeringOffset.y : 0}px`
   } as CSSProperties;
@@ -888,37 +875,6 @@ function PanoramicCabinExperience({
     resetSteering();
   };
 
-  const handlePointerDown = (event: PointerEvent<HTMLDivElement>) => {
-    suppressPanelToggleRef.current = false;
-    swipeStartRef.current = {
-      x: event.clientX,
-      y: event.clientY,
-      pointerId: event.pointerId
-    };
-  };
-
-  const handlePointerUp = (event: PointerEvent<HTMLDivElement>) => {
-    const start = swipeStartRef.current;
-    swipeStartRef.current = null;
-
-    if (!start || start.pointerId !== event.pointerId) {
-      return;
-    }
-
-    const deltaX = event.clientX - start.x;
-    const deltaY = event.clientY - start.y;
-
-    if (Math.abs(deltaX) < 48 || Math.abs(deltaX) < Math.abs(deltaY) * 1.25) {
-      return;
-    }
-
-    suppressPanelToggleRef.current = true;
-    window.setTimeout(() => {
-      suppressPanelToggleRef.current = false;
-    }, 100);
-    onNavigate(deltaX < 0 ? 1 : -1);
-  };
-
   const toggleLeadExpanded = () => {
     if (suppressPanelToggleRef.current) {
       suppressPanelToggleRef.current = false;
@@ -963,54 +919,46 @@ function PanoramicCabinExperience({
         arrivalApproach ? 'arrival-approach' : ''
       }`}
       style={sceneStyle}
-      onPointerDown={handlePointerDown}
-      onPointerUp={handlePointerUp}
-      onPointerCancel={() => {
-        swipeStartRef.current = null;
-      }}
     >
-      <div className="cabin-viewport">
-        <div className="cabin-stage" aria-hidden="true">
-          <div className="scene-art-plate art-cockpit" />
-          <div className="scene-art-plate art-map" />
-          <div className="scene-art-plate art-ship" />
-          <div className="scene-art-plate art-radio" />
-          <div className="scene-cockpit-window-hotspot" aria-hidden={activeView !== 'cockpit'}>
-            <div className="cockpit-window-view">
-              <div className="cockpit-space-scene">
-                <div className="cockpit-starfield" />
-                <div className="cockpit-flyby-layer cockpit-flyby-layer-far" aria-hidden="true">
-                  {cockpitFlybys.filter((flyby) => !flyby.foreground).map((flyby) => (
-                    <img className="cockpit-flyby-ship" key={flyby.id} src={flyby.src} alt="" style={flyby.style} />
-                  ))}
-                </div>
-                <img
-                  src={windowDestinationArt.src}
-                  alt=""
-                  className={`cockpit-destination-art destination-${windowDestinationArt.kind}`}
-                  style={destinationStyle}
-                />
-                <div className="cockpit-flyby-layer cockpit-flyby-layer-near" aria-hidden="true">
-                  {cockpitFlybys.filter((flyby) => flyby.foreground).map((flyby) => (
-                    <img className="cockpit-flyby-ship" key={flyby.id} src={flyby.src} alt="" style={flyby.style} />
-                  ))}
-                </div>
-                <img src={imageAssets.hyperdriveTunnel} alt="" className="cockpit-hyperdrive-art" />
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="scene-vignette" />
-      </div>
-
-      <div className="cabin-overlay-stage">
+      <CabinPanorama
+        activeStation={activeView}
+        onStationChange={onViewChange}
+        scene={primaryCabinScene}
+      >
         {primaryViewIds.map((viewId) => (
           <div
-            className={`cabin-overlay-plate controls-${viewId} view-${viewId}`}
+            className={`cabin-overlay-plate cabin-experience cabin-station-context controls-${viewId} view-${viewId}`}
+            data-cabin-station={viewId}
             key={viewId}
             aria-hidden={viewId !== activeView}
             inert={viewId !== activeView}
           >
+            {viewId === 'cockpit' && (
+              <div className="scene-cockpit-window-hotspot" aria-hidden={activeView !== 'cockpit'}>
+                <div className="cockpit-window-view">
+                  <div className="cockpit-space-scene">
+                    <div className="cockpit-starfield" />
+                    <div className="cockpit-flyby-layer cockpit-flyby-layer-far" aria-hidden="true">
+                      {cockpitFlybys.filter((flyby) => !flyby.foreground).map((flyby) => (
+                        <img className="cockpit-flyby-ship" key={flyby.id} src={flyby.src} alt="" style={flyby.style} />
+                      ))}
+                    </div>
+                    <img
+                      src={windowDestinationArt.src}
+                      alt=""
+                      className={`cockpit-destination-art destination-${windowDestinationArt.kind}`}
+                      style={destinationStyle}
+                    />
+                    <div className="cockpit-flyby-layer cockpit-flyby-layer-near" aria-hidden="true">
+                      {cockpitFlybys.filter((flyby) => flyby.foreground).map((flyby) => (
+                        <img className="cockpit-flyby-ship" key={flyby.id} src={flyby.src} alt="" style={flyby.style} />
+                      ))}
+                    </div>
+                    <img src={imageAssets.hyperdriveTunnel} alt="" className="cockpit-hyperdrive-art" />
+                  </div>
+                </div>
+              </div>
+            )}
             <CabinOverlay
               activeView={viewId}
               currentSystem={currentSystem}
@@ -1049,7 +997,8 @@ function PanoramicCabinExperience({
             />
           </div>
         ))}
-      </div>
+      </CabinPanorama>
+      <div className="scene-vignette" />
     </div>
   );
 }
@@ -1329,7 +1278,6 @@ function CabinOverlay({
       return (
         <div className="overlay-layer map-overlay">
           <div className="map-artwork-coordinate-space">
-            <img src={imageAssets.viewMapCeiling} alt="" className="map-console-art" />
             <div className="overlay-shell map-shell">
               <div className="map-screen-viewport">
                 <div className="map-screen-panel">
@@ -1441,7 +1389,6 @@ function CabinOverlay({
       return (
         <div className="overlay-layer ship-overlay">
           <div className="ship-artwork-coordinate-space">
-            <img src={imageAssets.viewShipAft} alt="" className="ship-console-art" />
             <div className="ship-registry-screen-viewport">
               <div className="ship-screen-panel overlay-shell">
                 <div className="screen-heading overlay-heading">
@@ -1488,7 +1435,6 @@ function CabinOverlay({
       return (
         <div className="overlay-layer radio-overlay">
           <div className="radio-artwork-coordinate-space">
-            <img src={imageAssets.viewRadioConsole} alt="" className="radio-console-art" />
             <div className="radio-screen-viewport">
               <div className="transmission-feed" ref={transmissionFeedRef}>
                 {radioFeedItems.map((item) => {

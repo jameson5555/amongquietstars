@@ -4587,3 +4587,137 @@ body {
   border-radius: 4px;
   font-size: 0.58rem;
 }
+
+/* True 360-degree cabin renderer */
+
+.cabin-360-root {
+  --cabin-perspective: 720px;
+  --cabin-station-scale: 2;
+  --cabin-yaw: 0deg;
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background: #04070c;
+  cursor: grab;
+  touch-action: pan-y;
+  user-select: none;
+}
+
+.cabin-360-root[data-dragging="true"] {
+  cursor: grabbing;
+}
+
+.cabin-webgl-layer,
+.cabin-panorama-fallback,
+.cabin-css3d-camera,
+.cabin-css3d-world {
+  position: absolute;
+  inset: 0;
+}
+
+.cabin-webgl-layer {
+  z-index: 1;
+}
+
+.cabin-webgl-layer canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.cabin-panorama-fallback {
+  z-index: 0;
+  background:
+    linear-gradient(rgba(3, 7, 13, 0.08), rgba(3, 7, 13, 0.18)),
+    var(--cabin-fallback);
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.cabin-360-root[data-renderer="webgl"] .cabin-panorama-fallback {
+  visibility: hidden;
+}
+
+.cabin-360-root[data-renderer="fallback"] .cabin-webgl-layer {
+  display: none;
+}
+
+.cabin-css3d-camera {
+  z-index: 2;
+  overflow: hidden;
+  perspective: var(--cabin-perspective);
+  perspective-origin: 50% 50%;
+  pointer-events: none;
+  transform-style: preserve-3d;
+}
+
+.cabin-css3d-world {
+  overflow: visible;
+  transform: rotateY(calc(-1 * var(--cabin-yaw)));
+  transform-origin: 50% 50% 0;
+  transform-style: preserve-3d;
+}
+
+.cabin-360-root .cabin-overlay-plate.cabin-station-context {
+  position: absolute;
+  inset: 0;
+  z-index: auto;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  overflow: visible;
+  opacity: 1;
+  visibility: visible;
+  filter: none;
+  pointer-events: none;
+  backface-visibility: hidden;
+  transform:
+    rotateY(var(--station-yaw))
+    translateZ(calc(-1 * var(--cabin-perspective)))
+    scale(var(--cabin-station-scale));
+  transform-origin: 50% 50%;
+  transform-style: preserve-3d;
+  transition: none;
+  will-change: auto;
+}
+
+.cabin-360-root[data-renderer="fallback"] .cabin-css3d-world {
+  transform: none;
+}
+
+.cabin-360-root[data-renderer="fallback"] .cabin-overlay-plate.cabin-station-context {
+  transform: none;
+}
+
+.cabin-station-context .map-console-art,
+.cabin-station-context .ship-console-art,
+.cabin-station-context .radio-console-art {
+  display: none;
+}
+
+.cabin-station-context.view-cockpit .scene-cockpit-window-hotspot {
+  inset: 0;
+  clip-path: polygon(
+    3% 0%,
+    97% 0%,
+    97% 63%,
+    91% 70%,
+    82% 74%,
+    18% 74%,
+    9% 70%,
+    3% 63%
+  );
+}
+
+.cabin-experience > .scene-vignette {
+  z-index: 5;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cabin-css3d-world,
+  .cabin-360-root .cabin-overlay-plate.cabin-station-context {
+    transition: none;
+  }
+}

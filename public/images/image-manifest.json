@@ -2,6 +2,18 @@
   "basePath": "/images/",
   "assets": [
     {
+      "id": "cabin_panorama_4096",
+      "file": "/images/cabin_panorama_4096.webp",
+      "width": 4096,
+      "height": 2048
+    },
+    {
+      "id": "cabin_panorama_2048",
+      "file": "/images/cabin_panorama_2048.webp",
+      "width": 2048,
+      "height": 1024
+    },
+    {
       "id": "view_cockpit_forward",
       "file": "/images/view_cockpit_forward.webp",
       "width": 941,

@@ -10,6 +10,7 @@ For Vite/React, public assets can be referenced directly as:
 
 Recommended usage:
 
+- `cabin_panorama_4096.webp` / `cabin_panorama_2048.webp` — high- and standard-resolution 2:1 equirectangular textures for the interactive 360-degree cabin; station angles and UI calibration live in `src/data/cabinScene.ts`
 - `view_cockpit_forward.webp` — portrait cozy painterly forward cockpit plate with embedded top/bottom overlay screens and an alpha-cut transparent canopy opening for the live space layer
 - `view_map_ceiling.webp` — portrait port-side cabin view with two embedded navigation screens and cockpit context at the edge
 - `journal_tablet_overlay.webp` — transparent tablet cutout for the floating journal overlay
@@ -24,5 +25,6 @@ Recommended usage:
 
 A manifest is included as `image-manifest.json`. PNG fallbacks are intentionally omitted because the app targets modern browsers.
 
+The panorama source is preserved as `source-images/cabin_panorama_v1.png`. Replacement panoramas must remain 2:1; update the scene definition when station centers or screen geometry changes.
 The cockpit cutout is generated from `source-images/view_cockpit_forward_source.png` with `npm run assets:cockpit-window`.
 Destination objects/backdrops are generated from `source-images/*_source.png` with `npm run assets:destinations`.
