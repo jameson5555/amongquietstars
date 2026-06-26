@@ -109,9 +109,17 @@ export function CabinPanorama({
 
       const station = scene.stations[stationId];
       const distance = angularDistance(station.yaw, yaw);
-      stationElement.style.visibility = distance < 60 ? 'visible' : 'hidden';
+      stationElement.style.visibility =
+        distance <= station.interactiveAngle + 4 ? 'visible' : 'hidden';
       stationElement.style.pointerEvents =
         !dragging && distance <= station.interactiveAngle ? 'auto' : 'none';
+
+      if (stationId === 'cockpit') {
+        const liveWindow = stationElement.querySelector<HTMLElement>(
+          '.scene-cockpit-window-hotspot'
+        );
+        if (liveWindow) liveWindow.style.visibility = distance < 24 ? 'visible' : 'hidden';
+      }
     });
   };
 
@@ -322,7 +330,7 @@ export function CabinPanorama({
 
     const stationStyle = {
       ...(child.props as { style?: CSSProperties }).style,
-      '--station-yaw': `${scene.stations[stationId].yaw}deg`
+      '--station-yaw': `${-scene.stations[stationId].yaw}deg`
     } as CSSProperties;
     return cloneElement(child as ReactElement<{ style?: CSSProperties }>, { style: stationStyle });
   });

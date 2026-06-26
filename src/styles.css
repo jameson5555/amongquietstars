@@ -4654,7 +4654,7 @@ body {
 
 .cabin-css3d-world {
   overflow: visible;
-  transform: rotateY(calc(-1 * var(--cabin-yaw)));
+  transform: rotateY(var(--cabin-yaw));
   transform-origin: 50% 50% 0;
   transform-style: preserve-3d;
 }

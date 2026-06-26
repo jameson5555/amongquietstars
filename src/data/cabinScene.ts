@@ -18,7 +18,7 @@ export const primaryCabinScene: CabinSceneDefinition = {
   initialStation: 'cockpit',
   stations: {
     cockpit: { id: 'cockpit', yaw: 0, interactiveAngle: 18 },
-    radio: { id: 'radio', yaw: -76, interactiveAngle: 18 },
+    radio: { id: 'radio', yaw: -100, interactiveAngle: 18 },
     ship: { id: 'ship', yaw: 112, interactiveAngle: 18 },
     map: { id: 'map', yaw: 180, interactiveAngle: 18 }
   }
