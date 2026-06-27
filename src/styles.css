@@ -4588,6 +4588,7 @@ body {
 }
 
 .cabin-panorama-fallback,
+.cabin-strip-backdrops,
 .cabin-strip-viewport,
 .cabin-strip-overlays {
   position: absolute;
@@ -4595,7 +4596,7 @@ body {
 }
 
 .cabin-panorama-fallback {
-  z-index: 0;
+  z-index: 2;
   background:
     linear-gradient(rgba(3, 7, 13, 0.08), rgba(3, 7, 13, 0.18)),
     var(--cabin-fallback);
@@ -4608,8 +4609,26 @@ body {
   visibility: hidden;
 }
 
-.cabin-strip-viewport {
+.cabin-strip-backdrops {
   z-index: 1;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.cabin-strip-backdrop-station {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  pointer-events: none;
+  transform: translate3d(0, 0, 0);
+  transition: none;
+  will-change: transform;
+}
+
+.cabin-strip-viewport {
+  z-index: 2;
   overflow: hidden;
   pointer-events: none;
 }
@@ -4640,7 +4659,7 @@ body {
 }
 
 .cabin-strip-overlays {
-  z-index: 2;
+  z-index: 3;
   overflow: hidden;
   pointer-events: none;
 }
@@ -4667,17 +4686,21 @@ body {
   transform: none !important;
 }
 
+.cabin-360-root[data-renderer="fallback"] .cabin-strip-backdrop-station {
+  transform: none !important;
+}
+
 .cabin-station-context .map-console-art,
 .cabin-station-context .ship-console-art,
 .cabin-station-context .radio-console-art {
   display: none;
 }
 
-.cabin-360-root .cabin-station-context.view-cockpit .scene-cockpit-window-hotspot {
+.cabin-360-root .cabin-strip-backdrop-station .scene-cockpit-window-hotspot {
   inset: 0;
   z-index: 1;
   opacity: 1;
-  clip-path: var(--cockpit-window-clip);
+  clip-path: none;
   transform: none;
   transition: none;
   will-change: auto;

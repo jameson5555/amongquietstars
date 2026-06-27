@@ -132,3 +132,5 @@ await Promise.all([
 ]);
 
 writeFileSync(new URL('splash-640x1136.png', splashDir), drawPng(640, 1136, splashPixel));
+
+await import('./process-cabin-strip.mjs');

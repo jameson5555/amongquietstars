@@ -922,6 +922,32 @@ function PanoramicCabinExperience({
     >
       <CabinPanorama
         activeStation={activeView}
+        cockpitBackdrop={(
+          <div className="scene-cockpit-window-hotspot">
+            <div className="cockpit-window-view">
+              <div className="cockpit-space-scene">
+                <div className="cockpit-starfield" />
+                <div className="cockpit-flyby-layer cockpit-flyby-layer-far" aria-hidden="true">
+                  {cockpitFlybys.filter((flyby) => !flyby.foreground).map((flyby) => (
+                    <img className="cockpit-flyby-ship" key={flyby.id} src={flyby.src} alt="" style={flyby.style} />
+                  ))}
+                </div>
+                <img
+                  src={windowDestinationArt.src}
+                  alt=""
+                  className={`cockpit-destination-art destination-${windowDestinationArt.kind}`}
+                  style={destinationStyle}
+                />
+                <div className="cockpit-flyby-layer cockpit-flyby-layer-near" aria-hidden="true">
+                  {cockpitFlybys.filter((flyby) => flyby.foreground).map((flyby) => (
+                    <img className="cockpit-flyby-ship" key={flyby.id} src={flyby.src} alt="" style={flyby.style} />
+                  ))}
+                </div>
+                <img src={imageAssets.hyperdriveTunnel} alt="" className="cockpit-hyperdrive-art" />
+              </div>
+            </div>
+          </div>
+        )}
         onStationChange={onViewChange}
         scene={primaryCabinScene}
       >
@@ -933,32 +959,6 @@ function PanoramicCabinExperience({
             aria-hidden={viewId !== activeView}
             inert={viewId !== activeView}
           >
-            {viewId === 'cockpit' && (
-              <div className="scene-cockpit-window-hotspot" aria-hidden={activeView !== 'cockpit'}>
-                <div className="cockpit-window-view">
-                  <div className="cockpit-space-scene">
-                    <div className="cockpit-starfield" />
-                    <div className="cockpit-flyby-layer cockpit-flyby-layer-far" aria-hidden="true">
-                      {cockpitFlybys.filter((flyby) => !flyby.foreground).map((flyby) => (
-                        <img className="cockpit-flyby-ship" key={flyby.id} src={flyby.src} alt="" style={flyby.style} />
-                      ))}
-                    </div>
-                    <img
-                      src={windowDestinationArt.src}
-                      alt=""
-                      className={`cockpit-destination-art destination-${windowDestinationArt.kind}`}
-                      style={destinationStyle}
-                    />
-                    <div className="cockpit-flyby-layer cockpit-flyby-layer-near" aria-hidden="true">
-                      {cockpitFlybys.filter((flyby) => flyby.foreground).map((flyby) => (
-                        <img className="cockpit-flyby-ship" key={flyby.id} src={flyby.src} alt="" style={flyby.style} />
-                      ))}
-                    </div>
-                    <img src={imageAssets.hyperdriveTunnel} alt="" className="cockpit-hyperdrive-art" />
-                  </div>
-                </div>
-              </div>
-            )}
             <CabinOverlay
               activeView={viewId}
               currentSystem={currentSystem}

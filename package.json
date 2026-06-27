@@ -8,6 +8,7 @@
     "build": "npm run typecheck && npm run assets && vite build",
     "preview": "vite preview --host 127.0.0.1",
     "assets": "node scripts/generate-assets.mjs",
+    "assets:cabin-strip": "node scripts/process-cabin-strip.mjs",
     "assets:cockpit-window": "node scripts/cut-cockpit-window.mjs",
     "assets:destinations": "node scripts/process-destination-images.mjs",
     "lint": "eslint .",

@@ -30,6 +30,7 @@ interface CabinPanoramaProps {
   activeStation: CabinStationId;
   children: ReactNode;
   className?: string;
+  cockpitBackdrop: ReactNode;
   onStationChange: (station: CabinStationId) => void;
   scene: CabinSceneDefinition;
 }
@@ -65,6 +66,7 @@ export function CabinPanorama({
   activeStation,
   children,
   className = '',
+  cockpitBackdrop,
   onStationChange,
   scene
 }: CabinPanoramaProps) {
@@ -111,7 +113,9 @@ export function CabinPanorama({
           ? absoluteDistance <= station.interactiveDistance ? 'visible' : 'hidden'
           : absoluteDistance < 1.02 ? 'visible' : 'hidden';
       stationElement.style.pointerEvents =
-        !dragging && absoluteDistance <= station.interactiveDistance ? 'auto' : 'none';
+        stationElement.dataset.cabinBackdrop === 'true'
+          ? 'none'
+          : !dragging && absoluteDistance <= station.interactiveDistance ? 'auto' : 'none';
     });
   };
 
@@ -228,6 +232,15 @@ export function CabinPanorama({
       style={rootStyle}
     >
       <div className="cabin-panorama-fallback" aria-hidden="true" />
+      <div className="cabin-strip-backdrops" aria-hidden="true">
+        <div
+          className="cabin-strip-backdrop-station"
+          data-cabin-backdrop="true"
+          data-cabin-station="cockpit"
+        >
+          {cockpitBackdrop}
+        </div>
+      </div>
       <div className="cabin-strip-viewport" aria-hidden="true">
         <div className="cabin-strip-track" ref={stripTrackRef}>
           {[-1, 0, 1].map((copy) => (
