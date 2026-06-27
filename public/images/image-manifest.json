@@ -2,15 +2,15 @@
   "basePath": "/images/",
   "assets": [
     {
-      "id": "cabin_panorama_4096",
-      "file": "/images/cabin_panorama_4096.webp",
-      "width": 4096,
+      "id": "cabin_strip_4608",
+      "file": "/images/cabin_strip_4608.webp",
+      "width": 4608,
       "height": 2048
     },
     {
-      "id": "cabin_panorama_2048",
-      "file": "/images/cabin_panorama_2048.webp",
-      "width": 2048,
+      "id": "cabin_strip_2304",
+      "file": "/images/cabin_strip_2304.webp",
+      "width": 2304,
       "height": 1024
     },
     {

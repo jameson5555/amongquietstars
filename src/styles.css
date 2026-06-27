@@ -4588,12 +4588,10 @@ body {
   font-size: 0.58rem;
 }
 
-/* True 360-degree cabin renderer */
+/* Seamless four-station cylindrical cabin strip */
 
 .cabin-360-root {
-  --cabin-perspective: 720px;
-  --cabin-station-scale: 2;
-  --cabin-yaw: 0deg;
+  --cabin-position: 1;
   position: absolute;
   inset: 0;
   overflow: hidden;
@@ -4607,22 +4605,11 @@ body {
   cursor: grabbing;
 }
 
-.cabin-webgl-layer,
 .cabin-panorama-fallback,
-.cabin-css3d-camera,
-.cabin-css3d-world {
+.cabin-strip-viewport,
+.cabin-strip-overlays {
   position: absolute;
   inset: 0;
-}
-
-.cabin-webgl-layer {
-  z-index: 1;
-}
-
-.cabin-webgl-layer canvas {
-  display: block;
-  width: 100%;
-  height: 100%;
 }
 
 .cabin-panorama-fallback {
@@ -4635,28 +4622,45 @@ body {
   background-size: cover;
 }
 
-.cabin-360-root[data-renderer="webgl"] .cabin-panorama-fallback {
+.cabin-360-root[data-renderer="strip"] .cabin-panorama-fallback {
   visibility: hidden;
 }
 
-.cabin-360-root[data-renderer="fallback"] .cabin-webgl-layer {
+.cabin-strip-viewport {
+  z-index: 1;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.cabin-360-root[data-renderer="fallback"] .cabin-strip-viewport {
   display: none;
 }
 
-.cabin-css3d-camera {
-  z-index: 2;
-  overflow: hidden;
-  perspective: var(--cabin-perspective);
-  perspective-origin: 50% 50%;
-  pointer-events: none;
-  transform-style: preserve-3d;
+.cabin-strip-track {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 1200%;
+  height: 100%;
+  display: flex;
+  align-items: stretch;
+  transform: translate3d(-500px, 0, 0);
+  will-change: transform;
 }
 
-.cabin-css3d-world {
-  overflow: visible;
-  transform: rotateY(var(--cabin-yaw));
-  transform-origin: 50% 50% 0;
-  transform-style: preserve-3d;
+.cabin-strip-image {
+  display: block;
+  flex: 0 0 33.333333%;
+  width: 33.333333%;
+  height: 100%;
+  object-fit: fill;
+  pointer-events: none;
+  user-select: none;
+}
+
+.cabin-strip-overlays {
+  z-index: 2;
+  overflow: hidden;
+  pointer-events: none;
 }
 
 .cabin-360-root .cabin-overlay-plate.cabin-station-context {
@@ -4671,23 +4675,14 @@ body {
   visibility: visible;
   filter: none;
   pointer-events: none;
-  backface-visibility: hidden;
-  transform:
-    rotateY(var(--station-yaw))
-    translateZ(calc(-1 * var(--cabin-perspective)))
-    scale(var(--cabin-station-scale));
+  transform: translate3d(0, 0, 0);
   transform-origin: 50% 50%;
-  transform-style: preserve-3d;
   transition: none;
-  will-change: auto;
-}
-
-.cabin-360-root[data-renderer="fallback"] .cabin-css3d-world {
-  transform: none;
+  will-change: transform;
 }
 
 .cabin-360-root[data-renderer="fallback"] .cabin-overlay-plate.cabin-station-context {
-  transform: none;
+  transform: none !important;
 }
 
 .cabin-station-context .map-console-art,
@@ -4698,16 +4693,7 @@ body {
 
 .cabin-station-context.view-cockpit .scene-cockpit-window-hotspot {
   inset: 0;
-  clip-path: polygon(
-    10% 4%,
-    90% 4%,
-    90% 58%,
-    85% 63%,
-    77% 66%,
-    23% 66%,
-    15% 63%,
-    10% 58%
-  );
+  clip-path: var(--cockpit-window-clip);
 }
 
 .cabin-experience > .scene-vignette {
@@ -4716,8 +4702,295 @@ body {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .cabin-css3d-world,
+  .cabin-strip-track,
   .cabin-360-root .cabin-overlay-plate.cabin-station-context {
     transition: none;
   }
+}
+
+/* Calibrate live interfaces to the approved cabin-strip artwork. The artwork is
+   stretched with the viewport, so every coordinate space must use that same box. */
+
+.cabin-experience.view-map .map-artwork-coordinate-space,
+.cabin-experience.view-radio .radio-artwork-coordinate-space,
+.cabin-experience.view-ship .ship-artwork-coordinate-space {
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  aspect-ratio: auto;
+  transform: none;
+}
+
+/* Cockpit: four registry windows, a tall hologram aperture, and physical controls. */
+
+.cabin-experience.view-cockpit .cockpit-top-band {
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.cabin-experience.view-cockpit .cockpit-top-band .resource-strip {
+  position: absolute;
+  top: 4.3%;
+  left: 12%;
+  width: 77%;
+  height: 8.6%;
+  gap: 2.3%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+
+.cabin-experience.view-cockpit .cockpit-top-band .resource {
+  align-content: center;
+  gap: 3px;
+  padding: 3px 1px;
+  border: 0;
+  border-radius: 6px;
+  background: rgba(2, 10, 14, 0.36);
+  box-shadow:
+    inset 0 0 11px rgba(92, 216, 236, 0.11),
+    0 0 7px rgba(8, 11, 12, 0.72);
+}
+
+.cabin-experience.view-cockpit .cockpit-top-band .resource span {
+  font-size: clamp(0.42rem, 1.55vw, 0.61rem);
+}
+
+.cabin-experience.view-cockpit .cockpit-top-band .resource strong {
+  font-size: clamp(0.75rem, 3.2vw, 1.08rem);
+}
+
+.cabin-experience.view-cockpit .cockpit-top-band .cockpit-status-hologram {
+  position: absolute;
+  top: 19%;
+  left: 19%;
+  width: 62%;
+  margin: 0;
+  padding: 8px 10px;
+  transform: translateY(0) scale(1);
+}
+
+.cabin-experience.view-cockpit .cockpit-top-band .cockpit-status-hologram.hidden {
+  transform: translateY(-10px) scale(0.96);
+}
+
+.cabin-experience.view-cockpit .cockpit-holo-fields {
+  top: auto;
+  right: 15%;
+  bottom: 45%;
+  left: 15%;
+}
+
+.cabin-experience.view-cockpit .status-console-trigger {
+  top: 52.2%;
+  left: 43%;
+  width: 14%;
+  height: 9%;
+}
+
+.cabin-experience.view-cockpit .lead-console-trigger {
+  top: 64.5%;
+  right: auto;
+  bottom: auto;
+  left: 7%;
+  width: 25%;
+  height: 12.5%;
+  border-radius: 50%;
+}
+
+.cabin-experience.view-cockpit .lead-console-trigger::before,
+.cabin-experience.view-cockpit .lead-console-trigger::after {
+  clip-path: circle(46% at 50% 50%);
+}
+
+.cabin-experience.view-cockpit .music-console-trigger {
+  top: 59%;
+  left: 67%;
+  width: 27%;
+  height: 24%;
+}
+
+.cabin-experience.view-cockpit .radar-steering-control {
+  top: 59%;
+  left: 36%;
+  width: 31%;
+  height: 18%;
+}
+
+/* Map: both generated screens are nearly front-facing. */
+
+.cabin-experience.view-map .map-screen-viewport {
+  top: 16.4%;
+  left: 19.3%;
+  width: 68.2%;
+  height: 31.8%;
+  clip-path: polygon(4% 0, 96% 4%, 100% 10%, 100% 94%, 96% 100%, 4% 98%, 0 94%, 0 6%);
+}
+
+.cabin-experience.view-map .map-screen-panel {
+  inset: 4% 4.5% 5%;
+  transform: none;
+}
+
+.cabin-experience.view-map .map-route-screen-viewport {
+  top: 53.1%;
+  left: 19.4%;
+  width: 68%;
+  height: 24.2%;
+  clip-path: polygon(4% 2%, 96% 0, 100% 8%, 100% 83%, 96% 91%, 4% 100%, 0 94%, 0 8%);
+}
+
+.cabin-experience.view-map .overlay-system-list {
+  inset: 5% 4.5% 8%;
+  transform: none;
+}
+
+/* Radio: one broad, minimally skewed transmissions display. */
+
+.cabin-experience.view-radio .radio-screen-viewport {
+  top: 18.7%;
+  left: 27.2%;
+  width: 69.5%;
+  height: 29.5%;
+  clip-path: polygon(4% 5%, 96% 0, 100% 7%, 100% 94%, 96% 100%, 4% 97%, 0 91%, 0 10%);
+}
+
+.cabin-experience.view-radio .transmission-feed {
+  inset: 5% 5% 7%;
+  transform: none;
+}
+
+/* Ship: registry, resources, and upgrades share the bedroom's single TV. */
+
+.cabin-experience.view-ship .ship-combined-screen-viewport {
+  position: absolute;
+  z-index: 1;
+  top: 13.8%;
+  left: 53.3%;
+  width: 43.3%;
+  height: 29.2%;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  clip-path: inset(0 round 6px);
+}
+
+.cabin-experience.view-ship .ship-combined-panel {
+  position: absolute;
+  inset: 11% 8% 7%;
+  min-width: 0;
+  min-height: 0;
+  display: grid;
+  grid-template-rows: auto auto auto minmax(0, 1fr) auto;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  transform: none;
+}
+
+.cabin-experience.view-ship .ship-combined-panel .overlay-heading {
+  margin: 0;
+}
+
+.cabin-experience.view-ship .ship-combined-panel .overlay-heading .eyebrow {
+  font-size: clamp(0.38rem, 1.3vw, 0.53rem);
+  line-height: 1;
+}
+
+.cabin-experience.view-ship .ship-combined-panel .overlay-heading h2 {
+  margin-top: 2px;
+  overflow: hidden;
+  font-size: clamp(0.62rem, 2.6vw, 0.94rem);
+  line-height: 1;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cabin-experience.view-ship .ship-combined-panel .ship-resources-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 3px;
+}
+
+.cabin-experience.view-ship .ship-combined-panel .ship-resource {
+  min-width: 0;
+  padding: 3px 1px;
+  text-align: center;
+}
+
+.cabin-experience.view-ship .ship-combined-panel .ship-resource span {
+  display: block;
+  overflow: hidden;
+  font-size: clamp(0.33rem, 1.1vw, 0.46rem);
+  line-height: 1;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cabin-experience.view-ship .ship-combined-panel .ship-resource strong {
+  display: block;
+  margin-top: 2px;
+  font-size: clamp(0.58rem, 2.3vw, 0.82rem);
+  line-height: 1;
+}
+
+.cabin-experience.view-ship .ship-combined-panel .ship-resource p {
+  display: none;
+}
+
+.cabin-experience.view-ship .ship-combined-panel .overlay-upgrade-list {
+  min-width: 0;
+  min-height: 0;
+  display: grid;
+  grid-auto-rows: max-content;
+  align-content: start;
+  gap: 3px;
+  margin: 0;
+  padding: 0 3px 2px 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  touch-action: pan-y;
+}
+
+.cabin-experience.view-ship .ship-combined-panel .upgrade-card {
+  min-width: 0;
+  gap: 4px;
+  margin: 0;
+  padding: 4px;
+  border-radius: 3px;
+}
+
+.cabin-experience.view-ship .ship-combined-panel .upgrade-card h4 {
+  margin: 0 0 1px;
+  font-size: clamp(0.42rem, 1.55vw, 0.57rem);
+  line-height: 1;
+}
+
+.cabin-experience.view-ship .ship-combined-panel .upgrade-card p {
+  display: -webkit-box;
+  overflow: hidden;
+  font-size: clamp(0.34rem, 1.15vw, 0.46rem);
+  line-height: 1.1;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+}
+
+.cabin-experience.view-ship .ship-combined-panel .upgrade-card strong {
+  font-size: clamp(0.39rem, 1.3vw, 0.5rem);
+  white-space: nowrap;
+}
+
+.cabin-experience.view-ship .ship-combined-panel .reset-button {
+  min-height: 20px;
+  margin: 0;
+  padding: 3px 6px;
+  font-size: clamp(0.38rem, 1.25vw, 0.5rem);
 }

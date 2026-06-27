@@ -12,6 +12,7 @@ export default defineConfig({
       manifest: false,
       workbox: {
         globPatterns: ['**/*.{js,css,html,svg,png,webp,webmanifest}'],
+        globIgnores: ['**/cabin_panorama_*.webp'],
         navigateFallback: '/amongquietstars/index.html'
       },
       devOptions: {

@@ -1389,8 +1389,8 @@ function CabinOverlay({
       return (
         <div className="overlay-layer ship-overlay">
           <div className="ship-artwork-coordinate-space">
-            <div className="ship-registry-screen-viewport">
-              <div className="ship-screen-panel overlay-shell">
+            <div className="ship-combined-screen-viewport">
+              <div className="ship-combined-panel overlay-shell">
                 <div className="screen-heading overlay-heading">
                   <p className="eyebrow">Ship registry</p>
                   <h2>Among Quiet Stars</h2>
@@ -1404,11 +1404,6 @@ function CabinOverlay({
                     </div>
                   ))}
                 </div>
-              </div>
-            </div>
-
-            <div className="ship-upgrades-screen-viewport">
-              <div className="ship-upgrades-panel overlay-shell">
                 <div className="screen-heading overlay-heading compact-heading">
                   <p className="eyebrow">Available upgrades</p>
                 </div>
