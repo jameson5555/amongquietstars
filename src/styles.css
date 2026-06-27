@@ -2166,28 +2166,10 @@ body {
   inset: 0;
   z-index: 1;
   overflow: hidden;
-  opacity: 0;
-  pointer-events: none;
-  transition:
-    opacity 520ms ease,
-    transform 900ms cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-.view-cockpit .scene-cockpit-window-hotspot {
   opacity: 1;
-  transform: scale(1) translate3d(0%, 0, 0);
-}
-
-.view-map .scene-cockpit-window-hotspot {
-  transform: scale(1.02) translate3d(100%, 0, 0);
-}
-
-.view-radio .scene-cockpit-window-hotspot {
-  transform: scale(1.02) translate3d(-100%, 0, 0);
-}
-
-.view-ship .scene-cockpit-window-hotspot {
-  transform: scale(1.02) translate3d(-200%, 0, 0);
+  pointer-events: none;
+  transform: none;
+  transition: none;
 }
 
 .cockpit-window-view {
@@ -4691,9 +4673,14 @@ body {
   display: none;
 }
 
-.cabin-station-context.view-cockpit .scene-cockpit-window-hotspot {
+.cabin-360-root .cabin-station-context.view-cockpit .scene-cockpit-window-hotspot {
   inset: 0;
+  z-index: 1;
+  opacity: 1;
   clip-path: var(--cockpit-window-clip);
+  transform: none;
+  transition: none;
+  will-change: auto;
 }
 
 .cabin-experience > .scene-vignette {
