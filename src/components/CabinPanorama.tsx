@@ -10,7 +10,6 @@ import {
   type ReactNode
 } from 'react';
 import {
-  BackSide,
   LinearFilter,
   Mesh,
   MeshBasicMaterial,
@@ -204,7 +203,8 @@ export function CabinPanorama({
           texture.offset.x = scene.textureRotation / 360;
 
           const geometry = new SphereGeometry(500, 64, 32);
-          const material = new MeshBasicMaterial({ map: texture, side: BackSide });
+          geometry.scale(-1, 1, 1);
+          const material = new MeshBasicMaterial({ map: texture });
           sphere = new Mesh(geometry, material);
           threeScene.add(sphere);
           root.dataset.renderer = 'webgl';

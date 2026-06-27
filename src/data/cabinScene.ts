@@ -13,13 +13,13 @@ export const primaryCabinScene: CabinSceneDefinition = {
     radio: imageAssets.viewRadioConsole,
     ship: imageAssets.viewShipAft
   },
-  verticalFov: 76,
+  verticalFov: 96,
   textureRotation: -90,
   initialStation: 'cockpit',
   stations: {
     cockpit: { id: 'cockpit', yaw: 0, interactiveAngle: 18 },
-    radio: { id: 'radio', yaw: -100, interactiveAngle: 18 },
-    ship: { id: 'ship', yaw: 112, interactiveAngle: 18 },
+    radio: { id: 'radio', yaw: 100, interactiveAngle: 18 },
+    ship: { id: 'ship', yaw: -122, interactiveAngle: 18 },
     map: { id: 'map', yaw: 180, interactiveAngle: 18 }
   }
 };

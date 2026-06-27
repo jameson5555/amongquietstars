@@ -4699,14 +4699,14 @@ body {
 .cabin-station-context.view-cockpit .scene-cockpit-window-hotspot {
   inset: 0;
   clip-path: polygon(
-    3% 0%,
-    97% 0%,
-    97% 63%,
-    91% 70%,
-    82% 74%,
-    18% 74%,
-    9% 70%,
-    3% 63%
+    10% 4%,
+    90% 4%,
+    90% 58%,
+    85% 63%,
+    77% 66%,
+    23% 66%,
+    15% 63%,
+    10% 58%
   );
 }
 
